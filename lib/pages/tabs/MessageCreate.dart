@@ -32,110 +32,115 @@ class _MessageCreateState extends State<MessageCreate> {
     //富文本的controller
     SimpleRichEditController controller = SimpleRichEditController();
 
-    return SafeArea(
-        child: Container(
-      padding: EdgeInsets.all(20),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _containerList = [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Text("关键词:"),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            ActionChip(
-                              label: Text(
-                                _actionChipString,
-                                style: TextStyle(color: Colors.white),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("创建消息"),
+      ),
+      body: SafeArea(
+          child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _containerList = [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Text("关键词:"),
+                              SizedBox(
+                                width: 15,
                               ),
-                              backgroundColor: Colors.blue,
-                              onPressed: () {
-                                //_awaitReturnNewTag(context);
-                                _awaitReturnChooseTag(context);
-                              },
-                              avatar: Icon(
-                                _actionChipIconData,
-                                color: Colors.white,
+                              ActionChip(
+                                label: Text(
+                                  _actionChipString,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.blue,
+                                onPressed: () {
+                                  //_awaitReturnNewTag(context);
+                                  _awaitReturnChooseTag(context);
+                                },
+                                avatar: Icon(
+                                  _actionChipIconData,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        FlatButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/updateTags');
-                            },
-                            child: Text("管理关键词")),
-                      ]),
-                  Divider(),
-                  Form(
-                    key: newTitleFormKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          // controller: textFieldController,
-                          style: TextStyle(
-                            color: Colors.black,
+                            ],
                           ),
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.title),
-                              labelText: "标题",
-                              // border: OutlineInputBorder(),
-                              hintText: "标题需包含关键词"),
-                          onSaved: (value) {
-                            newTitle = value;
-                          },
-                          validator: _validateNewTitle,
-                        ),
-                      ],
+                          FlatButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/updateTags');
+                              },
+                              child: Text("管理关键词")),
+                        ]),
+                    Divider(),
+                    Form(
+                      key: newTitleFormKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            // controller: textFieldController,
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                                icon: Icon(Icons.title),
+                                labelText: "标题",
+                                // border: OutlineInputBorder(),
+                                hintText: "标题需包含关键词"),
+                            onSaved: (value) {
+                              newTitle = value;
+                            },
+                            validator: _validateNewTitle,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(),
-                  SafeArea(
-                    child: SizedBox(
-                      height: ScreenUtil.getInstance().setHeight(600),
-                      child: RichEdit(
-                          controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                    Divider(),
+                    SafeArea(
+                      child: SizedBox(
+                        height: ScreenUtil.getInstance().setHeight(600),
+                        child: RichEdit(
+                            controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                      ),
                     ),
-                  ),
-                  // Container(
-                  //   child: TextField(
-                  //     minLines: 18,
-                  //     keyboardType: TextInputType.multiline,
-                  //     maxLines: null,
-                  //     decoration: InputDecoration(
-                  //         border: OutlineInputBorder(), hintText: "输入内容"),
-                  //   ),
-                  // ),
-                  // Divider(),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     FlatButton(
-                  //         onPressed: () {}, child: Icon(Icons.note_add)),
-                  //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
-                  //     FlatButton(
-                  //         onPressed: () {}, child: Icon(Icons.video_call)),
-                  //   ],
-                  // ),
-                ]),
-            JdButton(
-              text: "发送",
-              cb: () {
-                _sendMessage(controller);
-              },
-            ),
-          ]),
-    ));
+                    // Container(
+                    //   child: TextField(
+                    //     minLines: 18,
+                    //     keyboardType: TextInputType.multiline,
+                    //     maxLines: null,
+                    //     decoration: InputDecoration(
+                    //         border: OutlineInputBorder(), hintText: "输入内容"),
+                    //   ),
+                    // ),
+                    // Divider(),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //     FlatButton(
+                    //         onPressed: () {}, child: Icon(Icons.note_add)),
+                    //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
+                    //     FlatButton(
+                    //         onPressed: () {}, child: Icon(Icons.video_call)),
+                    //   ],
+                    // ),
+                  ]),
+              JdButton(
+                text: "发送",
+                cb: () {
+                  _sendMessage(controller);
+                },
+              ),
+            ]),
+      )),
+    );
   }
 
   String _validateNewTitle(value) {

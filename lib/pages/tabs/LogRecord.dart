@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../widget/event_bus.dart';
+import 'package:weitong/services/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import '../../Model/user_data.dart';
@@ -71,27 +71,30 @@ class _LogRecordPageState extends State<LogRecordPage> {
     });
     print("------------------------------------");
     return Scaffold(
-        body: ListView(
-      children: [
-        Container(
-          child: IconButton(
-            onPressed: () {
-              onSendMyMessage();
-            },
-            icon: Icon(Icons.send),
-          ),
+        appBar: AppBar(
+          title: Text("联系人"),
         ),
-        Container(
-            child: FlatButton(
-          child: Text("点击显示图片"),
-          onPressed: () {
-            setState(() {
-              flage = 1;
-            });
-          },
-        )),
-        Container(child: flage == 0 ? Text("图片未加载成功") : showMyImage()),
-      ],
-    ));
+        body: ListView(
+          children: [
+            Container(
+              child: IconButton(
+                onPressed: () {
+                  onSendMyMessage();
+                },
+                icon: Icon(Icons.send),
+              ),
+            ),
+            Container(
+                child: FlatButton(
+              child: Text("点击显示图片"),
+              onPressed: () {
+                setState(() {
+                  flage = 1;
+                });
+              },
+            )),
+            Container(child: flage == 0 ? Text("图片未加载成功") : showMyImage()),
+          ],
+        ));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/user_data.dart';
+import 'package:weitong/services/event_bus.dart';
 import '../Login.dart';
 import 'LogRecord.dart';
 import 'MessageCreate.dart';
@@ -23,6 +24,8 @@ class _TabsState extends State<Tabs> {
     LogRecordPage(),
     UserPage()
   ];
+
+  AppLifecycleState currentState = AppLifecycleState.resumed;
   // List _pagelist = [Message(), MessageCreate(), LogRecord(), User()];
   @override
   void initState() {
@@ -33,9 +36,6 @@ class _TabsState extends State<Tabs> {
   }
 
   initPlatformState() async {
-    // 1.初始化 im SDK
-    RongIMClient.init(RongAppKey);
-
     //2.连接 im SDK
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.get("token");
@@ -67,6 +67,7 @@ class _TabsState extends State<Tabs> {
           (route) => route == null);
     }
 
+//绑定接收消息
     RongIMClient.onMessageReceivedWrapper =
         (Message msg, int left, bool hasPackage, bool offline) {
       String hasP = hasPackage ? "true" : "false";
@@ -89,6 +90,24 @@ class _TabsState extends State<Tabs> {
           "object onMessageReceivedWrapper objName: ${msg.objectName} content is null left:${left.toString()} hasPackage:$hasP offline:$off",
         );
       }
+      // if (currentState == AppLifecycleState.paused // 应用程序当前对用户不可见，不响应用户输入，并在后台运行。
+      //     // && !checkNoficationQuietStatus()   //检查通知静止时间？
+      //     ) {
+      //   EventBus.instance.commit(EventKeys.ReceiveMessage,
+      //       {"message": msg, "left": left, "hasPackage": hasPackage});
+      //   RongIMClient.getConversationNotificationStatus(
+      //       msg.conversationType, msg.targetId, (int status, int code) {
+      //     if (status == 1) {
+      //       _postLocalNotification(msg, left);
+      //     }
+      //   });
+      // } else {
+      //   //如果应用在后台的话
+      //通知其他页面收到消息
+
+      EventBus.instance.commit(EventKeys.ReceiveMessage,
+          {"message": msg, "left": left, "hasPackage": hasPackage});
+      // }
     };
   }
 
@@ -99,9 +118,9 @@ class _TabsState extends State<Tabs> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("微通"),
-      ),
+      // appBar: AppBar(
+      //   title: Text("微通"),
+      // ),
       // floatingActionButton: FloatingActionButton(
       //   child: Icon(Icons.delete),
       //   onPressed: () {

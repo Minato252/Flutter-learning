@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/pages/Admin/searchDemo.dart';
+import 'Model/user_data.dart';
 import 'pages/tabs/Tabs.dart';
 import 'routers/router.dart';
 import 'pages/Login.dart';
@@ -16,6 +18,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // 1.初始化 im SDK
+    RongIMClient.init(RongAppKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
