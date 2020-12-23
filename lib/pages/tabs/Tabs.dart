@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/user_data.dart';
 import '../Login.dart';
 import 'LogRecord.dart';
 import 'MessageCreate.dart';
@@ -31,35 +33,63 @@ class _TabsState extends State<Tabs> {
   }
 
   initPlatformState() async {
-    //1.初始化 im SDK
-    // RongIMClient.init(RongAppKey);
+    // 1.初始化 im SDK
+    RongIMClient.init(RongAppKey);
 
     //2.连接 im SDK
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.get("token");
     if (token != null && token.length > 0) {
-      // // int rc = await RongIMClient.connect(token);
-      // RongIMClient.connect(token, (int code, String userId) {
-      //   developer.log("connect result " + code.toString(), name: pageName);
+      // int rc = await RongIMClient.connect(token);
+      RongIMClient.connect(token, (int code, String userId) {
+        // developer.log("connect result " + code.toString(), name: pageName);
 
-      //   EventBus.instance.commit(EventKeys.UpdateNotificationQuietStatus, {});
-      //   if (code == 31004 || code == 12) {
-      //     developer.log("connect result " + code.toString(), name: pageName);
-      //     Navigator.of(context).pushAndRemoveUntil(
-      //         new MaterialPageRoute(builder: (context) => new LoginPage()),
-      //         (route) => route == null);
-      //   } else if (code == 0) {
-      //     developer.log("connect userId" + userId, name: pageName);
-      //     // 连接成功后打开数据库
-      //     // _initUserInfoCache();
-      //   }
-      // });
+        // EventBus.instance.commit(EventKeys.UpdateNotificationQuietStatus, {});
+        if (code == 31004 || code == 12) {
+          //登陆失败
+          // developer.log("connect result " + code.toString(), name: pageName);
+          Navigator.of(context).pushAndRemoveUntil(
+              new MaterialPageRoute(builder: (context) => new LoginPage()),
+              (route) => route == null);
+        } else if (code == 0 || code == 34001) {
+          print("登陆成功");
+          //登陆成功
+          // developer.log("connect userId" + userId, name: pageName);
+          // 连接成功后打开数据库
+          // _initUserInfoCache();
+
+        }
+      });
     } else {
       print("jump into login");
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new LoginPage()),
           (route) => route == null);
     }
+
+    RongIMClient.onMessageReceivedWrapper =
+        (Message msg, int left, bool hasPackage, bool offline) {
+      String hasP = hasPackage ? "true" : "false";
+      String off = offline ? "true" : "false";
+      if (msg.content != null) {
+        print(
+          "object onMessageReceivedWrapper objName:" +
+              msg.content.getObjectName() +
+              " msgContent:" +
+              msg.content.encode() +
+              " left:" +
+              left.toString() +
+              " hasPackage:" +
+              hasP +
+              " offline:" +
+              off,
+        );
+      } else {
+        print(
+          "object onMessageReceivedWrapper objName: ${msg.objectName} content is null left:${left.toString()} hasPackage:$hasP offline:$off",
+        );
+      }
+    };
   }
 
   Future<void> cleanToken() async {

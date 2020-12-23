@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:weitong/services/IM.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'SimpleRichEditController.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class MessageCreate extends StatefulWidget {
   MessageCreate({Key key}) : super(key: key);
@@ -201,8 +203,23 @@ class Pre extends StatelessWidget {
   Widget build(BuildContext context) {
     print("html:" + htmlCode);
     return Scaffold(
-      appBar: AppBar(),
-      body: Html(data: htmlCode),
-    );
+        appBar: AppBar(
+          title: Text("预览页面"),
+        ),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Html(data: htmlCode),
+                // Text("测试"),
+                JdButton(
+                    text: "确定发送",
+                    cb: () {
+                      IM.sendMessage(htmlCode, "456");
+                    }),
+              ],
+            ),
+          ),
+        ));
   }
 }

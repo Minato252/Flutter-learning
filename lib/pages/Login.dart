@@ -147,11 +147,19 @@ class _LoginPageState extends State<LoginPage> {
     var result = new UserItemModel.fromJson(rel2);
 
     //===debug
-    result = new UserItemModel.fromJson({
-      "code": "200",
-      "token":
-          "+N6PSEp6cPDMad7e68GxGrTxq47Jn+UhuuSKJ1cFdRA=@9s7f.cn.rongnav.com;9s7f.cn.rongcfg.com"
-    });
+    if (id == "123") {
+      result = new UserItemModel.fromJson({
+        "code": "200",
+        "token":
+            "C62X0xoVliMEoBxY/wvYD9C+6U+NWI+rl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
+      });
+    } else {
+      result = new UserItemModel.fromJson({
+        "code": "200",
+        "token":
+            "pwVAR1znR18EoBxY/wvYDx5rxrGUTVxwl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
+      });
+    }
 
     if (this.role == "user" && result.code == "200") {
       _saveUserInfo(id, result.token);
