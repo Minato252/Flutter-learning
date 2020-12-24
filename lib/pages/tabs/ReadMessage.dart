@@ -7,18 +7,18 @@ import 'package:weitong/widget/JdButton.dart';
 
 class ReadMessage extends StatelessWidget {
   // final htmlCode;
-  Conversation conversation;
+  Conversation arguments;
 
   ReadMessage(
       {Key key,
       // this.htmlCode,
-      this.conversation})
+      this.arguments})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     print("**********显示消息详情**************");
-    print(conversation);
+    print(arguments);
     // return Scaffold(;
     //     appBar: AppBar(
     //       title: Text("预览页面"),

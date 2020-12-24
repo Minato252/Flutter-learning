@@ -16,7 +16,9 @@ final routes = {
   '/chooseTags': (context) => TagChoiceChipDemo(),
   '/admin': (context) => AdminTabs(),
   '/addUser': (context) => AddUser(),
-  '/readMessage': (context, {argumets}) => ReadMessage(argumets: argumets),
+  '/readMessage': (context, {argumets}) => ReadMessage(
+        arguments: argumets,
+      ),
 };
 
 //固定写法
