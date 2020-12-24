@@ -70,9 +70,9 @@ class Base64Convert {
   * 将Base64字符串的图片转换成图片
   */
   static Widget base642Image(String base64Txt) {
-    // Uint8List decodeTxt = convert.base64.decode(base64Txt);
-    Uint8List decodeTxt = convert
-        .base64Decode(base64Txt.replaceAll('\r', '').replaceAll('\n', ''));
+    Uint8List decodeTxt = convert.base64.decode(base64Txt);
+    // Uint8List decodeTxt = convert
+    //     .base64Decode(base64Txt.replaceAll('\r', '').replaceAll('\n', ''));
     print("***************这是base64解码后的字符串*************");
     print(decodeTxt);
 
