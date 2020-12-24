@@ -6,6 +6,7 @@ import '../pages/tabs/Tabs.dart';
 import '../pages/tags/TagChipDemo.dart';
 import '../pages/tags/TagTextFieldDemo.dart';
 import '../pages/Admin/AdminTabs.dart';
+import '../pages/tabs/ReadMessage.dart';
 
 //配置路由
 final routes = {
@@ -15,6 +16,7 @@ final routes = {
   '/chooseTags': (context) => TagChoiceChipDemo(),
   '/admin': (context) => AdminTabs(),
   '/addUser': (context) => AddUser(),
+  '/readMessage': (context, {argumets}) => ReadMessage(argumets: argumets),
 };
 
 //固定写法

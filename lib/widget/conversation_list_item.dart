@@ -35,6 +35,8 @@ class _ConversationListItemState extends State<ConversationListItem> {
 
   void _onTaped() {
     if (this.delegate != null) {
+      print("******我要打印消息情况了********");
+      print(this.conversation.latestMessageContent);
       this.delegate.didTapConversation(this.conversation);
     } else {
       developer.log("没有实现 ConversationListItemDelegate", name: pageName);
@@ -198,7 +200,6 @@ class _ConversationListItemState extends State<ConversationListItem> {
         height: 1,
         width: 1,
       );
-      ;
     }
     double width = count > 100 ? 25 : RCLayout.ConListUnreadSize;
     return Container(

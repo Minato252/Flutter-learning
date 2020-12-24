@@ -209,7 +209,8 @@ class _MessagePageState extends State<MessagePage>
       "coversationType": conversation.conversationType,
       "targetId": conversation.targetId
     };
-    Navigator.pushNamed(context, "/conversation", arguments: arg);
+    // Navigator.pushNamed(context, "/readMessage", arguments: arg);
+    Navigator.pushNamed(context, "/readMessage", arguments: conversation);
   }
 
   @override

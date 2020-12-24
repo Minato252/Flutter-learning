@@ -151,13 +151,13 @@ class _LoginPageState extends State<LoginPage> {
       result = new UserItemModel.fromJson({
         "code": "200",
         "token":
-            "C62X0xoVliMEoBxY/wvYD9C+6U+NWI+rl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
+            "sh30VIVO49gIlrD5LWafqbSQstMz0o4n5HrCEP6oB6k=@2a6v.cn.rongnav.com;2a6v.cn.rongcfg.com"
       });
     } else {
       result = new UserItemModel.fromJson({
         "code": "200",
         "token":
-            "pwVAR1znR18EoBxY/wvYDx5rxrGUTVxwl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
+            "wkagPMVbm6UIlrD5LWafqWB54enjavHR5HrCEP6oB6k=@2a6v.cn.rongnav.com;2a6v.cn.rongcfg.com"
       });
     }
 
