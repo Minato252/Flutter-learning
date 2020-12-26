@@ -205,12 +205,15 @@ class _MessagePageState extends State<MessagePage>
 
   @override
   void didTapConversation(Conversation conversation) {
+    print("didTapConversation中的conversation");
+    print(conversation);
     Map arg = {
       "coversationType": conversation.conversationType,
       "targetId": conversation.targetId
     };
     // Navigator.pushNamed(context, "/readMessage", arguments: arg);
-    Navigator.pushNamed(context, "/readMessage", arguments: conversation);
+    // Navigator.pushNamed(context, "/readMessage",
+    //     arguments: {conversation: conversation});
   }
 
   @override

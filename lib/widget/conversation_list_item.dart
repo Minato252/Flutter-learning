@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import '../routers/router.dart';
+import '../pages/tabs/ReadMessage.dart';
 
 // import 'widget_util.dart';
 
@@ -33,10 +35,10 @@ class _ConversationListItemState extends State<ConversationListItem> {
     setInfo();
   }
 
-  void _onTaped() {
+  void _onTaped() async {
     if (this.delegate != null) {
       print("******我要打印消息情况了********");
-      print(this.conversation.latestMessageContent);
+      print(this.conversation.latestMessageContent.conversationDigest());
       this.delegate.didTapConversation(this.conversation);
     } else {
       developer.log("没有实现 ConversationListItemDelegate", name: pageName);
@@ -131,6 +133,16 @@ class _ConversationListItemState extends State<ConversationListItem> {
       digest = "";
     }
     return Expanded(
+        child: InkWell(
+      onTap: () {
+        print("****************这是我点击的消息详情**********");
+        print(conversation.mentionedCount);
+        // Navigator.pushNamed(context, '/readMessage',
+        //     arguments: {'coversation': '123'});
+
+        Navigator.pushNamed(context, '/readMessage',
+            arguments: {'conversation': digest});
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,10 +162,12 @@ class _ConversationListItemState extends State<ConversationListItem> {
           _buildDigest(digest)
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildDigest(String digest) {
+    // print("********_buildDigest中查看数据内容*********");
+    // print(digest);
     bool showError = false;
     if (conversation.mentionedCount > 0) {
       digest = RCString.ConHaveMentioned + digest;

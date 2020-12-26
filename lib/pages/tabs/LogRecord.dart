@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:weitong/pages/tabs/ReadMessage.dart';
 import 'package:weitong/services/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/services/providerServices.dart';
 import '../../Model/user_data.dart';
 import '../Login.dart';
 // import '../../services/Base64Convert.dart';
 import '../../services/MessageSend.dart';
+
+import 'package:provider/provider.dart';
 
 class LogRecordPage extends StatefulWidget {
   LogRecordPage({Key key}) : super(key: key);
@@ -70,31 +74,39 @@ class _LogRecordPageState extends State<LogRecordPage> {
       print('connect result ' + code.toString());
     });
     print("------------------------------------");
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("联系人"),
-        ),
-        body: ListView(
-          children: [
-            Container(
-              child: IconButton(
+    return MultiProvider(
+      providers: [
+        // ChangeNotifierProvider(builder: (context) => ProviderServices().MyConversation,)
+      ],
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text("联系人"),
+          ),
+          body: ListView(
+            children: [
+              Container(
+                  child: IconButton(
+                      icon: Icon(Icons.send),
+                      // Providers:[ChangeNotifierProvider(builder: (_) =)]
+                      onPressed: () {
+                        // onSendMyMessage();
+                        // Navigator.pushNamed(context, '/readMessage',
+                        //     arguments: {"cid": '123'});
+                        Navigator.pushNamed(context, '/readMessage',
+                            arguments: {'conversation': '123'});
+                      })),
+              Container(
+                  child: FlatButton(
+                child: Text("点击显示图片"),
                 onPressed: () {
-                  onSendMyMessage();
+                  setState(() {
+                    flage = 1;
+                  });
                 },
-                icon: Icon(Icons.send),
-              ),
-            ),
-            Container(
-                child: FlatButton(
-              child: Text("点击显示图片"),
-              onPressed: () {
-                setState(() {
-                  flage = 1;
-                });
-              },
-            )),
-            Container(child: flage == 0 ? Text("图片未加载成功") : showMyImage()),
-          ],
-        ));
+              )),
+              Container(child: flage == 0 ? Text("图片未加载成功") : showMyImage()),
+            ],
+          )),
+    );
   }
 }
