@@ -7,6 +7,7 @@ import '../pages/tags/TagChipDemo.dart';
 import '../pages/tags/TagTextFieldDemo.dart';
 import '../pages/Admin/AdminTabs.dart';
 import '../pages/tabs/ReadMessage.dart';
+import '../pages/tabs/MessageItem.dart';
 
 //配置路由
 final routes = {
@@ -18,6 +19,8 @@ final routes = {
   '/addUser': (context) => AddUser(),
   // '/readMessage': (context, {argumets}) => ReadMessage(arguments: argumets),
   '/readMessage': (context, {arguments}) => ReadMessage(arguments: arguments),
+  '/messageItem': (context, {arguments}) =>
+      MessageItemPage(arguments: arguments),
   // '/form': (context, {arguments}) => FormPage(arguments: arguments),
   // '/readMessage': (context) => ReadMessage(),
 };

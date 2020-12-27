@@ -12,12 +12,16 @@ import 'dart:developer' as developer;
 class ConversationListItem extends StatefulWidget {
   final Conversation conversation;
   final ConversationListItemDelegate delegate;
-  const ConversationListItem({Key key, this.delegate, this.conversation})
+  final List conlist;
+
+  const ConversationListItem(
+      {Key key, this.delegate, this.conversation, this.conlist})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _ConversationListItemState(this.delegate, this.conversation);
+    return new _ConversationListItemState(
+        this.delegate, this.conversation, this.conlist);
   }
 }
 
@@ -25,13 +29,16 @@ class _ConversationListItemState extends State<ConversationListItem> {
   String pageName = "example.ConversationListItem";
   Conversation conversation;
   ConversationListItemDelegate delegate;
+  List conversationList;
+
   // example.BaseInfo info;
   Offset tapPos;
 
   _ConversationListItemState(
-      ConversationListItemDelegate delegate, Conversation con) {
+      ConversationListItemDelegate delegate, Conversation con, List conlist) {
     this.delegate = delegate;
     this.conversation = con;
+    this.conversationList = conlist;
     setInfo();
   }
 
@@ -136,12 +143,18 @@ class _ConversationListItemState extends State<ConversationListItem> {
         child: InkWell(
       onTap: () {
         print("****************这是我点击的消息详情**********");
-        print(conversation.mentionedCount);
+        for (Conversation item in conversationList) {
+          print(item.latestMessageContent.conversationDigest());
+        }
+
         // Navigator.pushNamed(context, '/readMessage',
         //     arguments: {'coversation': '123'});
 
-        Navigator.pushNamed(context, '/readMessage',
-            arguments: {'conversation': digest});
+        // Navigator.pushNamed(context, '/readMessage',
+        //     arguments: {'conversation': digest});
+
+        Navigator.pushNamed(context, '/messageItem',
+            arguments: {'conlist': conversationList});
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
