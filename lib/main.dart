@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/pages/Admin/searchDemo.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'Model/user_data.dart';
 import 'pages/tabs/Tabs.dart';
 import 'routers/router.dart';

@@ -26,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   String password;
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Container(
         child: Scaffold(
             appBar: AppBar(
