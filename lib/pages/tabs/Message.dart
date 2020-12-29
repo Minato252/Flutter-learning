@@ -159,7 +159,7 @@ class _MessagePageState extends State<MessagePage>
         return ConversationListItem(
           delegate: this,
           conversation: conList[index],
-          conlist: this.conList.toList(),
+          conlist: this.conList,
         );
       },
     );
