@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/pages/tabs/MessageItem.dart';
 import '../routers/router.dart';
 import '../pages/tabs/ReadMessage.dart';
 
@@ -153,8 +154,14 @@ class _ConversationListItemState extends State<ConversationListItem> {
         // Navigator.pushNamed(context, '/readMessage',
         //     arguments: {'conversation': digest});
 
-        Navigator.pushNamed(context, '/messageItem',
-            arguments: {'conlist': conversationList});
+        // Navigator.pushNamed(context, '/messageItem',
+        //     arguments: {'conlist': conversationList});
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    MessageItemPage(arguments: {'conlist': conversationList})));
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
