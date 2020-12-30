@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:weitong/services/IM.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'SimpleRichEditController.dart';
@@ -27,7 +28,7 @@ class _MessageCreateState extends State<MessageCreate> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     //富文本的controller
     SimpleRichEditController controller = SimpleRichEditController();
@@ -106,7 +107,7 @@ class _MessageCreateState extends State<MessageCreate> {
                     Divider(),
                     SafeArea(
                       child: SizedBox(
-                        height: ScreenUtil.getInstance().setHeight(600),
+                        height: ScreenAdapter.height(600),
                         child: RichEdit(
                             controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                       ),

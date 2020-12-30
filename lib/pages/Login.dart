@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/Tabs.dart';
-import '../services/ScreenAdapter.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import '../widget/JdText.dart';
 import '../widget/JdButton.dart';
 import 'package:dio/dio.dart';
@@ -45,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             body: Container(
+              // padding: EdgeInsets.all(ScreenAdapter.width(20)),
+
               padding: EdgeInsets.all(ScreenAdapter.width(20)),
               child: ListView(
                 children: [
