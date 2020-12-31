@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/services/IM.dart';
 
+List friends = [];
 Scrollbar getPre(String title, String keyWord, String htmlCode) {
   return Scrollbar(
     child: SingleChildScrollView(
@@ -57,6 +58,8 @@ class PreAndSend extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.send),
             onPressed: () {
+              //在这里写选择联系人，并将targetId改为联系人id
+
               IM.sendMessage(content, targetId);
             },
           )
