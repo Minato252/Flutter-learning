@@ -1,12 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
-class MessageItemPage extends StatelessWidget {
-  Map arguments;
+class MessageItemPage extends StatefulWidget {
+  final Map arguments;
   MessageItemPage({Key key, this.arguments}) : super(key: key);
+
+  @override
+  _MessageItemPageState createState() =>
+      _MessageItemPageState(arguments: this.arguments);
+}
+
+class _MessageItemPageState extends State<MessageItemPage> {
+  Map arguments;
+  int conversationType;
+  String targetId;
+
+  bool isFirstGetHistoryMessages = true;
+  _MessageItemPageState({this.arguments});
+
+  @override
+  void initState() {
+    super.initState();
+
+    conversationType = arguments["coversationType"];
+    targetId = arguments["targetId"];
+  }
+
   @override
   Widget build(BuildContext context) {
     List conlist = arguments['conlist'];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("消息"),

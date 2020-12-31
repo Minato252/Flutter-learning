@@ -49,6 +49,9 @@ class RCFont {
   // 底部引用消息
   static const double BottomReferenceNameSize = 13;
   static const double BottomReferenceContentSize = 14;
+
+  //标题大小
+  static const double TitleSize = 32;
 }
 
 class RCLayout {

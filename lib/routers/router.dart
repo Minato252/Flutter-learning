@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tabs/Message.dart';
+import 'package:weitong/pages/tabs/conversation_page.dart';
 import 'package:weitong/pages/tags/TagChoiceChipDemo.dart';
 import '../pages/tabs/Tabs.dart';
 import '../pages/tags/TagChipDemo.dart';
@@ -19,8 +20,12 @@ final routes = {
   '/addUser': (context) => AddUser(),
   // '/readMessage': (context, {argumets}) => ReadMessage(arguments: argumets),
   '/readMessage': (context, {arguments}) => ReadMessage(arguments: arguments),
+
   '/messageItem': (context, {arguments}) =>
       MessageItemPage(arguments: arguments),
+
+  '/conversation': (context, {arguments}) =>
+      ConversationPage(arguments: arguments),
   // '/form': (context, {arguments}) => FormPage(arguments: arguments),
   // '/readMessage': (context) => ReadMessage(),
 };

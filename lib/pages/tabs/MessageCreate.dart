@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/tabs/Pre.dart';
 import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/widget/JdButton.dart';
@@ -30,6 +32,7 @@ class _MessageCreateState extends State<MessageCreate> {
   Widget build(BuildContext context) {
     // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
+    ScreenAdapter.init(context);
     //富文本的controller
     SimpleRichEditController controller = SimpleRichEditController();
 
@@ -190,42 +193,10 @@ class _MessageCreateState extends State<MessageCreate> {
       // controller.generateHtml();
       //这里是用html初始化一个页面
       Navigator.push(context, MaterialPageRoute(builder: (c) {
-        return Pre(
-          htmlCode: htmlCode,
-        );
+        return PreAndSend(
+            htmlCode: htmlCode, title: newTitle, keyWord: _curchosedTag);
       }));
       print("发送成功");
     }
-  }
-}
-
-//这个类在初始化时传入html代码就可以生成对应的页面了
-class Pre extends StatelessWidget {
-  final htmlCode;
-
-  Pre({Key key, this.htmlCode}) : super(key: key);
-  @override
-  @override
-  Widget build(BuildContext context) {
-    print("html:" + htmlCode);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("预览页面"),
-        ),
-        body: Scrollbar(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Html(data: htmlCode),
-                // Text("测试"),
-                JdButton(
-                    text: "确定发送",
-                    cb: () {
-                      IM.sendMessage(htmlCode, "456");
-                    }),
-              ],
-            ),
-          ),
-        ));
   }
 }

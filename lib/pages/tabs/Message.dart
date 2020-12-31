@@ -52,8 +52,10 @@ class _MessagePageState extends State<MessagePage>
 
   updateConversationList() async {
     List list = await RongIMClient.getConversationList(displayConversationType);
+
     if (list != null) {
       // list.sort((a,b) => b.sentTime.compareTo(a.sentTime));
+
       conList = list;
     }
     _renfreshUI();
@@ -144,6 +146,8 @@ class _MessagePageState extends State<MessagePage>
   }
 
   Widget _buildConversationListView() {
+    //把conversationlist展开
+
     return new ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: conList.length,
@@ -214,7 +218,7 @@ class _MessagePageState extends State<MessagePage>
       "coversationType": conversation.conversationType,
       "targetId": conversation.targetId
     };
-    // Navigator.pushNamed(context, "/readMessage", arguments: arg);
+    Navigator.pushNamed(context, "/conversation", arguments: arg);
     // Navigator.pushNamed(context, "/readMessage",
     //     arguments: {conversation: conversation});
   }

@@ -7,7 +7,7 @@ import '../widget/JdButton.dart';
 import 'package:dio/dio.dart';
 import '../Model/UserModel.dart';
 import 'dart:convert' as convert;
-
+import 'package:weitong/Model/user_data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'Admin/AdminTabs.dart';
@@ -151,17 +151,9 @@ class _LoginPageState extends State<LoginPage> {
 
     //===debug
     if (id == "123") {
-      result = new UserItemModel.fromJson({
-        "code": "200",
-        "token":
-            "sh30VIVO49gIlrD5LWafqbSQstMz0o4n5HrCEP6oB6k=@2a6v.cn.rongnav.com;2a6v.cn.rongcfg.com"
-      });
+      result = new UserItemModel.fromJson(demo[0]);
     } else {
-      result = new UserItemModel.fromJson({
-        "code": "200",
-        "token":
-            "wkagPMVbm6UIlrD5LWafqWB54enjavHR5HrCEP6oB6k=@2a6v.cn.rongnav.com;2a6v.cn.rongcfg.com"
-      });
+      result = new UserItemModel.fromJson(demo[1]);
     }
 
     if (this.role == "user" && result.code == "200") {

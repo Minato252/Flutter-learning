@@ -45,8 +45,6 @@ class _ConversationListItemState extends State<ConversationListItem> {
 
   void _onTaped() async {
     if (this.delegate != null) {
-      print("******我要打印消息情况了********");
-      print(this.conversation.latestMessageContent.conversationDigest());
       this.delegate.didTapConversation(this.conversation);
     } else {
       developer.log("没有实现 ConversationListItemDelegate", name: pageName);
@@ -120,12 +118,14 @@ class _ConversationListItemState extends State<ConversationListItem> {
   }
 
   Widget _buildTitle() {
-    String title = (conversation.conversationType == RCConversationType.Private
-            ? "单聊："
-            : "群聊：")
-        //     +
-        // (this.info == null || this.info.id == null ? "" : this.info.id)
-        ;
+    // String title = (conversation.conversationType == RCConversationType.Private
+    //         ? "单聊："
+    //         : "群聊：")
+    //=====改成id
+    String title = conversation.senderUserId;
+    //     +
+    // (this.info == null || this.info.id == null ? "" : this.info.id)
+    ;
     String digest = "";
     if (conversation.latestMessageContent != null) {
       if (conversation.latestMessageContent.destructDuration != null &&
@@ -142,27 +142,27 @@ class _ConversationListItemState extends State<ConversationListItem> {
     }
     return Expanded(
         child: InkWell(
-      onTap: () {
-        print("****************这是我点击的消息详情**********");
-        for (Conversation item in conversationList) {
-          print(item.latestMessageContent.conversationDigest());
-        }
+      // onTap: () {
+      //   print("****************这是我点击的消息详情**********");
+      //   for (Conversation item in conversationList) {
+      //     print(item.latestMessageContent.conversationDigest());
+      //   }
 
-        // Navigator.pushNamed(context, '/readMessage',
-        //     arguments: {'coversation': '123'});
+      //   // Navigator.pushNamed(context, '/readMessage',
+      //   //     arguments: {'coversation': '123'});
 
-        // Navigator.pushNamed(context, '/readMessage',
-        //     arguments: {'conversation': digest});
+      //   // Navigator.pushNamed(context, '/readMessage',
+      //   //     arguments: {'conversation': digest});
 
-        // Navigator.pushNamed(context, '/messageItem',
-        //     arguments: {'conlist': conversationList});
+      //   // Navigator.pushNamed(context, '/messageItem',
+      //   //     arguments: {'conlist': conversationList});
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    MessageItemPage(arguments: {'conlist': conversationList})));
-      },
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) =>
+      //               MessageItemPage(arguments: {'conlist': conversationList})));
+      // },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
