@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/tabs/Pre.dart';
 import 'package:weitong/services/IM.dart';
@@ -192,9 +193,12 @@ class _MessageCreateState extends State<MessageCreate> {
       print(htmlCode);
       // controller.generateHtml();
       //这里是用html初始化一个页面
+      MessageModel messageModel = MessageModel(
+          htmlCode: htmlCode, title: newTitle, keyWord: _curchosedTag);
       Navigator.push(context, MaterialPageRoute(builder: (c) {
         return PreAndSend(
-            htmlCode: htmlCode, title: newTitle, keyWord: _curchosedTag);
+          messageModel: messageModel,
+        );
       }));
       print("发送成功");
     }

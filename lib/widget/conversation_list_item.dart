@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/tabs/MessageItem.dart';
 import '../routers/router.dart';
 import '../pages/tabs/ReadMessage.dart';
@@ -122,17 +123,40 @@ class _ConversationListItemState extends State<ConversationListItem> {
     //         ? "单聊："
     //         : "群聊：")
     //=====改成id
-    String title = conversation.senderUserId;
+    String title = conversation.targetId;
     //     +
     // (this.info == null || this.info.id == null ? "" : this.info.id)
-    ;
+
+    // //这是融云的内容=========
+    // String digest = "";
+    // if (conversation.latestMessageContent != null) {
+    //   if (conversation.latestMessageContent.destructDuration != null &&
+    //       conversation.latestMessageContent.destructDuration > 0) {
+    //     digest = "[阅后即焚]";
+    //   } else {
+    //     digest = conversation.latestMessageContent.conversationDigest();
+    //   }
+    // } else {
+    //   digest = "无法识别消息 " + conversation.objectName;
+    // }
+    // if (digest == null) {
+    //   digest = "";
+    // }
+    // //=========
+    ///======这里是重写的内容详情======
     String digest = "";
     if (conversation.latestMessageContent != null) {
       if (conversation.latestMessageContent.destructDuration != null &&
           conversation.latestMessageContent.destructDuration > 0) {
         digest = "[阅后即焚]";
       } else {
-        digest = conversation.latestMessageContent.conversationDigest();
+        MessageModel messageModel = MessageModel.fromJsonString(
+            conversation.latestMessageContent.conversationDigest());
+        if (messageModel.isJson) {
+          digest = "关键词：${messageModel.keyWord} 标题：${messageModel.title}";
+        } else {
+          digest = conversation.latestMessageContent.conversationDigest();
+        }
       }
     } else {
       digest = "无法识别消息 " + conversation.objectName;
@@ -140,6 +164,7 @@ class _ConversationListItemState extends State<ConversationListItem> {
     if (digest == null) {
       digest = "";
     }
+
     return Expanded(
         child: InkWell(
       // onTap: () {

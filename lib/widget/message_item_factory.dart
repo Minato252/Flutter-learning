@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:developer' as developer;
@@ -16,6 +17,25 @@ class MessageItemFactory extends StatelessWidget {
   const MessageItemFactory({Key key, this.message, this.needShow = true})
       : super(key: key);
 
+// //这里是他原来的================
+//   ///文本消息 item
+//   Widget textMessageItem(BuildContext context) {
+//     double screenWidth = MediaQuery.of(context).size.width;
+//     TextMessage msg = message.content;
+//     print("textMessage: " + msg.content);
+//     return Container(
+//       constraints: BoxConstraints(
+//         // 屏幕宽度减去头像宽度加上间距
+//         maxWidth: screenWidth - 150,
+//       ),
+//       padding: EdgeInsets.all(8),
+//       child: Text(
+//         needShow ? msg.content : "点击查看",
+//         style: TextStyle(fontSize: RCFont.MessageTextFont),
+//       ),
+//     );
+//   }
+
   ///文本消息 item
   Widget textMessageItem(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -27,10 +47,38 @@ class MessageItemFactory extends StatelessWidget {
         maxWidth: screenWidth - 150,
       ),
       padding: EdgeInsets.all(8),
-      child: Text(
-        needShow ? msg.content : "点击查看",
-        style: TextStyle(fontSize: RCFont.MessageTextFont),
-      ),
+      child: modify(msg.content),
+
+      //  Text(
+      //   needShow ? msg.content : "点击查看",
+      //   style: TextStyle(fontSize: RCFont.MessageTextFont),
+      // ),
+    );
+  }
+
+  //======在这里提取了标题和关键词进行重新排版
+  Widget modify(String content) {
+    MessageModel messageModel = MessageModel.fromJsonString(content);
+    if (!messageModel.isJson) {
+      return Text(content);
+    }
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("关键词: "),
+            Chip(label: Text(messageModel.keyWord)),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("标题: "),
+            Text(messageModel.title),
+          ],
+        )
+      ],
     );
   }
 

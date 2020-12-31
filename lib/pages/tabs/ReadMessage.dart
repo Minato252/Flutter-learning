@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/tabs/Pre.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -40,24 +41,17 @@ import 'package:weitong/widget/JdButton.dart';
 //   }
 // }
 
-class ReadMessage extends StatelessWidget {
-  Map arguments;
-  String htmlCode;
-  String title;
-  String keyWord;
-  ReadMessage({Key key, this.arguments}) : super(key: key);
+// class ReadMessage extends StatelessWidget {
+//   Map arguments;
+//   String htmlCode;
+//   String title;
+//   String keyWord;
+//   ReadMessage({Key key, this.arguments}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    // return Container(child: Text(arguments['conversation']));
-    Map m = jsonDecode(arguments['conversation']);
-    htmlCode = m['htmlCode'];
-    title = m['title'];
-    keyWord = m['keyWord'];
-    return Pre(
-      title: title,
-      keyWord: keyWord,
-      htmlCode: htmlCode,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     // return Container(child: Text(arguments['conversation']));
+//     return Pre(
+//         messageModle: MessageModel.fromJsonString(arguments['conversation']));
+//   }
+// }

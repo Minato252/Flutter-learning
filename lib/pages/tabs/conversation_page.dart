@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
@@ -11,6 +12,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:developer' as developer;
 
 import 'package:weitong/widget/widget_util.dart';
+
+import 'Pre.dart';
 
 //整个聊天详情的界面
 enum ConversationStatus {
@@ -784,8 +787,17 @@ class _ConversationPageState extends State<ConversationPage>
     print(
       message.content,
     );
-    Navigator.pushNamed(context, '/readMessage',
-        arguments: {'conversation': msg.content});
+    // );
+    // Navigator.pushNamed(context, '/readMessage',
+    //     arguments: {'conversation': msg.content});
+
+    MessageModel messageModel = MessageModel.fromJsonString(msg.content);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return Pre(
+        messageModel: messageModel,
+      );
+    }));
+
     // RongIMClient.setMessageReceivedSttus(message.messageId, 1, (code) async {
     //   developer.log("setMessageReceivedStatus result:$code",
     //       name: pageName);

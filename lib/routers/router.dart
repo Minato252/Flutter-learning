@@ -19,7 +19,7 @@ final routes = {
   '/admin': (context) => AdminTabs(),
   '/addUser': (context) => AddUser(),
   // '/readMessage': (context, {argumets}) => ReadMessage(arguments: argumets),
-  '/readMessage': (context, {arguments}) => ReadMessage(arguments: arguments),
+  // '/readMessage': (context, {arguments}) => ReadMessage(arguments: arguments),
 
   '/messageItem': (context, {arguments}) =>
       MessageItemPage(arguments: arguments),
