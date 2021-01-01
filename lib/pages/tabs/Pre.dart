@@ -34,7 +34,20 @@ Scrollbar getPre(MessageModel messageModel) {
 }
 
 //这个类在初始化时传入html代码就可以生成对应的页面了,还附带了确认发送的按钮
-class PreAndSend extends StatelessWidget {
+
+class PreAndSend extends StatefulWidget {
+  MessageModel messageModel;
+  String content;
+  PreAndSend({MessageModel messageModel}) {
+    this.messageModel = messageModel;
+    this.content = messageModel.toJsonString();
+  }
+  @override
+  _PreAndSendState createState() =>
+      _PreAndSendState(messageModel: messageModel);
+}
+
+class _PreAndSendState extends State<PreAndSend> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
@@ -42,7 +55,7 @@ class PreAndSend extends StatelessWidget {
   List<String> targetIdList;
   StreamSubscription<PageEvent> sss; //eventbus传值
 
-  PreAndSend({MessageModel messageModel}) {
+  _PreAndSendState({MessageModel messageModel}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
   }
@@ -53,53 +66,64 @@ class PreAndSend extends StatelessWidget {
 
     content = messageModel.toJsonString();
     return Scaffold(
-      appBar: AppBar(
-        title: Text("预览页面"),
-        actions: [
-          Row(
-            children: [
-              ActionChip(
-                label: Text(
-                  '选择联系人',
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Colors.grey[600],
-                onPressed: () {
-                  sss =
-                      EventBusUtil.getInstance().on<PageEvent>().listen((data) {
-                    // print('${data.test}');
-                    targetIdList = data.userList;
-                    sss.cancel();
-                  });
+        appBar: AppBar(
+          title: Text("预览页面"),
+          actions: [
+            Row(
+              children: [
+                ActionChip(
+                  label: Text(
+                    '选择联系人',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.grey[600],
+                  onPressed: () {
+                    sss = EventBusUtil.getInstance()
+                        .on<PageEvent>()
+                        .listen((data) {
+                      // print('${data.test}');
+                      targetIdList = data.userList;
+                      sss.cancel();
+                      setState(() {});
+                    });
 
-                  Navigator.pushNamed(context, '/chooseUser');
-                  // _awaitReturnChooseTargetIdList(context);
+                    Navigator.pushNamed(context, '/chooseUser');
+                    // _awaitReturnChooseTargetIdList(context);
 
-                  //  targetIdList= a Navigator.pushNamed(context, '/chooseUser');
-                },
-                avatar: Icon(
-                  Icons.add,
-                  color: Colors.white,
+                    //  targetIdList= a Navigator.pushNamed(context, '/chooseUser');
+                  },
+                  avatar: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              IconButton(
-                tooltip: "发送",
-                icon: Icon(Icons.send),
-                onPressed: () {
-                  if (targetIdList == null) {
-                    sendMessageSuccess("请选择您要发送的联系人！");
-                  } else {
-                    _sendMessage(content);
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-      body: getPre(messageModel),
-    );
+                IconButton(
+                  tooltip: "发送",
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    if (targetIdList == null) {
+                      sendMessageSuccess("请选择您要发送的联系人！");
+                    } else {
+                      _sendMessage(content);
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+        body: Column(
+          children: [
+            Align(
+              alignment: new FractionalOffset(0.0, 0.0),
+              child: Text("已选择联系人：${targetIdList.toString()}"),
+            ),
+            Expanded(
+              child: getPre(messageModel),
+            ),
+          ],
+        ));
   }
 
   _sendMessage(String content) {

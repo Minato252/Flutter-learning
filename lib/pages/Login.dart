@@ -152,8 +152,10 @@ class _LoginPageState extends State<LoginPage> {
     //===debug
     if (id == "123") {
       result = new UserItemModel.fromJson(demo[0]);
-    } else {
+    } else if (id == '456') {
       result = new UserItemModel.fromJson(demo[1]);
+    } else if (id == '789') {
+      result = new UserItemModel.fromJson(demo[2]);
     }
 
     if (this.role == "user" && result.code == "200") {
