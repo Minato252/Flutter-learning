@@ -6,8 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/services/IM.dart';
+import 'package:weitong/services/event_util.dart';
 
-List friends = [];
 Scrollbar getPre(MessageModel messageModel) {
   return Scrollbar(
     child: SingleChildScrollView(
@@ -38,6 +38,9 @@ class PreAndSend extends StatelessWidget {
   MessageModel messageModel;
   String content;
   String targetId = "456";
+  // List targetIdList;
+  List<String> targetIdList;
+  StreamSubscription<PageEvent> sss;
 
   PreAndSend({MessageModel messageModel}) {
     this.messageModel = messageModel;
@@ -53,12 +56,41 @@ class PreAndSend extends StatelessWidget {
       appBar: AppBar(
         title: Text("预览页面"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () {
-              _sendMessage(content);
-              Navigator.pop(context);
-            },
+          Row(
+            children: [
+              ActionChip(
+                label: Text(
+                  '选择联系人',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.grey[600],
+                onPressed: () {
+                  sss =
+                      EventBusUtil.getInstance().on<PageEvent>().listen((data) {
+                    // print('${data.test}');
+                    targetIdList = data.userList;
+                    sss.cancel();
+                  });
+
+                  Navigator.pushNamed(context, '/chooseUser');
+                  // _awaitReturnChooseTargetIdList(context);
+
+                  //  targetIdList= a Navigator.pushNamed(context, '/chooseUser');
+                },
+                avatar: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                tooltip: "发送",
+                icon: Icon(Icons.send),
+                onPressed: () {
+                  _sendMessage(content);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           )
         ],
       ),
@@ -66,10 +98,19 @@ class PreAndSend extends StatelessWidget {
     );
   }
 
+  _awaitReturnChooseTargetIdList(BuildContext context) async {
+    targetIdList = await Navigator.pushNamed(context, '/chooseUser');
+    print(targetIdList);
+  }
+
   _sendMessage(String content) {
     //在这里写选择联系人，并将targetId改为联系人id
-
-    IM.sendMessage(content, targetId);
+    // print("****************这里打印targetIdList****");
+    // print(targetIdList);
+    for (String item in targetIdList) {
+      IM.sendMessage(content, item);
+    }
+    // IM.sendMessage(content, targetId);
     print("content: " + content);
     sendMessageSuccess();
   }
