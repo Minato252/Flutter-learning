@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -225,14 +226,16 @@ class _MessagePageState extends State<MessagePage>
 
   @override
   void didLongPressConversation(Conversation conversation, Offset tapPos) {
-    Map<String, String> actionMap = {
-      RCLongPressAction.DeleteConversationKey:
-          RCLongPressAction.DeleteConversationValue,
-      RCLongPressAction.ClearUnreadKey: RCLongPressAction.ClearUnreadValue,
-      RCLongPressAction.SetConversationToTopKey: conversation.isTop
-          ? RCLongPressAction.CancelConversationToTopValue
-          : RCLongPressAction.SetConversationToTopValue
-    };
+    // Map<String, String> actionMap = {
+    //   RCLongPressAction.DeleteConversationKey:
+    //       RCLongPressAction.DeleteConversationValue,
+    //   RCLongPressAction.ClearUnreadKey: RCLongPressAction.ClearUnreadValue,
+    //   RCLongPressAction.SetConversationToTopKey: conversation.isTop
+    //       ? RCLongPressAction.CancelConversationToTopValue
+    //       : RCLongPressAction.SetConversationToTopValue
+
+    _deleteConversation(conversation);
+
     // WidgetUtil.showLongPressMenu(context, tapPos, actionMap, (String key) {
     //   // developer.log("当前选中的是 " + key, name: pageName);
     //   if (key == RCLongPressAction.DeleteConversationKey) {
@@ -249,6 +252,28 @@ class _MessagePageState extends State<MessagePage>
     //     // developer.log("未实现操作 " + key, name: pageName);
     //   }
     // });
+  }
+
+  void deleteConversation(Conversation conversation) {
+    CupertinoAlertDialog(
+      title: Text('确定要清空对话吗？'),
+      content: Text('回话将会被删除'),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          child: Text('删除'),
+          onPressed: () {
+            _deleteConversation(conversation);
+            // Navigator.of(context).pop();
+          },
+        ),
+        CupertinoDialogAction(
+          child: Text('取消'),
+          onPressed: () {
+            // Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 }
 // //轮播图

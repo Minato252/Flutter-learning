@@ -111,7 +111,7 @@ class _MessageCreateState extends State<MessageCreate> {
                     Divider(),
                     SafeArea(
                       child: SizedBox(
-                        height: ScreenAdapter.height(600),
+                        height: ScreenAdapter.height(500),
                         child: RichEdit(
                             controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                       ),

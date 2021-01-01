@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/services/IM.dart';
@@ -56,6 +57,7 @@ class PreAndSend extends StatelessWidget {
             icon: Icon(Icons.send),
             onPressed: () {
               _sendMessage(content);
+              Navigator.pop(context);
             },
           )
         ],
@@ -69,6 +71,18 @@ class PreAndSend extends StatelessWidget {
 
     IM.sendMessage(content, targetId);
     print("content: " + content);
+    sendMessageSuccess();
+  }
+
+  sendMessageSuccess() {
+    Fluttertoast.showToast(
+        msg: "发送成功",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER, // 消息框弹出的位置
+        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 }
 
