@@ -40,7 +40,7 @@ class PreAndSend extends StatelessWidget {
   String targetId = "456";
   // List targetIdList;
   List<String> targetIdList;
-  StreamSubscription<PageEvent> sss;
+  StreamSubscription<PageEvent> sss; //eventbus传值
 
   PreAndSend({MessageModel messageModel}) {
     this.messageModel = messageModel;
@@ -86,8 +86,12 @@ class PreAndSend extends StatelessWidget {
                 tooltip: "发送",
                 icon: Icon(Icons.send),
                 onPressed: () {
-                  _sendMessage(content);
-                  Navigator.pop(context);
+                  if (targetIdList == null) {
+                    sendMessageSuccess("请选择您要发送的联系人！");
+                  } else {
+                    _sendMessage(content);
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],
@@ -98,26 +102,21 @@ class PreAndSend extends StatelessWidget {
     );
   }
 
-  _awaitReturnChooseTargetIdList(BuildContext context) async {
-    targetIdList = await Navigator.pushNamed(context, '/chooseUser');
-    print(targetIdList);
-  }
-
   _sendMessage(String content) {
     //在这里写选择联系人，并将targetId改为联系人id
-    // print("****************这里打印targetIdList****");
-    // print(targetIdList);
+    print("****************这里打印targetIdList****");
+    print(targetIdList);
     for (String item in targetIdList) {
       IM.sendMessage(content, item);
     }
     // IM.sendMessage(content, targetId);
     print("content: " + content);
-    sendMessageSuccess();
+    sendMessageSuccess("发送成功");
   }
 
-  sendMessageSuccess() {
+  sendMessageSuccess(String alrt) {
     Fluttertoast.showToast(
-        msg: "发送成功",
+        msg: alrt,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER, // 消息框弹出的位置
         timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
