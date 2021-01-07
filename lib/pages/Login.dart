@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/Tabs.dart';
-import '../services/ScreenAdapter.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import '../widget/JdText.dart';
 import '../widget/JdButton.dart';
 import 'package:dio/dio.dart';
 import '../Model/UserModel.dart';
 import 'dart:convert' as convert;
-
+import 'package:weitong/Model/user_data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'Admin/AdminTabs.dart';
@@ -26,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   String password;
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Container(
         child: Scaffold(
             appBar: AppBar(
@@ -44,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             body: Container(
+              // padding: EdgeInsets.all(ScreenAdapter.width(20)),
+
               padding: EdgeInsets.all(ScreenAdapter.width(20)),
               child: ListView(
                 children: [
@@ -148,17 +151,11 @@ class _LoginPageState extends State<LoginPage> {
 
     //===debug
     if (id == "123") {
-      result = new UserItemModel.fromJson({
-        "code": "200",
-        "token":
-            "C62X0xoVliMEoBxY/wvYD9C+6U+NWI+rl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
-      });
-    } else {
-      result = new UserItemModel.fromJson({
-        "code": "200",
-        "token":
-            "pwVAR1znR18EoBxY/wvYDx5rxrGUTVxwl/n/1guK71s=@9o5k.cn.rongnav.com;9o5k.cn.rongcfg.com"
-      });
+      result = new UserItemModel.fromJson(demo[0]);
+    } else if (id == '456') {
+      result = new UserItemModel.fromJson(demo[1]);
+    } else if (id == '789') {
+      result = new UserItemModel.fromJson(demo[2]);
     }
 
     if (this.role == "user" && result.code == "200") {

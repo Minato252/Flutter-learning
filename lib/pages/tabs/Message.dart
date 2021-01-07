@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -52,8 +53,10 @@ class _MessagePageState extends State<MessagePage>
 
   updateConversationList() async {
     List list = await RongIMClient.getConversationList(displayConversationType);
+
     if (list != null) {
       // list.sort((a,b) => b.sentTime.compareTo(a.sentTime));
+
       conList = list;
     }
     _renfreshUI();
@@ -144,6 +147,8 @@ class _MessagePageState extends State<MessagePage>
   }
 
   Widget _buildConversationListView() {
+    //把conversationlist展开
+
     return new ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: conList.length,
@@ -157,7 +162,10 @@ class _MessagePageState extends State<MessagePage>
           );
         }
         return ConversationListItem(
-            delegate: this, conversation: conList[index]);
+          delegate: this,
+          conversation: conList[index],
+          conlist: this.conList, ////这里进入对话列表
+        );
       },
     );
   }
@@ -205,23 +213,29 @@ class _MessagePageState extends State<MessagePage>
 
   @override
   void didTapConversation(Conversation conversation) {
+    print("didTapConversation中的conversation");
+    print(conversation);
     Map arg = {
       "coversationType": conversation.conversationType,
       "targetId": conversation.targetId
     };
     Navigator.pushNamed(context, "/conversation", arguments: arg);
+    // Navigator.pushNamed(context, "/readMessage",
+    //     arguments: {conversation: conversation});
   }
 
   @override
   void didLongPressConversation(Conversation conversation, Offset tapPos) {
-    Map<String, String> actionMap = {
-      RCLongPressAction.DeleteConversationKey:
-          RCLongPressAction.DeleteConversationValue,
-      RCLongPressAction.ClearUnreadKey: RCLongPressAction.ClearUnreadValue,
-      RCLongPressAction.SetConversationToTopKey: conversation.isTop
-          ? RCLongPressAction.CancelConversationToTopValue
-          : RCLongPressAction.SetConversationToTopValue
-    };
+    // Map<String, String> actionMap = {
+    //   RCLongPressAction.DeleteConversationKey:
+    //       RCLongPressAction.DeleteConversationValue,
+    //   RCLongPressAction.ClearUnreadKey: RCLongPressAction.ClearUnreadValue,
+    //   RCLongPressAction.SetConversationToTopKey: conversation.isTop
+    //       ? RCLongPressAction.CancelConversationToTopValue
+    //       : RCLongPressAction.SetConversationToTopValue
+
+    _deleteConversation(conversation);
+
     // WidgetUtil.showLongPressMenu(context, tapPos, actionMap, (String key) {
     //   // developer.log("当前选中的是 " + key, name: pageName);
     //   if (key == RCLongPressAction.DeleteConversationKey) {
@@ -238,6 +252,28 @@ class _MessagePageState extends State<MessagePage>
     //     // developer.log("未实现操作 " + key, name: pageName);
     //   }
     // });
+  }
+
+  void deleteConversation(Conversation conversation) {
+    CupertinoAlertDialog(
+      title: Text('确定要清空对话吗？'),
+      content: Text('回话将会被删除'),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          child: Text('删除'),
+          onPressed: () {
+            _deleteConversation(conversation);
+            // Navigator.of(context).pop();
+          },
+        ),
+        CupertinoDialogAction(
+          child: Text('取消'),
+          onPressed: () {
+            // Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 }
 // //轮播图

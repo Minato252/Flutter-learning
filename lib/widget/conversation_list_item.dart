@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/tabs/MessageItem.dart';
+import '../routers/router.dart';
+import '../pages/tabs/ReadMessage.dart';
 
 // import 'widget_util.dart';
 
@@ -10,12 +14,16 @@ import 'dart:developer' as developer;
 class ConversationListItem extends StatefulWidget {
   final Conversation conversation;
   final ConversationListItemDelegate delegate;
-  const ConversationListItem({Key key, this.delegate, this.conversation})
+  final List conlist;
+
+  const ConversationListItem(
+      {Key key, this.delegate, this.conversation, this.conlist})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return new _ConversationListItemState(this.delegate, this.conversation);
+    return new _ConversationListItemState(
+        this.delegate, this.conversation, this.conlist);
   }
 }
 
@@ -23,17 +31,20 @@ class _ConversationListItemState extends State<ConversationListItem> {
   String pageName = "example.ConversationListItem";
   Conversation conversation;
   ConversationListItemDelegate delegate;
+  List conversationList;
+
   // example.BaseInfo info;
   Offset tapPos;
 
   _ConversationListItemState(
-      ConversationListItemDelegate delegate, Conversation con) {
+      ConversationListItemDelegate delegate, Conversation con, List conlist) {
     this.delegate = delegate;
     this.conversation = con;
+    this.conversationList = conlist;
     setInfo();
   }
 
-  void _onTaped() {
+  void _onTaped() async {
     if (this.delegate != null) {
       this.delegate.didTapConversation(this.conversation);
     } else {
@@ -108,19 +119,44 @@ class _ConversationListItemState extends State<ConversationListItem> {
   }
 
   Widget _buildTitle() {
-    String title = (conversation.conversationType == RCConversationType.Private
-            ? "单聊："
-            : "群聊：")
-        //     +
-        // (this.info == null || this.info.id == null ? "" : this.info.id)
-        ;
+    // String title = (conversation.conversationType == RCConversationType.Private
+    //         ? "单聊："
+    //         : "群聊：")
+    //=====改成id
+    String title = conversation.targetId;
+    //     +
+    // (this.info == null || this.info.id == null ? "" : this.info.id)
+
+    // //这是融云的内容=========
+    // String digest = "";
+    // if (conversation.latestMessageContent != null) {
+    //   if (conversation.latestMessageContent.destructDuration != null &&
+    //       conversation.latestMessageContent.destructDuration > 0) {
+    //     digest = "[阅后即焚]";
+    //   } else {
+    //     digest = conversation.latestMessageContent.conversationDigest();
+    //   }
+    // } else {
+    //   digest = "无法识别消息 " + conversation.objectName;
+    // }
+    // if (digest == null) {
+    //   digest = "";
+    // }
+    // //=========
+    ///======这里是重写的内容详情======
     String digest = "";
     if (conversation.latestMessageContent != null) {
       if (conversation.latestMessageContent.destructDuration != null &&
           conversation.latestMessageContent.destructDuration > 0) {
         digest = "[阅后即焚]";
       } else {
-        digest = conversation.latestMessageContent.conversationDigest();
+        MessageModel messageModel = MessageModel.fromJsonString(
+            conversation.latestMessageContent.conversationDigest());
+        if (messageModel.isJson) {
+          digest = "关键词：${messageModel.keyWord} 标题：${messageModel.title}";
+        } else {
+          digest = conversation.latestMessageContent.conversationDigest();
+        }
       }
     } else {
       digest = "无法识别消息 " + conversation.objectName;
@@ -128,7 +164,30 @@ class _ConversationListItemState extends State<ConversationListItem> {
     if (digest == null) {
       digest = "";
     }
+
     return Expanded(
+        child: InkWell(
+      // onTap: () {
+      //   print("****************这是我点击的消息详情**********");
+      //   for (Conversation item in conversationList) {
+      //     print(item.latestMessageContent.conversationDigest());
+      //   }
+
+      //   // Navigator.pushNamed(context, '/readMessage',
+      //   //     arguments: {'coversation': '123'});
+
+      //   // Navigator.pushNamed(context, '/readMessage',
+      //   //     arguments: {'conversation': digest});
+
+      //   // Navigator.pushNamed(context, '/messageItem',
+      //   //     arguments: {'conlist': conversationList});
+
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) =>
+      //               MessageItemPage(arguments: {'conlist': conversationList})));
+      // },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,10 +207,12 @@ class _ConversationListItemState extends State<ConversationListItem> {
           _buildDigest(digest)
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildDigest(String digest) {
+    // print("********_buildDigest中查看数据内容*********");
+    // print(digest);
     bool showError = false;
     if (conversation.mentionedCount > 0) {
       digest = RCString.ConHaveMentioned + digest;
@@ -198,7 +259,6 @@ class _ConversationListItemState extends State<ConversationListItem> {
         height: 1,
         width: 1,
       );
-      ;
     }
     double width = count > 100 ? 25 : RCLayout.ConListUnreadSize;
     return Container(

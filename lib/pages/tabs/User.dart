@@ -1,6 +1,7 @@
 //https://material.io/tools/icons/?icon=favorite&style=baseline
 
 import 'package:flutter/material.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/widget/JdButton.dart';
 import '../../services/ScreenAdapter.dart';
@@ -16,7 +17,17 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   @override
+  String id;
+
+  void initState() {
+    super.initState();
+    // 1.初始化 im SDK
+    _getUserInfo();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("我的"),
@@ -49,7 +60,7 @@ class _UserPageState extends State<UserPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("用户名：124124125",
+                        Text("用户名：${id}",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: ScreenAdapter.size(32))),
@@ -77,10 +88,7 @@ class _UserPageState extends State<UserPage> {
           JdButton(
             text: "退出登录",
             cb: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                  new MaterialPageRoute(builder: (context) => new LoginPage()),
-                  (route) => route == null);
-              cleanToken();
+              _logout();
             },
           )
         ],
@@ -88,8 +96,25 @@ class _UserPageState extends State<UserPage> {
     );
   }
 
+  void _logout() async {
+    RongIMClient.disconnect(false);
+
+    cleanToken();
+    Navigator.of(context).pushAndRemoveUntil(
+        new MaterialPageRoute(builder: (context) => new LoginPage()),
+        (route) => route == null);
+  }
+
   Future<void> cleanToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", null);
+  }
+
+  _getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.id = prefs.get("id");
+    setState(() {
+      id;
+    });
   }
 }
