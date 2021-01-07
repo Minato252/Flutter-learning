@@ -9,6 +9,8 @@ class MessageModel {
   String htmlCode; //内容代码
   bool isJson = true;
 
+  bool modify = false;
+
   MessageModel({String htmlCode, String title, String keyWord})
       : htmlCode = htmlCode,
         title = title,

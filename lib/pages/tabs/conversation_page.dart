@@ -792,8 +792,13 @@ class _ConversationPageState extends State<ConversationPage>
     //     arguments: {'conversation': msg.content});
 
     MessageModel messageModel = MessageModel.fromJsonString(msg.content);
+    messageModel.modify = true;
     Navigator.push(context, MaterialPageRoute(builder: (c) {
-      return Pre(
+      // return Pre(
+      //   messageModel: messageModel,
+      // );
+
+      return PreAndSend(
         messageModel: messageModel,
       );
     }));

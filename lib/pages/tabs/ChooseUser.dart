@@ -14,6 +14,7 @@ class ChooseUserPage extends StatefulWidget {
 class _ChooseUserPageState extends State<ChooseUserPage> {
   StreamSubscription<PageEvent> sss; //eventbus传值
   List<String> targIdList = [];
+
   // String jsonFriends =
   //     "{'123':{'name':'张三','分支':'同事'},'456':{'name':'李四','分支':'同学'},'789':{'name':'小明','分支':'同事'}}";
   List<String> friends = ['123', '456', '789', '001'];
