@@ -32,6 +32,10 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
               ),
             ],
           ),
+          Align(
+            alignment: new FractionalOffset(0.0, 0.0),
+            child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+          ),
           Html(data: messageModel.htmlCode),
           messageModel.modify
               ? SafeArea(
@@ -138,6 +142,10 @@ class _PreAndSendState extends State<PreAndSend> {
               alignment: new FractionalOffset(0.0, 0.0),
               child: Text("已选择联系人：${targetIdList.toString()}"),
             ),
+            // Align(
+            //   alignment: new FractionalOffset(0.0, 0.0),
+            //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+            // ),
             Expanded(
               child: getPre(messageModel, false, controller),
             ),

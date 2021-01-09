@@ -10,6 +10,7 @@ class StaffManagePage extends StatefulWidget {
 }
 
 class _StaffManagePageState extends State<StaffManagePage> {
+  String degreeName = "请输入权限名称";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +19,16 @@ class _StaffManagePageState extends State<StaffManagePage> {
       ),
       body: TreeView(nodes: [
         TreeNode(content: Text("权限1")),
+        TreeNode(
+            content: Row(
+          children: [
+            Text(degreeName),
+            InkWell(
+              child: Icon(Icons.add),
+              onTap: () {},
+            )
+          ],
+        )),
         TreeNode(
           content: Text("权限2"),
           children: [

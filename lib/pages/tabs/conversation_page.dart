@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/widget/message_content_list.dart';
@@ -787,12 +788,19 @@ class _ConversationPageState extends State<ConversationPage>
     print(
       message.content,
     );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     // );
     // Navigator.pushNamed(context, '/readMessage',
     //     arguments: {'conversation': msg.content});
 
     MessageModel messageModel = MessageModel.fromJsonString(msg.content);
+    // hadlook = messageModel.hadLook;
+
     messageModel.modify = true;
+    if (!messageModel.hadLook.contains(prefs.get("id"))) {
+      messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
+    }
+
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       // return Pre(
       //   messageModel: messageModel,
