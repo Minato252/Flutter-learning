@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 
-//在这里管理人员权限(方框,连线)
+// 在这里管理人员权限(方框,连线)
 class StaffManagePage extends StatefulWidget {
   StaffManagePage({Key key}) : super(key: key);
 
@@ -11,6 +11,12 @@ class StaffManagePage extends StatefulWidget {
 
 class _StaffManagePageState extends State<StaffManagePage> {
   String degreeName = "请输入权限名称";
+  List<String> node = ["1", "2", "3"];
+
+  Widget addNode() {
+    Map<String, TreeNode> _remarkControllers = new Map();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,4 +51,10 @@ class _StaffManagePageState extends State<StaffManagePage> {
       ]),
     );
   }
+}
+
+class Task {
+  String remark; //要给每个添加的controller绑定的值
+  String key; //唯一键 与数据无关
+  String json = "";
 }

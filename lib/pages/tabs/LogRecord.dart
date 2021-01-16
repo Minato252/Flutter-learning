@@ -1,18 +1,7 @@
-import 'dart:convert';
-
-import 'package:weitong/pages/tabs/ReadMessage.dart';
-import 'package:weitong/services/event_bus.dart';
 import 'package:flutter/material.dart';
-import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
-import 'package:weitong/services/providerServices.dart';
-import '../../Model/user_data.dart';
-import '../Login.dart';
-// import '../../services/Base64Convert.dart';
-import '../../services/MessageSend.dart';
-
-import 'package:provider/provider.dart';
 
 class LogRecordPage extends StatefulWidget {
+  double _width = 200.0;
   LogRecordPage({Key key}) : super(key: key);
 
   @override
@@ -20,93 +9,23 @@ class LogRecordPage extends StatefulWidget {
 }
 
 class _LogRecordPageState extends State<LogRecordPage> {
-  int flage = 0;
-  String Mybase64;
-  onSendMessage() async {
-    TextMessage txtMessage = new TextMessage();
-
-    txtMessage.content = "这条消息来自 Flutter";
-    Message msg = await RongIMClient.sendMessage(
-        RCConversationType.Private, '123', txtMessage);
-    print("send message start senderUserId = " + msg.senderUserId);
-  }
-
-  onSendMyMessage() async {
-    TextMessage txtMessage = new TextMessage();
-    Mybase64 = await ImageMessageSend.image2Base64(
-        r"/storage/emulated/0/Pictures/Screenshots/1.jpg");
-
-    //  vert.image2Base64(r"/storage/emulated/0/Pictures/2.png");
-    // String Mybase64 =
-    //     Base64Convert.image2Base64(r"../../../images/1.jpg").toString();
-    print(
-        "-------*****************base64内容测试R************************------------");
-    print(Mybase64);
-    print("-------*****************************************------------");
-    txtMessage.content = "{image:'$Mybase64'}";
-    Message msg = await RongIMClient.sendMessage(
-        RCConversationType.Private, '123', txtMessage);
-    print("send message start senderUserId = " + msg.senderUserId);
-  }
-
-  showMyImage() {
-    // var Mybase64 = await Base64Convert.image2Base64(
-    //     r"/storage/emulated/0/Pictures/Screenshots/1.jpg");
-    print("-------******************测试显示图片***********************------------");
-    print("测试显示图片");
-    print(Mybase64);
-    var result = ImageMessageSend.base642Image(Mybase64);
-    return result;
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
+  double _width; //通过修改图片宽度来达到缩放效果
   @override
   Widget build(BuildContext context) {
-    print("------------------------------------");
-    RongIMClient.init(RongAppKey);
-    RongIMClient.connect(RongIMToken, (int code, String userId) {
-      print("-------*****************************************------------");
-      print('connect result ' + code.toString());
-    });
-    print("------------------------------------");
-    return MultiProvider(
-      providers: [
-        // ChangeNotifierProvider(builder: (context) => ProviderServices().MyConversation,)
-      ],
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text("联系人"),
-          ),
-          body: ListView(
-            children: [
-              Container(
-                  child: IconButton(
-                      icon: Icon(Icons.send),
-                      // Providers:[ChangeNotifierProvider(builder: (_) =)]
-                      onPressed: () {
-                        // onSendMyMessage();
-                        // Navigator.pushNamed(context, '/readMessage',
-                        //     arguments: {"cid": '123'});
-                        Navigator.pushNamed(context, '/readMessage',
-                            arguments: {'conversation': '123'});
-                      })),
-              Container(
-                  child: FlatButton(
-                child: Text("点击显示图片"),
-                onPressed: () {
-                  setState(() {
-                    flage = 1;
-                  });
-                },
-              )),
-              Container(child: flage == 0 ? Text("图片未加载成功") : showMyImage()),
-            ],
-          )),
+    return Container(
+      child: GestureDetector(
+        //指定宽度，高度自适应
+        child: Image.network(
+            "https://pic24.photophoto.cn/20120928/0035035561837079_b.jpg",
+            fit: BoxFit.contain,
+            width: _width),
+        onScaleUpdate: (details) {
+          setState(() {
+            //缩放倍数在0.8到10倍之间
+            _width = 200 * details.scale.clamp(.4, 10.0);
+          });
+        },
+      ),
     );
   }
 }
