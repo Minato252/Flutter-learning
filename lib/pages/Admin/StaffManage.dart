@@ -6,28 +6,20 @@ import 'package:weitong/pages/Admin/RightTextFieldDemo.dart';
 
 String jsonTree = '''
 {
+
   "employee": {
-    "name": "sonoo",
-    "level": 56,
-    "married": true,
-    "hobby": null
-  },
-  "week": [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ]
+    "name": {},
+    "level": {},
+    "married": {},
+    "hobby": {}
+  }
+
 }
 ''';
 
 class RightWidget extends StatefulWidget {
   String rightName;
-  Function refreshUI;
-  RightWidget(String rightNam) {
+  RightWidget(String rightName) {
     this.rightName = rightName;
   }
 
@@ -36,10 +28,10 @@ class RightWidget extends StatefulWidget {
 }
 
 class _RightWidgetState extends State<RightWidget> {
+  String rightName;
   _RightWidgetState(String rightName) {
     this.rightName = rightName;
   }
-  String rightName;
   Widget build(BuildContext context) {
     return Container(
       child: Row(
@@ -69,7 +61,7 @@ class _RightWidgetState extends State<RightWidget> {
       var parsedJson = json.decode(jsonTree);
       parsedJson = insertNode(parsedJson, rightName, newRight);
       jsonTree = json.encode(parsedJson);
-      //这里应该刷新tree的UI
+      //这里应该刷新tree的UI,目前只能用按钮实现
     }
   }
 }
@@ -144,6 +136,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
+            jsonTree;
 //             jsonTree = '''
 //             {
 //   "employee": {
