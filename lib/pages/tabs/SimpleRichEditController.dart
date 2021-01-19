@@ -56,7 +56,7 @@ class SimpleRichEditController extends RichEditController {
 
   @override
   Widget generateImageView(RichEditData data) =>
-      Image.file(File(data.data), width: data.imgWith);
+      Image.file(File(data.data), height: 200, width: 300);
 
 //重写html函数
 
@@ -95,7 +95,8 @@ class SimpleRichEditController extends RichEditController {
     String url = await UploadFile.fileUplod(element.data);
 
     sb.write("<p>");
-    sb.write("<img id=\"12\" style=\"width:${element.imgWith}px;\"  src=\"");
+    sb.write("<image style=\"padding: 10px;max-width: 90%;\" src=\"");
+
     sb.write(url);
     sb.write("\"/>");
     sb.write("<\/p>");
