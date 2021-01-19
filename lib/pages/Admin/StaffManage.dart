@@ -27,22 +27,19 @@ String jsonTree = '''
 class RightWidget extends StatefulWidget {
   String rightName;
   Function refreshUI;
-  RightWidget(String rightNam, Function refreshUI) {
+  RightWidget(String rightNam) {
     this.rightName = rightName;
-    this.refreshUI = refreshUI;
   }
 
   @override
-  _RightWidgetState createState() => _RightWidgetState(rightName, refreshUI);
+  _RightWidgetState createState() => _RightWidgetState(rightName);
 }
 
 class _RightWidgetState extends State<RightWidget> {
-  _RightWidgetState(String rightName, Function refreshUI) {
+  _RightWidgetState(String rightName) {
     this.rightName = rightName;
-    this.refreshUI = refreshUI;
   }
   String rightName;
-  Function refreshUI;
   Widget build(BuildContext context) {
     return Container(
       child: Row(
@@ -72,7 +69,7 @@ class _RightWidgetState extends State<RightWidget> {
       var parsedJson = json.decode(jsonTree);
       parsedJson = insertNode(parsedJson, rightName, newRight);
       jsonTree = json.encode(parsedJson);
-      refreshUI();
+      //这里应该刷新tree的UI
     }
   }
 }
@@ -101,6 +98,7 @@ class StaffManagePage extends StatefulWidget {
 class _StaffManagePageState extends State<StaffManagePage> {
   String degreeName = "请输入权限名称";
   List<String> node = ["1", "2", "3"];
+  @override
 
   // Widget addNode() {
   //   Map<String, TreeNode> _remarkControllers = new Map();
@@ -108,7 +106,6 @@ class _StaffManagePageState extends State<StaffManagePage> {
 
   @override
   Widget build(BuildContext context) {
-    RightWidget rw = RightWidget("头", refreshUI);
     return Scaffold(
       appBar: AppBar(
         title: Text("安全生产经营管理体系"),
@@ -163,10 +160,6 @@ class _StaffManagePageState extends State<StaffManagePage> {
     );
   }
 
-  void refreshUI() {
-    setState(() {});
-  }
-
   /// Builds tree or error message out of the entered content.
   Widget buildTree() {
     try {
@@ -184,8 +177,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
     if (parsedJson is Map<String, dynamic>) {
       return parsedJson.keys
           .map((k) => TreeNode(
-              content: RightWidget('$k', refreshUI),
-              children: toTreeNodes(parsedJson[k])))
+              content: RightWidget('$k'), children: toTreeNodes(parsedJson[k])))
           .toList();
     }
     if (parsedJson is List<dynamic>) {
@@ -196,7 +188,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
           .values
           .toList();
     }
-    return [TreeNode(content: RightWidget(parsedJson.toString(), refreshUI))];
+    return [TreeNode(content: RightWidget(parsedJson.toString()))];
   }
 }
 
