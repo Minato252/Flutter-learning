@@ -1,35 +1,48 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:weitong/pages/Admin/RightTextFieldDemo.dart';
 
-class TreeNodePlus extends TreeNode {
-  List<TreeNode> children;
-  Widget content;
-  TreeNodePlus(RightWidget rw) {
-    content = rw;
-    children = rw.children;
-  }
+String jsonTree = '''
+{
+  "employee": {
+    "name": "sonoo",
+    "level": 56,
+    "married": true,
+    "hobby": null
+  },
+  "week": [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ]
 }
+''';
 
 class RightWidget extends StatefulWidget {
   String rightName;
-  List<TreeNodePlus> children;
-  RightWidget(String rightName, List<TreeNodePlus> children) {
+  Function refreshUI;
+  RightWidget(String rightNam, Function refreshUI) {
     this.rightName = rightName;
-    this.children = children;
+    this.refreshUI = refreshUI;
   }
 
   @override
-  _RightWidgetState createState() => _RightWidgetState(rightName, children);
+  _RightWidgetState createState() => _RightWidgetState(rightName, refreshUI);
 }
 
 class _RightWidgetState extends State<RightWidget> {
-  _RightWidgetState(String rightName, List<TreeNodePlus> children) {
+  _RightWidgetState(String rightName, Function refreshUI) {
     this.rightName = rightName;
-    this.children = children;
+    this.refreshUI = refreshUI;
   }
   String rightName;
-  List<TreeNodePlus> children;
+  Function refreshUI;
   Widget build(BuildContext context) {
     return Container(
       child: Row(
@@ -56,14 +69,25 @@ class _RightWidgetState extends State<RightWidget> {
       new MaterialPageRoute(builder: (context) => new RightTextFieldDemo()),
     );
     if (newRight != null) {
-      List<TreeNodePlus> children = [];
-      RightWidget rw = RightWidget(newRight, children);
-      TreeNodePlus tn = new TreeNodePlus(rw);
-      setState(() {
-        this.children.add(tn);
-      });
+      var parsedJson = json.decode(jsonTree);
+      parsedJson = insertNode(parsedJson, rightName, newRight);
+      jsonTree = json.encode(parsedJson);
+      refreshUI();
     }
   }
+}
+
+Map insertNode(parsedJson, parent, child) {
+  if (parsedJson is Map<String, dynamic>) {
+    parsedJson.forEach((key, value) {
+      if (key == parent) {
+        value[child] = {};
+      } else {
+        parsedJson[key] = insertNode(parsedJson[key], parent, child);
+      }
+    });
+  }
+  return parsedJson;
 }
 
 // 在这里管理人员权限(方框,连线)
@@ -77,57 +101,102 @@ class StaffManagePage extends StatefulWidget {
 class _StaffManagePageState extends State<StaffManagePage> {
   String degreeName = "请输入权限名称";
   List<String> node = ["1", "2", "3"];
-  List<TreeNodePlus> children = [];
 
-  TreeNodePlus tn;
   // Widget addNode() {
   //   Map<String, TreeNode> _remarkControllers = new Map();
   // }
 
   @override
   Widget build(BuildContext context) {
-    RightWidget rw = RightWidget("头", children);
-    this.tn = TreeNodePlus(rw);
+    RightWidget rw = RightWidget("头", refreshUI);
     return Scaffold(
       appBar: AppBar(
         title: Text("安全生产经营管理体系"),
       ),
-      body: TreeView(nodes: [
-        //   TreeNode(content: Text("权限1")),
-        //   TreeNode(
-        //       content: Row(
-        //     children: [
-        //       Text(degreeName),
-        //       InkWell(
-        //         child: Icon(Icons.add),
-        //         onTap: () {},
-        //       )
-        //     ],
-        //   )),
-        //   TreeNode(
-        //     content: Text("权限2"),
-        //     children: [
-        //       TreeNode(content: Text("权限3")),
-        //       TreeNode(content: Text("权限4")),
-        //       TreeNode(
-        //         content: Text("权限5"),
-        //         children: [
-        //           TreeNode(content: Text("权限6")),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        tn,
-      ]),
+      body: Scrollbar(
+        child: SingleChildScrollView(
+          child: buildTree(),
+        ),
+      ),
+      //   TreeNode(content: Text("权限1")),
+      //   TreeNode(
+      //       content: Row(
+      //     children: [
+      //       Text(degreeName),
+      //       InkWell(
+      //         child: Icon(Icons.add),
+      //         onTap: () {},
+      //       )
+      //     ],
+      //   )),
+      //   TreeNode(
+      //     content: Text("权限2"),
+      //     children: [
+      //       TreeNode(content: Text("权限3")),
+      //       TreeNode(content: Text("权限4")),
+      //       TreeNode(
+      //         content: Text("权限5"),
+      //         children: [
+      //           TreeNode(content: Text("权限6")),
+      //         ],
+      //       ),
+      //     ],
+      //   ),
+      // tn,
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          RightWidget rw = tn.content;
-          rw.rightName = '123';
-          setState(() {});
-          print(rw.rightName);
+          setState(() {
+//             jsonTree = '''
+//             {
+//   "employee": {
+//     "name": {},
+//     "level": {},
+//     "married": {},
+//     "hobby": {}
+//   }
+//             }
+// ''';
+          });
         },
       ),
     );
+  }
+
+  void refreshUI() {
+    setState(() {});
+  }
+
+  /// Builds tree or error message out of the entered content.
+  Widget buildTree() {
+    try {
+      var parsedJson = json.decode(jsonTree);
+      return TreeView(
+        nodes: toTreeNodes(parsedJson),
+        // treeController: _treeController,
+      );
+    } on FormatException catch (e) {
+      return Text(e.message);
+    }
+  }
+
+  List<TreeNode> toTreeNodes(dynamic parsedJson) {
+    if (parsedJson is Map<String, dynamic>) {
+      return parsedJson.keys
+          .map((k) => TreeNode(
+              content: RightWidget('$k', refreshUI),
+              children: toTreeNodes(parsedJson[k])))
+          .toList();
+    }
+    if (parsedJson is List<dynamic>) {
+      return parsedJson
+          .asMap()
+          .map((i, element) => MapEntry(i,
+              TreeNode(content: Text('[$i]:'), children: toTreeNodes(element))))
+          .values
+          .toList();
+    }
+    return [TreeNode(content: RightWidget(parsedJson.toString(), refreshUI))];
   }
 }
 
