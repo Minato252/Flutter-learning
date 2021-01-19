@@ -12,10 +12,13 @@ class SimpleRichEditController extends RichEditController {
   //添加视频方法
   @override
   Future<String> addVideo() async {
-    var pickedFile = await ImagePicker().getVideo(source: ImageSource.gallery);
+    PickedFile pickedFile =
+        await ImagePicker().getVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
       //模拟上传后返回的路径
-      return pickedFile.path;
+      var path = pickedFile.path;
+
+      return path;
     }
     return null;
   }
@@ -96,6 +99,7 @@ class SimpleRichEditController extends RichEditController {
 
     sb.write("<p>");
     sb.write("<image style=\"padding: 10px;max-width: 90%;\" src=\"");
+
     sb.write(url);
     sb.write("\"/>");
     sb.write("<\/p>");
@@ -103,7 +107,12 @@ class SimpleRichEditController extends RichEditController {
 
   Future<void> generateVideoHtmlUrl(
       StringBuffer sb, RichEditData element) async {
-    String url = await UploadFile.fileUplod(element.data);
+    String path = element.data;
+    String suffix = path.substring(0, path.lastIndexOf(".") + 1);
+    int num = new DateTime.now().millisecondsSinceEpoch;
+    String name = suffix + 'mp4';
+    print("fileName: " + name);
+    String url = await UploadFile.fileUplod(element.data, fileName: name);
 
     sb.write("<p>");
     sb.write('''

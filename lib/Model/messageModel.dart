@@ -9,11 +9,14 @@ class MessageModel {
   String htmlCode; //内容代码
   bool isJson = true;
 
+  String hadLook;
+
   bool modify = false;
 
-  MessageModel({String htmlCode, String title, String keyWord})
+  MessageModel({String htmlCode, String title, String keyWord, String hadLook})
       : htmlCode = htmlCode,
         title = title,
+        hadLook = hadLook,
         keyWord = keyWord;
 
   MessageModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +24,7 @@ class MessageModel {
     title = json['title'];
     keyWord = json['keyWord'];
     htmlCode = json['htmlCode'];
+    hadLook = json['hadLook'];
     content = jsonEncode(json);
   }
 
@@ -30,6 +34,7 @@ class MessageModel {
     data['title'] = this.title;
     data['keyWord'] = this.keyWord;
     data['htmlCode'] = this.htmlCode;
+    data['hadLook'] = this.hadLook;
     return data;
   }
 
@@ -47,6 +52,7 @@ class MessageModel {
       title = json['title'];
       keyWord = json['keyWord'];
       htmlCode = json['htmlCode'];
+      hadLook = json['hadLook'];
     } catch (e) {
       isJson = false;
     }

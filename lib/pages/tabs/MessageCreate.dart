@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/tabs/Pre.dart';
@@ -190,11 +191,17 @@ class _MessageCreateState extends State<MessageCreate> {
       //这个htmlCode就是所有消息的HTML代码了
       //或许我们可以加密了再传输？
       var htmlCode = await controller.generateHtmlUrl();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       print(htmlCode);
+
       // controller.generateHtml();
       //这里是用html初始化一个页面
+
       MessageModel messageModel = MessageModel(
-          htmlCode: htmlCode, title: newTitle, keyWord: _curchosedTag);
+          htmlCode: htmlCode,
+          title: newTitle,
+          keyWord: _curchosedTag,
+          hadLook: prefs.get("id"));
       Navigator.push(context, MaterialPageRoute(builder: (c) {
         return PreAndSend(
           messageModel: messageModel,

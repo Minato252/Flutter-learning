@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +24,7 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("标题：$messageModel.title"),
+              Text("标题：${messageModel.title}"),
               Row(
                 children: [
                   Text("关键词:"),
@@ -32,7 +33,26 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
               ),
             ],
           ),
-          Html(data: messageModel.htmlCode),
+          Align(
+            alignment: new FractionalOffset(0.0, 0.0),
+            child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+          ),
+          Html(
+            data: messageModel.htmlCode,
+            style: {
+              'img': Style(width: 150, height: 150),
+              'video': Style(width: 150, height: 150),
+              // '#12': Style(width: 400, height: 400),
+            },
+          ),
+          //   FaiWebViewWidget(
+          //   //webview 加载本地html数据
+          //   htmlBlockData: messageModel.htmlCode,
+          //   //webview 加载信息回调
+          //   // callback: callBack,
+          //   //输出日志
+          //   isLog: true,
+          // ),
           messageModel.modify
               ? SafeArea(
                   child: SizedBox(
@@ -138,6 +158,10 @@ class _PreAndSendState extends State<PreAndSend> {
               alignment: new FractionalOffset(0.0, 0.0),
               child: Text("已选择联系人：${targetIdList.toString()}"),
             ),
+            // Align(
+            //   alignment: new FractionalOffset(0.0, 0.0),
+            //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+            // ),
             Expanded(
               child: getPre(messageModel, false, controller),
             ),

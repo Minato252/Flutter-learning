@@ -12,7 +12,9 @@ class AdminTabs extends StatefulWidget {
 
 class _AdminTabsState extends State<AdminTabs> {
   int _currentIndex = 0;
+  // List _pagelist = [StaffManagePage(), DepartmentManagePage(), Mine()];
   List _pagelist = [StaffManagePage(), DepartmentManagePage(), Mine()];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
