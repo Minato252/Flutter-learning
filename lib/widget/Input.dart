@@ -1,21 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:weitong/widget/JdButton.dart';
 
-class RightTextFieldDemo extends StatefulWidget {
+class Input extends StatefulWidget {
+  int maxLength; //最大长度
+  String title; //"新建权限"
+  String subtitle; //"输入您要新建的权限名称"
+  String name; //"权限名称"（不能为空）
+  List<String> illegalText; //非法字符列表
+  Input(String title, String subtitle, int maxLength, String name,
+      {List<String> illegalText = const []}) {
+    this.title = title;
+    this.subtitle = subtitle;
+    this.maxLength = maxLength;
+    this.name = name;
+    this.illegalText = illegalText;
+  }
   @override
-  _RightTextFieldDemoState createState() => _RightTextFieldDemoState();
+  _InputState createState() => _InputState(
+      this.title, this.subtitle, this.maxLength, this.name, this.illegalText);
 }
 
-class _RightTextFieldDemoState extends State<RightTextFieldDemo> {
+class _InputState extends State<Input> {
   // TextEditingController textFieldController = TextEditingController();
-  final int _maxLength = 12;
+
   final newTagFormKey = GlobalKey<FormState>();
+  int maxLength; //最大长度
+  String title; //"新建权限"
+  String subtitle; //"输入您要新建的权限名称"
+  String name; //"权限名称"（不能为空）
+  List<String> illegalText; //非法字符列表
+  _InputState(String title, String subtitle, int maxLength, String name,
+      List<String> illegalText) {
+    this.title = title;
+    this.subtitle = subtitle;
+    this.maxLength = maxLength;
+    this.name = name;
+    this.illegalText = illegalText;
+  }
+
   String newTag;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('新建权限')),
+        appBar: AppBar(title: Text('$title')),
         body: Container(
             padding: EdgeInsets.all(20),
             child: Form(
@@ -28,7 +56,7 @@ class _RightTextFieldDemoState extends State<RightTextFieldDemo> {
                     height: 32.0,
                   ),
                   Text(
-                    "输入您要新建的权限名称",
+                    "$subtitle",
                     style: TextStyle(fontSize: 32.0),
                   ),
                   SizedBox(
@@ -42,9 +70,9 @@ class _RightTextFieldDemoState extends State<RightTextFieldDemo> {
                     ),
                     decoration: InputDecoration(
                         icon: Icon(Icons.subject),
-                        labelText: "新建权限",
+                        labelText: "$title",
                         border: OutlineInputBorder(),
-                        hintText: "最多输入 ${_maxLength.toString()} 个字"),
+                        hintText: "最多输入 ${maxLength.toString()} 个字"),
                     onSaved: (value) {
                       newTag = value;
                     },
@@ -74,9 +102,11 @@ class _RightTextFieldDemoState extends State<RightTextFieldDemo> {
 
   String _validateNewTag(value) {
     if (value.isEmpty) {
-      return "权限名称不能为空";
-    } else if (value.length > _maxLength) {
-      return "权限名称不能超过 ${_maxLength.toString()}个字";
+      return "$name不能为空";
+    } else if (value.length > maxLength) {
+      return "$name不能超过 ${maxLength.toString()}个字";
+    } else if (illegalText.contains(value)) {
+      return "“$value”已存在，不能使用，请更换";
     }
     return null;
   }

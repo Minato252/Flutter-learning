@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/JdButton.dart';
-import 'TagTextFieldDemo.dart';
 
 class TagChipDemo extends StatefulWidget {
   @override
@@ -19,7 +19,11 @@ class _TagState extends State<TagChipDemo> {
   // void initState() {}
 
   _awaitReturnNewTag(BuildContext context) async {
-    final newTag = await Navigator.pushNamed(context, '/inputNewTag');
+    final newTag = await Navigator.push(
+      context,
+      new MaterialPageRoute(
+          builder: (context) => new Input("新建关键词", "输入您要新建的关键词", 12, "关键词")),
+    );
     if (newTag != null) {
       setState(() {
         _tags.add(newTag);
