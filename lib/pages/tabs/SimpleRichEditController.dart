@@ -59,7 +59,7 @@ class SimpleRichEditController extends RichEditController {
 
   @override
   Widget generateImageView(RichEditData data) =>
-      Image.file(File(data.data), height: 200, width: 300);
+      Image.file(File(data.data), width: data.imgWith);
 
 //重写html函数
 
@@ -98,7 +98,7 @@ class SimpleRichEditController extends RichEditController {
     String url = await UploadFile.fileUplod(element.data);
 
     sb.write("<p>");
-    sb.write("<image style=\"padding: 10px;max-width: 90%;\" src=\"");
+    sb.write("<image style=\"width:${element.imgWith}px;\" src=\"");
 
     sb.write(url);
     sb.write("\"/>");
@@ -115,8 +115,13 @@ class SimpleRichEditController extends RichEditController {
     String url = await UploadFile.fileUplod(element.data, fileName: name);
 
     sb.write("<p>");
+    // sb.write('''
+    //       <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
+    //       ''');
+    // sb.write("<\/p>");
+
     sb.write('''
-          <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
+          <video style="width:300px;height:150px" controls> <source src="${url}"></video>
           ''');
     sb.write("<\/p>");
   }

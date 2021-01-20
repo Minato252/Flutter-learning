@@ -14,6 +14,7 @@ import 'package:weitong/services/event_util.dart';
 import 'package:weitong/widget/JdButton.dart';
 
 import 'SimpleRichEditController.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 Scrollbar getPre(MessageModel messageModel, bool modify,
     SimpleRichEditController controller) {
@@ -37,22 +38,20 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
             alignment: new FractionalOffset(0.0, 0.0),
             child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
           ),
-          Html(
-            data: messageModel.htmlCode,
-            style: {
-              'img': Style(width: 150, height: 150),
-              'video': Style(width: 150, height: 150),
-              // '#12': Style(width: 400, height: 400),
-            },
-          ),
-          //   FaiWebViewWidget(
-          //   //webview 加载本地html数据
-          //   htmlBlockData: messageModel.htmlCode,
-          //   //webview 加载信息回调
-          //   // callback: callBack,
-          //   //输出日志
-          //   isLog: true,
+          // Html(
+          //   data: messageModel.htmlCode,
+          //   style: {
+          //     'img': Style(width: 150, height: 150),
+          //     'video': Style(width: 150, height: 150),
+          //     // '#12': Style(width: 400, height: 400),
+          //   },
           // ),
+
+          HtmlWidget(
+            messageModel.htmlCode,
+            webView: true,
+          ),
+
           messageModel.modify
               ? SafeArea(
                   child: SizedBox(
