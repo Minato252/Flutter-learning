@@ -50,4 +50,7 @@ class EventKeys {
       "UpdateNotificationQuietStatus";
   static const String ForwardMessageEnd = "ForwardMessageEnd";
   static const String BurnMessage = "BurnMessage";
+
+  //weitong
+  static const String RefreshTree = "RefreshTree";
 }
