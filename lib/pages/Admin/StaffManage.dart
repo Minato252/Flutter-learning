@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+import 'package:weitong/services/event_util.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/dialog_util.dart';
 
@@ -107,6 +108,9 @@ class _RightWidgetState extends State<RightWidget> {
     this.editable = editable;
     this.addable = addable;
   }
+
+  StreamSubscription<UpdataNode> sss; //eventbus传值
+
   Widget build(BuildContext context) {
     var addButton = addable
         ? IconButton(
@@ -154,6 +158,8 @@ class _RightWidgetState extends State<RightWidget> {
       parsedJson = insertNode(parsedJson, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
+
+      EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
     }
   }
 
@@ -171,6 +177,8 @@ class _RightWidgetState extends State<RightWidget> {
       parsedJson = editNode(parsedJson, parentName, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
+
+      EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
     }
   }
 
@@ -178,6 +186,8 @@ class _RightWidgetState extends State<RightWidget> {
     var parsedJson = json.decode(jsonTree);
     parsedJson = deleteNode(parsedJson, parentName, rightName);
     jsonTree = json.encode(parsedJson);
+
+    EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
   }
 }
 
@@ -297,14 +307,24 @@ class StaffManagePage extends StatefulWidget {
 class _StaffManagePageState extends State<StaffManagePage> {
   String degreeName = "请输入权限名称";
   List<String> node = ["1", "2", "3"];
-  @override
 
+  StreamSubscription<UpdataNode> sss; //eventbus传值
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   // Widget addNode() {
   //   Map<String, TreeNode> _remarkControllers = new Map();
   // }
 
   @override
   Widget build(BuildContext context) {
+    sss = EventBusUtil.getInstance().on<UpdataNode>().listen((data) {
+      sss.cancel();
+      setState(() {});
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text("安全生产经营管理体系"),
@@ -340,11 +360,11 @@ class _StaffManagePageState extends State<StaffManagePage> {
       //   ),
       // tn,
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          refreshUI();
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     refreshUI();
+      //   },
+      // ),
     );
   }
 

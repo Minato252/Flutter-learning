@@ -16,3 +16,8 @@ class PageEvent {
   List<String> userList;
   PageEvent(this.userList);
 }
+
+class UpdataNode {
+  String type;
+  UpdataNode(this.type);
+}
