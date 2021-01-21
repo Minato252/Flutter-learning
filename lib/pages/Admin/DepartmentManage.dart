@@ -177,6 +177,9 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     var parsedJson = json.decode(jsonTree);
     deleteStaff(parsedJson, staff);
     jsonTree = json.encode(parsedJson);
+
+    //这里需要更新jsonTree===================
+
     return true; //成功返回true
   }
 
@@ -184,12 +187,15 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     if (parsedJson is Map<String, dynamic>) {
       parsedJson.forEach((key, value) {
         if (key == staffMap["right"] && value["$staff"] is List) {
-          int index;
-          value["$staff"].asMap().map((i, element) {
-            if (element["id"] == staffMap["id"]) {}
-            index = i;
-          });
-          value["$staff"].remove(index);
+          List staffList = value["$staff"];
+          for (int i = 0; i < staffList.length; i++) {
+            Map element = staffList[i];
+            if (element["id"] == staffMap["id"]) {
+              print("delete" + staffMap["name"]);
+              value["$staff"].removeAt(i);
+              break;
+            }
+          }
         } else {
           deleteStaff(parsedJson[key], staffMap);
         }
