@@ -179,6 +179,7 @@ class _RightWidgetState extends State<RightWidget> {
       //这里应该刷新tree的UI,目前只能用按钮实现
 
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+      setState(() {});
     }
   }
 
@@ -270,7 +271,7 @@ class _RightWidgetState extends State<RightWidget> {
           //这里需要调用另一个类的函数
           print("非空");
           //在这里eventBus====================
-
+          EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
 //==========================================
         }
       } else {
@@ -285,6 +286,7 @@ class _RightWidgetState extends State<RightWidget> {
             } else {
               //这里需要调用另一个类的函数
               print("非空");
+              EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
             }
           } else {
             parsedJson[key] =
@@ -326,6 +328,11 @@ class _StaffManagePageState extends State<StaffManagePage> {
   @override
   Widget build(BuildContext context) {
     sss = EventBusUtil.getInstance().on<UpdataNode>().listen((data) {
+      if (data.type == "rejectDeleteNode") {
+        alertDialog();
+      } else {
+        setState(() {});
+      }
       sss.cancel();
       setState(() {});
     });
