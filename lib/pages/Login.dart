@@ -146,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
   void _loginAction() async {
     var rel = await Dio().post("http://47.110.150.159:8080/login",
         data: {"id": id, "password": password});
+    // var rel;
     var rel2 = convert.jsonDecode(rel.data);
     var result = new UserItemModel.fromJson(rel2);
 

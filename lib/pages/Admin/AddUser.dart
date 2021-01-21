@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:weitong/pages/Admin/StaffManageChoose.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/widget/dialog_util.dart';
 
 class AddUser extends StatefulWidget {
   AddUser({Key key}) : super(key: key);
@@ -118,40 +120,55 @@ class _AddUserState extends State<AddUser> {
                   },
                   validator: _validateNewJob,
                 ),
-                DropdownButton(
-                    value: rightValue,
-                    isExpanded: true,
-                    hint: Text("请选择权限等级"),
-                    items: [
-                      DropdownMenuItem(
-                        child: Text('权限1'),
-                        value: 1,
-                      ),
-                      DropdownMenuItem(
-                        child: Text('权限2'),
-                        value: 2,
-                      ),
-                      DropdownMenuItem(
-                        child: Text('权限3'),
-                        value: 3,
-                      ),
-                      DropdownMenuItem(
-                        child: Text('权限4'),
-                        value: 4,
-                      ),
-                      DropdownMenuItem(
-                        child: Text('权限5'),
-                        value: 5,
-                      ),
-                      DropdownMenuItem(
-                        child: Text('权限6'),
-                        value: 6,
-                      ),
-                    ],
-                    onChanged: (value) => setState(() {
-                          rightValue = value;
-                        })),
-
+                // DropdownButton(
+                //     value: rightValue,
+                //     isExpanded: true,
+                //     hint: Text("请选择权限等级"),
+                //     items: [
+                //       DropdownMenuItem(
+                //         child: Text('权限1'),
+                //         value: 1,
+                //       ),
+                //       DropdownMenuItem(
+                //         child: Text('权限2'),
+                //         value: 2,
+                //       ),
+                //       DropdownMenuItem(
+                //         child: Text('权限3'),
+                //         value: 3,
+                //       ),
+                //       DropdownMenuItem(
+                //         child: Text('权限4'),
+                //         value: 4,
+                //       ),
+                //       DropdownMenuItem(
+                //         child: Text('权限5'),
+                //         value: 5,
+                //       ),
+                //       DropdownMenuItem(
+                //         child: Text('权限6'),
+                //         value: 6,
+                //       ),
+                //     ],
+                //     onChanged: (value) => setState(() {
+                //           rightValue = value;
+                //         })),
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.subject),
+                        Text("权限等级："),
+                      ],
+                    ),
+                    Text("$right"),
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: chooseRight,
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
                 // Divider(),
                 JdButton(
                   text: '确定',
@@ -163,6 +180,18 @@ class _AddUserState extends State<AddUser> {
             ),
           )),
     );
+  }
+
+  Future<void> chooseRight() async {
+    final choosedRight = await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new StaffManageChoose()),
+    );
+    if (choosedRight != null) {
+      setState(() {
+        right = choosedRight;
+      });
+    }
   }
 
   String _validateNewId(value) {
@@ -194,9 +223,21 @@ class _AddUserState extends State<AddUser> {
     return null;
   }
 
+  void alertDialog() {
+    //==需要调用的提示框===============
+    DialogUtil.showAlertDiaLog(
+      context,
+      "权限不能为空",
+      title: "新增人员失败",
+    );
+  }
+
   void _sendDataBack(BuildContext context) {
     newUserFormKey.currentState.save();
-    right = "权限1";
+    if (right == null) {
+      alertDialog();
+      return;
+    }
     if (newUserFormKey.currentState.validate()) {
       Map mapToSendBack = {
         "name": name,

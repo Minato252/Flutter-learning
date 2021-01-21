@@ -3,19 +3,19 @@ import 'package:weitong/pages/Admin/UserDetails.dart';
 
 class UserSliverList extends StatefulWidget {
   List<Map> users;
-  UserSliverList(List<Map> users) {
-    this.users = users;
-  }
+
+  Function deleteStaff;
+  UserSliverList(this.users, {this.deleteStaff});
   @override
-  _UserSliverListState createState() => _UserSliverListState(users);
+  _UserSliverListState createState() =>
+      _UserSliverListState(users, deleteStaff);
 }
 
 class _UserSliverListState extends State<UserSliverList> {
   @override
   List<Map> users;
-  _UserSliverListState(List<Map> users) {
-    this.users = users;
-  }
+  Function deleteStaff;
+  _UserSliverListState(this.users, this.deleteStaff);
   Widget build(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate(
@@ -79,7 +79,9 @@ class _UserSliverListState extends State<UserSliverList> {
                 textColor: Colors.white,
                 onPressed: () {
                   setState(() {
-                    users.removeAt(index);
+                    if (deleteStaff(users[index])) {
+                      users.removeAt(index);
+                    }
                   });
 
                   Navigator.pop(context);
