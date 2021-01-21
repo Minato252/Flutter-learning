@@ -190,110 +190,114 @@ class _RightWidgetState extends State<RightWidget> {
 
     EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
   }
-}
 
-void getAllKeyName(parsedJson, List<String> result) {
-  if (parsedJson is Map<String, dynamic>) {
-    parsedJson.forEach((key, value) {
-      if (!result.contains(key)) {
-        result.add(key);
-      }
-      getAllKeyName(parsedJson[key], result);
-      return;
-    });
-  } else {
-    return;
-  }
-}
-
-Map insertNode(parsedJson, parent, child) {
-  if (parsedJson is Map<String, dynamic>) {
-    parsedJson.forEach((key, value) {
-      if (key == parent) {
-        value[child] = {
-          "$staff": [],
-        };
-      } else {
-        parsedJson[key] = insertNode(parsedJson[key], parent, child);
-      }
-    });
-  }
-  return parsedJson;
-}
-
-Map editNode(parsedJson, parentName, String oldName, String newName) {
-  if (parsedJson is Map<String, dynamic>) {
-    if (parentName == null) {
-      //在第一级一定会有
-      parsedJson[newName] = Map.from(parsedJson[oldName]);
-      parsedJson.remove(oldName);
-      return parsedJson;
-    } else {
+  void getAllKeyName(parsedJson, List<String> result) {
+    if (parsedJson is Map<String, dynamic>) {
       parsedJson.forEach((key, value) {
-        if (key == parentName) {
-          //一定在这一级
-          Map<String, dynamic> m = Map.from(value);
-          m[newName] = m[oldName];
-          m.remove(oldName);
-          parsedJson[key] = m;
+        if (!result.contains(key)) {
+          result.add(key);
+        }
+        getAllKeyName(parsedJson[key], result);
+        return;
+      });
+    } else {
+      return;
+    }
+  }
+
+  dynamic insertNode(parsedJson, parent, child) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        if (key == parent) {
+          value[child] = {
+            "$staff": [],
+          };
         } else {
-          parsedJson[key] =
-              editNode(parsedJson[key], parentName, oldName, newName);
+          parsedJson[key] = insertNode(parsedJson[key], parent, child);
         }
       });
-      return parsedJson;
     }
-  } else {
     return parsedJson;
   }
-}
 
-bool mapIsEmpty(Map<String, dynamic> m) {
-  bool isEmpty = true;
-  if (m["$staff"].length != 0) {
-    isEmpty = false;
-    return isEmpty;
-  }
-  if (m.keys.length > 1) {
-    isEmpty = false;
-    return isEmpty;
-  }
-  return isEmpty;
-}
-
-Map deleteNode(parsedJson, parentName, deleteName) {
-  if (parsedJson is Map<String, dynamic>) {
-    if (parentName == null) {
-      //在第一级一定会有待删除结点
-      if (mapIsEmpty(parsedJson[deleteName])) {
-        //待删除结点里面为空
-        parsedJson.remove(deleteName);
+  dynamic editNode(parsedJson, parentName, String oldName, String newName) {
+    if (parsedJson is Map<String, dynamic>) {
+      if (parentName == null) {
+        //在第一级一定会有
+        parsedJson[newName] = Map.from(parsedJson[oldName]);
+        parsedJson.remove(oldName);
+        return parsedJson;
       } else {
-        //这里需要调用另一个类的函数
-        print("非空");
-      }
-    } else {
-      parsedJson.forEach((key, value) {
-        if (key == parentName) {
-          //一定在这一级
-          Map<String, dynamic> m = Map.from(value);
-          if (mapIsEmpty(m[deleteName])) {
-            //待删除结点里面为空
-            m.remove(deleteName);
+        parsedJson.forEach((key, value) {
+          if (key == parentName) {
+            //一定在这一级
+            Map<String, dynamic> m = Map.from(value);
+            m[newName] = m[oldName];
+            m.remove(oldName);
             parsedJson[key] = m;
           } else {
-            //这里需要调用另一个类的函数
-            print("非空");
+            parsedJson[key] =
+                editNode(parsedJson[key], parentName, oldName, newName);
           }
-        } else {
-          parsedJson[key] = deleteNode(parsedJson[key], parentName, deleteName);
-        }
-      });
+        });
+        return parsedJson;
+      }
+    } else {
+      return parsedJson;
     }
+  }
 
-    return parsedJson;
-  } else {
-    return parsedJson;
+  bool mapIsEmpty(Map<String, dynamic> m) {
+    bool isEmpty = true;
+    if (m["$staff"].length != 0) {
+      isEmpty = false;
+      return isEmpty;
+    }
+    if (m.keys.length > 1) {
+      isEmpty = false;
+      return isEmpty;
+    }
+    return isEmpty;
+  }
+
+  dynamic deleteNode(parsedJson, parentName, deleteName) {
+    if (parsedJson is Map<String, dynamic>) {
+      if (parentName == null) {
+        //在第一级一定会有待删除结点
+        if (mapIsEmpty(parsedJson[deleteName])) {
+          //待删除结点里面为空
+          parsedJson.remove(deleteName);
+        } else {
+          //这里需要调用另一个类的函数
+          print("非空");
+          //在这里eventBus====================
+
+//==========================================
+        }
+      } else {
+        parsedJson.forEach((key, value) {
+          if (key == parentName) {
+            //一定在这一级
+            Map<String, dynamic> m = Map.from(value);
+            if (mapIsEmpty(m[deleteName])) {
+              //待删除结点里面为空
+              m.remove(deleteName);
+              parsedJson[key] = m;
+            } else {
+              //这里需要调用另一个类的函数
+              print("非空");
+            }
+          } else {
+            parsedJson[key] =
+                deleteNode(parsedJson[key], parentName, deleteName);
+          }
+        });
+      }
+
+      return parsedJson;
+    } else {
+      return parsedJson;
+    }
   }
 }
 
@@ -374,6 +378,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
   }
 
   void alertDialog() {
+    //==需要调用的提示框===============
     DialogUtil.showAlertDiaLog(
       context,
       "无法删除非空的权限，请将其包含的人员与权限均清空。",
