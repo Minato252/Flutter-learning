@@ -9,78 +9,78 @@ import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/dialog_util.dart';
 
 String staff = "人员";
-String jsonTree = '''
-{
-    "总经理": {
-        "$staff": [
-            {
-                "name": "老总", 
-                "id": "这里是手机号", 
-                "password": "这里是密码", 
-                "job": "这里是职务",
-                "right": "总经理"
-            }
-        ], 
-        "美术部门": {
-            "$staff": [
-                {
-                    "name": "张三", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                     "right": "美术部门"
-                }, 
-                {
-                    "name": "美术李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                "right": "美术部门"
-                }
-            ], 
-            "美术小组": {
-               "$staff": [
-                    {
-                        "name": "美术王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                        "right": "美术小组"
-                    }
-                ]
-            }
-        }, 
-        "软件部门": {
-           "$staff": [
-                {
-                    "name": "软件李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                    "right": "软件部门"
-                }
-            ], 
-            "软件小组": {
-                "$staff": [
-                    {
-                        "name": "软件王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                    "right": "软件小组"
-                    }
-                ]
-            }
-        }, 
-        "人力部门": {
-           "$staff": [ ]
-        }, 
-        "销售部门": {
-            "$staff": [ ]
-        }
-    }
-}
-'''; //一直以来更改的jsonTree
+// String jsonTreeNet = '''
+// {
+//     "总经理": {
+//         "$staff": [
+//             {
+//                 "name": "老总",
+//                 "id": "这里是手机号",
+//                 "password": "这里是密码",
+//                 "job": "这里是职务",
+//                 "right": "总经理"
+//             }
+//         ],
+//         "美术部门": {
+//             "$staff": [
+//                 {
+//                     "name": "张三",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                      "right": "美术部门"
+//                 },
+//                 {
+//                     "name": "美术李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                 "right": "美术部门"
+//                 }
+//             ],
+//             "美术小组": {
+//                "$staff": [
+//                     {
+//                         "name": "美术王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                         "right": "美术小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "软件部门": {
+//            "$staff": [
+//                 {
+//                     "name": "软件李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                     "right": "软件部门"
+//                 }
+//             ],
+//             "软件小组": {
+//                 "$staff": [
+//                     {
+//                         "name": "软件王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                     "right": "软件小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "人力部门": {
+//            "$staff": [ ]
+//         },
+//         "销售部门": {
+//             "$staff": [ ]
+//         }
+//     }
+// }
+// '''; //一直以来更改的jsonTree
 
 class RightWidget extends StatefulWidget {
   String parentName;
@@ -152,6 +152,8 @@ class _RightWidgetState extends State<RightWidget> {
   }
 
   onTapAdd() async {
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     List<String> illegalText = [];
     getAllKeyName(parsedJson, illegalText);
@@ -167,11 +169,16 @@ class _RightWidgetState extends State<RightWidget> {
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
 
+      tree.upDataTree(jsonTree);
+
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
     }
   }
 
   onTapEdit() async {
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
+
     var parsedJson = json.decode(jsonTree);
     List<String> illegalText = [];
     getAllKeyName(parsedJson, illegalText);
@@ -186,17 +193,26 @@ class _RightWidgetState extends State<RightWidget> {
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
 
+      setState(() {
+        rightName = newRight;
+      });
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
-      setState(() {});
+      // setState(() {});
+
+      tree.upDataTree(jsonTree);
     }
   }
 
   onTapDelete() {
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     parsedJson = deleteNode(parsedJson, parentName, rightName);
     jsonTree = json.encode(parsedJson);
 
     EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+
+    tree.upDataTree(jsonTree);
   }
 
   void getAllKeyName(parsedJson, List<String> result) {
@@ -335,8 +351,6 @@ class _StaffManagePageState extends State<StaffManagePage> {
 
   @override
   Widget build(BuildContext context) {
-    final tree = Provider.of<ProviderServices>(context);
-    tree.upDataTree(jsonTree);
     // print("***************打印provider************");
     // print(tree.tree.toString());
 
@@ -408,7 +422,10 @@ class _StaffManagePageState extends State<StaffManagePage> {
   /// Builds tree or error message out of the entered content.
   Widget buildTree() {
     try {
+      final tree = Provider.of<ProviderServices>(context);
+      String jsonTree = tree.tree;
       var parsedJson = json.decode(jsonTree);
+
       return TreeView(
         nodes: toTreeNodes(parsedJson, null),
         // treeController: _treeController,

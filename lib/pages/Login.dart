@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
+import 'package:weitong/services/providerServices.dart';
 import '../widget/JdText.dart';
 import '../widget/JdButton.dart';
 import 'package:dio/dio.dart';
@@ -11,6 +13,80 @@ import 'package:weitong/Model/user_data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'Admin/AdminTabs.dart';
+
+String staff = "人员";
+String jsonTreeNet = '''
+{
+    "总经理": {
+        "$staff": [
+            {
+                "name": "老总", 
+                "id": "这里是手机号", 
+                "password": "这里是密码", 
+                "job": "这里是职务",
+                "right": "总经理"
+            }
+        ], 
+        "美术部门": {
+            "$staff": [
+                {
+                    "name": "张三", 
+                    "id": "这里是手机号", 
+                    "password": "这里是密码", 
+                    "job": "这里是职务",
+                     "right": "美术部门"
+                }, 
+                {
+                    "name": "美术李四", 
+                    "id": "这里是手机号", 
+                    "password": "这里是密码", 
+                    "job": "这里是职务",
+                "right": "美术部门"
+                }
+            ], 
+            "美术小组": {
+               "$staff": [
+                    {
+                        "name": "美术王五", 
+                        "id": "这里是手机号", 
+                        "password": "这里是密码", 
+                        "job": "这里是职务",
+                        "right": "美术小组"
+                    }
+                ]
+            }
+        }, 
+        "软件部门": {
+           "$staff": [
+                {
+                    "name": "软件李四", 
+                    "id": "这里是手机号", 
+                    "password": "这里是密码", 
+                    "job": "这里是职务",
+                    "right": "软件部门"
+                }
+            ], 
+            "软件小组": {
+                "$staff": [
+                    {
+                        "name": "软件王五", 
+                        "id": "这里是手机号", 
+                        "password": "这里是密码", 
+                        "job": "这里是职务",
+                    "right": "软件小组"
+                    }
+                ]
+            }
+        }, 
+        "人力部门": {
+           "$staff": [ ]
+        }, 
+        "销售部门": {
+            "$staff": [ ]
+        }
+    }
+}
+'''; //一直以来更改的jsonTree
 
 class LoginPage extends StatefulWidget {
   String role;
@@ -165,6 +241,8 @@ class _LoginPageState extends State<LoginPage> {
           new MaterialPageRoute(builder: (context) => new Tabs()),
           (route) => route == null);
     } else if (this.role == "admin" && result.code == "200") {
+      final tree = Provider.of<ProviderServices>(context);
+      tree.upDataTree(jsonTreeNet);
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),
           (route) => route == null);

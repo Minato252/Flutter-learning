@@ -2,81 +2,83 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+import 'package:provider/provider.dart';
 import 'package:weitong/services/event_util.dart';
+import 'package:weitong/services/providerServices.dart';
 
 String staff = "人员";
-String jsonTree = '''
-{
-    "总经理": {
-        "$staff": [
-            {
-                "name": "老总", 
-                "id": "这里是手机号", 
-                "password": "这里是密码", 
-                "job": "这里是职务",
-                "right": "总经理"
-            }
-        ], 
-        "美术部门": {
-            "$staff": [
-                {
-                    "name": "张三", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                     "right": "美术部门"
-                }, 
-                {
-                    "name": "美术李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                "right": "美术部门"
-                }
-            ], 
-            "美术小组": {
-               "$staff": [
-                    {
-                        "name": "美术王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                        "right": "美术小组"
-                    }
-                ]
-            }
-        }, 
-        "软件部门": {
-           "$staff": [
-                {
-                    "name": "软件李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                    "right": "软件部门"
-                }
-            ], 
-            "软件小组": {
-                "$staff": [
-                    {
-                        "name": "软件王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                    "right": "软件小组"
-                    }
-                ]
-            }
-        }, 
-        "人力部门": {
-           "$staff": [ ]
-        }, 
-        "销售部门": {
-            "$staff": [ ]
-        }
-    }
-}
-'''; //一直以来更改的jsonTree
+// String jsonTree = '''
+// {
+//     "总经理": {
+//         "$staff": [
+//             {
+//                 "name": "老总",
+//                 "id": "这里是手机号",
+//                 "password": "这里是密码",
+//                 "job": "这里是职务",
+//                 "right": "总经理"
+//             }
+//         ],
+//         "美术部门": {
+//             "$staff": [
+//                 {
+//                     "name": "张三",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                      "right": "美术部门"
+//                 },
+//                 {
+//                     "name": "美术李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                 "right": "美术部门"
+//                 }
+//             ],
+//             "美术小组": {
+//                "$staff": [
+//                     {
+//                         "name": "美术王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                         "right": "美术小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "软件部门": {
+//            "$staff": [
+//                 {
+//                     "name": "软件李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                     "right": "软件部门"
+//                 }
+//             ],
+//             "软件小组": {
+//                 "$staff": [
+//                     {
+//                         "name": "软件王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                     "right": "软件小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "人力部门": {
+//            "$staff": [ ]
+//         },
+//         "销售部门": {
+//             "$staff": [ ]
+//         }
+//     }
+// }
+// '''; //一直以来更改的jsonTree
 
 class RightButton extends StatelessWidget {
   String rightName;
@@ -168,6 +170,9 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
   /// Builds tree or error message out of the entered content.
   Widget buildTree() {
     try {
+      final tree = Provider.of<ProviderServices>(context);
+      String jsonTree = tree.tree;
+
       var parsedJson = json.decode(jsonTree);
       return TreeView(
         nodes: toTreeNodes(parsedJson, null),

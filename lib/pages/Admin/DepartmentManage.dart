@@ -9,7 +9,7 @@ import 'UsersList.dart';
 
 import 'searchDemo.dart';
 
-// String staff = "人员";
+String staff = "人员";
 // String jsonTree = '''
 // {
 //     "总经理": {
@@ -102,15 +102,19 @@ class DepartmentManagePage extends StatefulWidget {
 }
 
 class _DepartmentManagePageState extends State<DepartmentManagePage> {
-  String staff = "人员";
-  String jsonTree;
   @override
+  List<Map> users;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     final tree = Provider.of<ProviderServices>(context);
-    jsonTree = tree.tree;
+    String jsonTree = tree.tree;
     //这里用了jsontree
     //在这里根据json提取所有人员
-    List<Map> users = getUsers(jsonTree);
+    users = getUsers(jsonTree);
     return Scaffold(
         appBar: AppBar(
           title: Text("人员信息"),
@@ -131,7 +135,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
             IconButton(
                 onPressed: () {
                   print("***************打印provider************");
-                  print(tree.tree.toString());
+                  print(users.toString());
                 },
                 icon: Icon(Icons.ac_unit)),
           ],
@@ -163,23 +167,39 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     final newUser = await Navigator.push(
         context, new MaterialPageRoute(builder: (context) => new AddUser()));
     if (newUser != null) {
+      //这里获得jsontree
+
+      final tree = Provider.of<ProviderServices>(context);
+      String jsonTree = tree.tree;
+
+      var parsedJson = json.decode(jsonTree);
+      insertStaff(parsedJson, newUser, newUser["right"]);
+      jsonTree = json.encode(parsedJson);
+
+      tree.upDataTree(jsonTree);
+      //这里需要利用jsonTree更新页面了======
+
       setState(() {
-        //这里获得jsontree
-        var parsedJson = json.decode(jsonTree);
-        insertStaff(parsedJson, newUser, newUser["right"]);
-        jsonTree = json.encode(parsedJson);
-        //这里需要利用jsonTree更新页面了======
+        final tree = Provider.of<ProviderServices>(context);
+        String jsonTree = tree.tree;
+        //这里用了jsontree
+        //在这里根据json提取所有人员
+        this.users = getUsers(jsonTree);
       });
     }
   }
 
   bool _deleteUser(Map staff) {
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
+
     var parsedJson = json.decode(jsonTree);
     deleteStaff(parsedJson, staff);
     jsonTree = json.encode(parsedJson);
 
     //这里需要更新jsonTree===================
 
+    tree.upDataTree(jsonTree);
     return true; //成功返回true
   }
 

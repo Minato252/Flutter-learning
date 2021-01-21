@@ -5,6 +5,7 @@ class UserSliverList extends StatefulWidget {
   List<Map> users;
 
   Function deleteStaff;
+
   UserSliverList(this.users, {this.deleteStaff});
   @override
   _UserSliverListState createState() =>
@@ -16,6 +17,7 @@ class _UserSliverListState extends State<UserSliverList> {
   List<Map> users;
   Function deleteStaff;
   _UserSliverListState(this.users, this.deleteStaff);
+
   Widget build(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate(
@@ -31,7 +33,7 @@ class _UserSliverListState extends State<UserSliverList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(users[index]["name"]),
+                    Text(widget.users[index]["name"]),
                     Row(
                       children: [
                         IconButton(
@@ -55,6 +57,10 @@ class _UserSliverListState extends State<UserSliverList> {
       },
       childCount: users.length,
     ));
+  }
+
+  void refreshUI() {
+    setState(() {});
   }
 
   Future _alertDialog(users, index) async {
