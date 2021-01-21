@@ -179,6 +179,7 @@ class _RightWidgetState extends State<RightWidget> {
       //这里应该刷新tree的UI,目前只能用按钮实现
 
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+      setState(() {});
     }
   }
 
