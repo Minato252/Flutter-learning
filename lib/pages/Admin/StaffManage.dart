@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+import 'package:provider/provider.dart';
 import 'package:weitong/services/event_util.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/dialog_util.dart';
 
@@ -333,6 +335,11 @@ class _StaffManagePageState extends State<StaffManagePage> {
 
   @override
   Widget build(BuildContext context) {
+    final tree = Provider.of<ProviderServices>(context);
+    tree.upDataTree(jsonTree);
+    // print("***************打印provider************");
+    // print(tree.tree.toString());
+
     sss = EventBusUtil.getInstance().on<UpdataNode>().listen((data) {
       if (data.type == "rejectDeleteNode") {
         alertDialog();

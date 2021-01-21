@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/pages/Admin/searchDemo.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'Model/user_data.dart';
 import 'pages/tabs/Tabs.dart';
 import 'routers/router.dart';
@@ -28,10 +30,25 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // home: SearchDemo(),
-      initialRoute: '/',
-      onGenerateRoute: onGenerateRoute,
+    // return MaterialApp(
+    //   // home: SearchDemo(),
+    //   initialRoute: '/',
+    //   onGenerateRoute: onGenerateRoute,
+    // );
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(builder: (_) => ProviderServices()),
+      ],
+      child: MaterialApp(
+        // home: Tabs(),
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        onGenerateRoute: onGenerateRoute,
+        // theme: ThemeData(
+        //     // primaryColor: Colors.yellow
+        //     primaryColor: Colors.white),
+      ),
     );
   }
 }
