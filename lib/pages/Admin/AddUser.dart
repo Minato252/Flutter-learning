@@ -4,10 +4,10 @@ import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
 
 class AddUser extends StatefulWidget {
-  AddUser({Key key}) : super(key: key);
-
+  List<String> illegalText; //非法字符列表
+  AddUser(this.illegalText);
   @override
-  _AddUserState createState() => _AddUserState();
+  _AddUserState createState() => _AddUserState(illegalText);
 }
 
 class _AddUserState extends State<AddUser> {
@@ -15,6 +15,8 @@ class _AddUserState extends State<AddUser> {
   final newUserFormKey = GlobalKey<FormState>();
   String id, password, name, job, right;
   int rightValue;
+  List<String> illegalText; //非法字符列表
+  _AddUserState(this.illegalText);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,6 +199,8 @@ class _AddUserState extends State<AddUser> {
   String _validateNewId(value) {
     if (value.isEmpty) {
       return "手机号不能为空";
+    } else if (illegalText.contains(value)) {
+      return "此手机号已被注册";
     }
 
     return null;

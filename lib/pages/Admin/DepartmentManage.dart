@@ -163,16 +163,17 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
   _addUser(BuildContext context) async {
     //这里用了jsontree
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
 
-    final newUser = await Navigator.push(
-        context, new MaterialPageRoute(builder: (context) => new AddUser()));
+    var parsedJson = json.decode(jsonTree);
+    List<String> idList = [];
+    getAllPeopleId(parsedJson, idList);
+    final newUser = await Navigator.push(context,
+        new MaterialPageRoute(builder: (context) => new AddUser(idList)));
     if (newUser != null) {
       //这里获得jsontree
 
-      final tree = Provider.of<ProviderServices>(context);
-      String jsonTree = tree.tree;
-
-      var parsedJson = json.decode(jsonTree);
       insertStaff(parsedJson, newUser, newUser["right"]);
       jsonTree = json.encode(parsedJson);
 
@@ -242,6 +243,18 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     getAllPeopleName(parsedJson, users);
     users = List<Map>.from(users);
     return users;
+  }
+
+  void getAllPeopleId(parsedJson, List result) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        getAllPeopleId(parsedJson[key], result);
+      });
+    } else if (parsedJson is List) {
+      for (int i = 0; i < parsedJson.length; i++) {
+        result.add(parsedJson[i]["id"]);
+      }
+    }
   }
 
   void getAllPeopleName(parsedJson, List result) {
