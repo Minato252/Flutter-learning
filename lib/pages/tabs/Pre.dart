@@ -177,7 +177,7 @@ class _PreAndSendState extends State<PreAndSend> {
       var htmlCode = await controller.generateHtmlUrl();
       DateTime now = new DateTime.now();
       String cure =
-          "<p><span style=\"font-size:20px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString()}<\/span><\/p>";
+          "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString()}<\/span><\/p>";
       // content = content + cure + htmlCode;
       messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
       content = messageModel.toJsonString();
