@@ -232,7 +232,6 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<String> getTree() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     String tree = prefs.get("tree");
     if (tree == null) {
       tree = "{}";
@@ -258,14 +257,23 @@ class _LoginPageState extends State<LoginPage> {
 
     if (this.role == "user" && rel2["code"] == "200") {
       _saveUserInfo(id, rel2["token"]);
+
+      //把树从内存里取出 这个之后变成网络请求
+      final tree = Provider.of<ProviderServices>(context);
+      String jsonTreeNet = await getTree();
+      tree.upDataTree(jsonTreeNet);
+
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),
           (route) => route == null);
     } else if (this.role == "admin" && rel2["管理员登录成功"] == "successful") {
       _saveAdminInfo(id, password);
+
+      //把树从内存里取出 这个之后变成网络请求
       final tree = Provider.of<ProviderServices>(context);
       String jsonTreeNet = await getTree();
       tree.upDataTree(jsonTreeNet);
+
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),
           (route) => route == null);

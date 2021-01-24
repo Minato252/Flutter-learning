@@ -366,7 +366,9 @@ class _StaffManagePageState extends State<StaffManagePage> {
         setState(() {});
       }
       sss.cancel();
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     return Scaffold(
       appBar: AppBar(
