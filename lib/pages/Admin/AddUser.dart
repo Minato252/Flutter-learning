@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
+import 'package:weitong/widget/toast.dart';
 
 class AddUser extends StatefulWidget {
   List<String> illegalText; //非法字符列表
@@ -281,30 +282,19 @@ class _AddUserState extends State<AddUser> {
     if (j.containsKey("fail")) {
       print("超出购买限额");
 
-      AlertMesaage("超出可创建最大人数");
+      // MyToast.AlertMesaage("超出可创建最大人数");
     } else if (j.containsKey("code")) {
       if (j["code"] == "202") {
         print("id已注册");
-        AlertMesaage(j["Msg"]);
+        // MyToast.AlertMesaage(j["Msg"]);
       }
     } else if (j.containsKey("uToken")) {
       print("注册成功");
 
-      AlertMesaage(j["注册成功"]);
+      // MyToast.AlertMesaage(j["注册成功"]);
       return true;
     }
     return false;
-  }
-
-  AlertMesaage(String msg, {var color = Colors.red}) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM, // 消息框弹出的位置
-        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
-        backgroundColor: color,
-        textColor: Colors.white,
-        fontSize: 16.0);
   }
 
   Future<void> _sendDataBack(BuildContext context) async {

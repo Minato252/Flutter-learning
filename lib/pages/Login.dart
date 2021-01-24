@@ -90,7 +90,6 @@ String staff = "人员";
 //     }
 // }
 // '''; //一直以来更改的jsonTree
-String jsonTreeNet = "{}";
 
 class LoginPage extends StatefulWidget {
   String role;
@@ -231,6 +230,16 @@ class _LoginPageState extends State<LoginPage> {
     // prefs.setString("password", _password.text);
   }
 
+  Future<String> getTree() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String tree = prefs.get("tree");
+    if (tree == null) {
+      tree = "{}";
+    }
+    return tree;
+  }
+
   void _loginAction() async {
     var rel = await Dio().post("http://47.110.150.159:8080/login",
         data: {"id": id, "password": password});
@@ -255,6 +264,7 @@ class _LoginPageState extends State<LoginPage> {
     } else if (this.role == "admin" && rel2["管理员登录成功"] == "successful") {
       _saveAdminInfo(id, password);
       final tree = Provider.of<ProviderServices>(context);
+      String jsonTreeNet = await getTree();
       tree.upDataTree(jsonTreeNet);
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),

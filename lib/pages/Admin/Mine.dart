@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
 import '../Login.dart';
@@ -97,10 +99,18 @@ class _MineState extends State<Mine> {
   }
 
   void _logout() async {
+    saveTree();
     clean();
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(builder: (context) => new LoginPage()),
         (route) => route == null);
+  }
+
+  saveTree() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final tree = Provider.of<ProviderServices>(context);
+    String jsonTree = tree.tree;
+    prefs.setString("tree", jsonTree);
   }
 
   Future<void> clean() async {
