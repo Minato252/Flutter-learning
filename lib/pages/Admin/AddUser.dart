@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
@@ -236,21 +241,90 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  void _sendDataBack(BuildContext context) {
+  Future<bool> registerUser(
+      String id, String name, String password, String job, String right) async {
+//  {
+//      "id": "0988", 注册账号
+//      "uPower":权限
+//      "name": "xxx", 放入融云服务器的用户姓名
+//      "password":"okkk",密码
+//      "type":"1" 这里必须和creator一样（程序在查询其他成员的时候需要这个值，不然会失效）
+//      "creator":"1"  区分成员属于哪个管理员创建
+//      "authority":"部长"  权限
+//     "who":"member"  此处区分注册人员；如果是注册管理员此处填写：adm
+//                                       如果是注册用户成员此处填写：member
+//  }
+
+//获取自己的id
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.get("adminId");
+    var rel = await Dio().post("http://47.110.150.159:8080/register", data: {
+      "id": id,
+      "uPower": right,
+      "name": name,
+      "password": password,
+      "type": adminId,
+      "creator": adminId,
+      "authority": job,
+      "who": "member"
+    });
+
+// 1 {fail:超出可创建最大人数}：表示超出购买的账号数，导致创建失败
+// 2 {"Msg":"账号已存在","code":"202","id":"id"} 202：表示此ID已经被注册
+// 3 注册成功，返回message：
+// {"authority":"1",
+// "id":"177",
+// "password":"okkk",
+// "token":"+N6PSEp6cPDMad7e68GxGrTxq47Jn+UhuuSKJ1cFdRA=@9s7f.cn.rongnav.com;9s7f.cn.rongcfg.com"}
+
+    Map j = json.decode(rel.data);
+    if (j.containsKey("fail")) {
+      print("超出购买限额");
+
+      AlertMesaage("超出可创建最大人数");
+    } else if (j.containsKey("code")) {
+      if (j["code"] == "202") {
+        print("id已注册");
+        AlertMesaage(j["Msg"]);
+      }
+    } else if (j.containsKey("uToken")) {
+      print("注册成功");
+
+      AlertMesaage(j["注册成功"]);
+      return true;
+    }
+    return false;
+  }
+
+  AlertMesaage(String msg, {var color = Colors.red}) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM, // 消息框弹出的位置
+        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        backgroundColor: color,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
+  Future<void> _sendDataBack(BuildContext context) async {
     newUserFormKey.currentState.save();
     if (right == null) {
       alertDialog();
       return;
     }
     if (newUserFormKey.currentState.validate()) {
-      Map mapToSendBack = {
-        "name": name,
-        "id": id,
-        "password": password,
-        "job": job,
-        "right": right,
-      };
-      Navigator.pop(context, mapToSendBack);
+      bool regSuc = await registerUser(id, name, password, job, right);
+      if (regSuc) {
+        Map mapToSendBack = {
+          "name": name,
+          "id": id,
+          "password": password,
+          "job": job,
+          "right": right,
+        };
+        Navigator.pop(context, mapToSendBack);
+      }
     }
   }
 }

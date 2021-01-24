@@ -14,6 +14,20 @@ class Mine extends StatefulWidget {
 
 class _MineState extends State<Mine> {
   @override
+  String id;
+  void initState() {
+    super.initState();
+    _getAdminInfo();
+  }
+
+  _getAdminInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.id = prefs.get("adminId");
+    setState(() {
+      id;
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -47,11 +61,11 @@ class _MineState extends State<Mine> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("用户名：124124125",
+                          Text("用户名：${id}",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: ScreenAdapter.size(32))),
-                          Text("普通员工",
+                          Text("用户管理员",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: ScreenAdapter.size(24))),
@@ -75,20 +89,23 @@ class _MineState extends State<Mine> {
             JdButton(
               text: "退出登录",
               cb: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    new MaterialPageRoute(
-                        builder: (context) => new LoginPage()),
-                    (route) => route == null);
-
-                cleanToken();
+                _logout();
               },
             )
           ],
         ));
   }
 
-  Future<void> cleanToken() async {
+  void _logout() async {
+    clean();
+    Navigator.of(context).pushAndRemoveUntil(
+        new MaterialPageRoute(builder: (context) => new LoginPage()),
+        (route) => route == null);
+  }
+
+  Future<void> clean() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", null);
+    prefs.setString("adminId", null);
+    prefs.setString("password", null);
   }
 }

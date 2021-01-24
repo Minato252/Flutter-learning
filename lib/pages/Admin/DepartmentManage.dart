@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/routers/router.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -134,8 +136,17 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
                 icon: Icon(Icons.add)),
             IconButton(
                 onPressed: () {
-                  print("***************打印provider************");
-                  print(users.toString());
+                  String jsons = """{
+	{
+		"id": "minato",
+		"password": "minato"
+	}: {
+		"id": "minato",
+		"password": "minato"
+	}
+}""";
+                  Map m = json.decode(jsons);
+                  print(m.toString());
                 },
                 icon: Icon(Icons.ac_unit)),
           ],
@@ -172,14 +183,11 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     final newUser = await Navigator.push(context,
         new MaterialPageRoute(builder: (context) => new AddUser(idList)));
     if (newUser != null) {
-      //这里获得jsontree
-
       insertStaff(parsedJson, newUser, newUser["right"]);
       jsonTree = json.encode(parsedJson);
 
       tree.upDataTree(jsonTree);
       //这里需要利用jsonTree更新页面了======
-
       setState(() {
         final tree = Provider.of<ProviderServices>(context);
         String jsonTree = tree.tree;
@@ -190,7 +198,16 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     }
   }
 
+  Future<bool> deleteAccount(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.get("adminId");
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/deleteMember?type=$adminId&id=$id");
+    return true;
+  }
+
   bool _deleteUser(Map staff) {
+    deleteAccount(staff["id"]);
     final tree = Provider.of<ProviderServices>(context);
     String jsonTree = tree.tree;
 

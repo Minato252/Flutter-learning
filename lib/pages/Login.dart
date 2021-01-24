@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/providerServices.dart';
+import 'package:weitong/widget/toast.dart';
 import '../widget/JdText.dart';
 import '../widget/JdButton.dart';
 import 'package:dio/dio.dart';
@@ -15,78 +18,79 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'Admin/AdminTabs.dart';
 
 String staff = "人员";
-String jsonTreeNet = '''
-{
-    "总经理": {
-        "$staff": [
-            {
-                "name": "老总", 
-                "id": "这里是手机号", 
-                "password": "这里是密码", 
-                "job": "这里是职务",
-                "right": "总经理"
-            }
-        ], 
-        "美术部门": {
-            "$staff": [
-                {
-                    "name": "张三", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                     "right": "美术部门"
-                }, 
-                {
-                    "name": "美术李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                "right": "美术部门"
-                }
-            ], 
-            "美术小组": {
-               "$staff": [
-                    {
-                        "name": "美术王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                        "right": "美术小组"
-                    }
-                ]
-            }
-        }, 
-        "软件部门": {
-           "$staff": [
-                {
-                    "name": "软件李四", 
-                    "id": "这里是手机号", 
-                    "password": "这里是密码", 
-                    "job": "这里是职务",
-                    "right": "软件部门"
-                }
-            ], 
-            "软件小组": {
-                "$staff": [
-                    {
-                        "name": "软件王五", 
-                        "id": "这里是手机号", 
-                        "password": "这里是密码", 
-                        "job": "这里是职务",
-                    "right": "软件小组"
-                    }
-                ]
-            }
-        }, 
-        "人力部门": {
-           "$staff": [ ]
-        }, 
-        "销售部门": {
-            "$staff": [ ]
-        }
-    }
-}
-'''; //一直以来更改的jsonTree
+// String jsonTreeNet = '''
+// {
+//     "总经理": {
+//         "$staff": [
+//             {
+//                 "name": "老总",
+//                 "id": "这里是手机号",
+//                 "password": "这里是密码",
+//                 "job": "这里是职务",
+//                 "right": "总经理"
+//             }
+//         ],
+//         "美术部门": {
+//             "$staff": [
+//                 {
+//                     "name": "张三",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                      "right": "美术部门"
+//                 },
+//                 {
+//                     "name": "美术李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                 "right": "美术部门"
+//                 }
+//             ],
+//             "美术小组": {
+//                "$staff": [
+//                     {
+//                         "name": "美术王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                         "right": "美术小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "软件部门": {
+//            "$staff": [
+//                 {
+//                     "name": "软件李四",
+//                     "id": "这里是手机号",
+//                     "password": "这里是密码",
+//                     "job": "这里是职务",
+//                     "right": "软件部门"
+//                 }
+//             ],
+//             "软件小组": {
+//                 "$staff": [
+//                     {
+//                         "name": "软件王五",
+//                         "id": "这里是手机号",
+//                         "password": "这里是密码",
+//                         "job": "这里是职务",
+//                     "right": "软件小组"
+//                     }
+//                 ]
+//             }
+//         },
+//         "人力部门": {
+//            "$staff": [ ]
+//         },
+//         "销售部门": {
+//             "$staff": [ ]
+//         }
+//     }
+// }
+// '''; //一直以来更改的jsonTree
+String jsonTreeNet = "{}";
 
 class LoginPage extends StatefulWidget {
   String role;
@@ -219,48 +223,57 @@ class _LoginPageState extends State<LoginPage> {
     // prefs.setString("password", _password.text);
   }
 
+  void _saveAdminInfo(String id, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("adminId", id);
+    prefs.setString("password", password);
+    // prefs.setString("phone", _assount.text);
+    // prefs.setString("password", _password.text);
+  }
+
   void _loginAction() async {
     var rel = await Dio().post("http://47.110.150.159:8080/login",
         data: {"id": id, "password": password});
     // var rel;
-    var rel2 = convert.jsonDecode(rel.data);
-    var result = new UserItemModel.fromJson(rel2);
 
-    //===debug
-    if (id == "123") {
-      result = new UserItemModel.fromJson(demo[0]);
-    } else if (id == '456') {
-      result = new UserItemModel.fromJson(demo[1]);
-    } else if (id == '789') {
-      result = new UserItemModel.fromJson(demo[2]);
-    }
+    Map rel2 = json.decode(rel.data);
 
-    if (this.role == "user" && result.code == "200") {
-      _saveUserInfo(id, result.token);
+    // //===debug
+    // if (id == "123") {
+    //   result = new UserItemModel.fromJson(demo[0]);
+    // } else if (id == '456') {
+    //   result = new UserItemModel.fromJson(demo[1]);
+    // } else if (id == '789') {
+    //   result = new UserItemModel.fromJson(demo[2]);
+    // }
+
+    if (this.role == "user" && rel2["code"] == "200") {
+      _saveUserInfo(id, rel2["token"]);
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),
           (route) => route == null);
-    } else if (this.role == "admin" && result.code == "200") {
+    } else if (this.role == "admin" && rel2["管理员登录成功"] == "successful") {
+      _saveAdminInfo(id, password);
       final tree = Provider.of<ProviderServices>(context);
       tree.upDataTree(jsonTreeNet);
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),
           (route) => route == null);
     } else {
-      AlertMesaage();
+      MyToast.AlertMesaage("用户名或密码错误");
     }
 
     //post
   }
 
-  AlertMesaage() {
-    Fluttertoast.showToast(
-        msg: "用户名或密码错误",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM, // 消息框弹出的位置
-        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
+  // AlertMesaage() {
+  //   Fluttertoast.showToast(
+  //       msg: "用户名或密码错误",
+  //       toastLength: Toast.LENGTH_LONG,
+  //       gravity: ToastGravity.BOTTOM, // 消息框弹出的位置
+  //       timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0);
+  // }
 }
