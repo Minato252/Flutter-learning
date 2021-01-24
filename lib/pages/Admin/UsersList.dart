@@ -41,12 +41,12 @@ class _UserSliverListState extends State<UserSliverList> {
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
-                                      UserDetails(users[index])));
+                                      UserDetails(widget.users[index])));
                             }),
                         IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
-                              _alertDialog(users, index);
+                              _alertDialog(widget.users, index);
                             }),
                       ],
                     )
@@ -55,7 +55,7 @@ class _UserSliverListState extends State<UserSliverList> {
           ),
         );
       },
-      childCount: users.length,
+      childCount: widget.users.length,
     ));
   }
 

@@ -1,5 +1,5 @@
 //融云 appkey
-String RongAppKey = 'sfci50a7sj63i';
+String RongAppKey = "8luwapkv84aql";
 //用户 id
 String CurrentUserId = '123';
 
