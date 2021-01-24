@@ -44,6 +44,7 @@ class SimpleRichEditController extends RichEditController {
         aspectRatio: 16 / 9,
         looping: false,
         showControls: true,
+
         // 占位图
         placeholder: new Container(
           color: Colors.grey,
@@ -99,12 +100,12 @@ class SimpleRichEditController extends RichEditController {
       StringBuffer sb, RichEditData element) async {
     String url = await UploadFile.fileUplod(element.data);
 
-    sb.write("<p>");
+    sb.write("<div style=\"text-align: center;\">");
     sb.write("<image style=\"width:${element.imgWith}px\" src=\"");
 
     sb.write(url);
     sb.write("\"/>");
-    sb.write("<\/p>");
+    sb.write("<\/div>");
   }
 
   Future<void> generateVideoHtmlUrl(

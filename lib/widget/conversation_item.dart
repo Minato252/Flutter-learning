@@ -181,7 +181,8 @@ class _ConversationItemState extends State<ConversationItem> {
                         // (this.user == null || this.user.id == null
                         //     ? ""
                         //     : this.user.id),
-                        "demo1",
+                        // "demo1",
+                        this.message.senderUserId,
                         style: TextStyle(
                             fontSize: RCFont.MessageNameFont,
                             color: Color(RCColor.MessageNameBgColor))),
@@ -244,7 +245,8 @@ class _ConversationItemState extends State<ConversationItem> {
                       // (this.user == null || this.user.id == null
                       //     ? ""
                       //     : this.user.id),
-                      "demo2", //暂时写成demo
+                      // "demo2", //暂时写成demo
+                      this.message.targetId,
                       style:
                           TextStyle(color: Color(RCColor.MessageNameBgColor)),
                     ),

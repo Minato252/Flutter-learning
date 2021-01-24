@@ -237,6 +237,8 @@ class _LoginPageState extends State<LoginPage> {
 
     if (this.role == "user" && result.code == "200") {
       _saveUserInfo(id, result.token);
+      final tree = Provider.of<ProviderServices>(context);
+      tree.upDataTree(jsonTreeNet);
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),
           (route) => route == null);
