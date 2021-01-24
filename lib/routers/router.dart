@@ -10,6 +10,9 @@ import '../pages/tags/TagTextFieldDemo.dart';
 import '../pages/Admin/AdminTabs.dart';
 import '../pages/tabs/ReadMessage.dart';
 import '../pages/tabs/MessageItem.dart';
+import 'package:weitong/pages/Note/EditCreate.dart';
+import 'package:weitong/pages/Note/CategoryPage.dart';
+import 'package:weitong/pages/Note/NewCategory.dart';
 
 //配置路由
 final routes = {
@@ -30,6 +33,9 @@ final routes = {
       ConversationPage(arguments: arguments),
   // '/form': (context, {arguments}) => FormPage(arguments: arguments),
   // '/readMessage': (context) => ReadMessage(),
+  '/category': (BuildContext context) => new CategoryPage(),
+  '/edit': (BuildContext context) => new EditCreate(),
+  '/newcategory': (context) => NewCategory(),
 };
 
 //固定写法

@@ -78,9 +78,11 @@ class _UserPageState extends State<UserPage> {
             title: Text("记录"),
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text("设置"),
-          ),
+              leading: Icon(Icons.settings),
+              title: Text("我的资料"),
+              onTap: () {
+                Navigator.of(context).pushNamed('/category');
+              }),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text("设置"),
