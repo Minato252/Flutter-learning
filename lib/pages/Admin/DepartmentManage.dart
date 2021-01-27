@@ -13,88 +13,6 @@ import 'UsersList.dart';
 import 'searchDemo.dart';
 
 String staff = "人员";
-// String jsonTree = '''
-// {
-//     "总经理": {
-//         "$staff": [
-//             {
-//                 "name": "老总",
-//                 "id": "这里是手机号",
-//                 "password": "这里是密码",
-//                 "job": "这里是职务",
-//                 "right": "总经理"
-//             }
-//         ],
-//         "美术部门": {
-//             "$staff": [
-//                 {
-//                     "name": "张三",
-//                     "id": "这里是手机号",
-//                     "password": "这里是密码",
-//                     "job": "这里是职务",
-//                      "right": "美术部门"
-//                 },
-//                 {
-//                     "name": "美术李四",
-//                     "id": "这里是手机号",
-//                     "password": "这里是密码",
-//                     "job": "这里是职务",
-//                 "right": "美术部门"
-//                 }
-//             ],
-//             "美术小组": {
-//                "$staff": [
-//                     {
-//                         "name": "美术王五",
-//                         "id": "这里是手机号",
-//                         "password": "这里是密码",
-//                         "job": "这里是职务",
-//                         "right": "美术小组"
-//                     }
-//                 ]
-//             }
-//         },
-//         "软件部门": {
-//            "$staff": [
-//                 {
-//                     "name": "软件李四",
-//                     "id": "这里是手机号",
-//                     "password": "这里是密码",
-//                     "job": "这里是职务",
-//                     "right": "软件部门"
-//                 }
-//             ],
-//             "软件小组": {
-//                 "$staff": [
-//                     {
-//                         "name": "软件王五",
-//                         "id": "这里是手机号",
-//                         "password": "这里是密码",
-//                         "job": "这里是职务",
-//                     "right": "软件小组"
-//                     }
-//                 ]
-//             }
-//         },
-//         "人力部门": {
-//            "$staff": [ ]
-//         },
-//         "销售部门": {
-//             "$staff": [ ]
-//         }
-//     }
-// }
-// '''; //一直以来更改的jsonTree
-// void getAllPeopleName(parsedJson, List result) {
-//   if (parsedJson is Map<String, dynamic>) {
-//     parsedJson.forEach((key, value) {
-//       getAllPeopleName(parsedJson[key], result);
-//     });
-//   } else if (parsedJson is List) {
-//     print("11");
-//     result.addAll(parsedJson);
-//   }
-// }
 
 //在这里管理人员详细信息,添加人员
 class DepartmentManagePage extends StatefulWidget {
@@ -256,9 +174,10 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
   List<Map> getUsers(String jsonTree) {
     //在这里根据json提取所有人员（获得users）
-    List<Map> users;
+    List users = [];
     var parsedJson = json.decode(jsonTree);
     Tree.getAllPeople(parsedJson, users);
+    users = List<Map>.from(users);
     return users;
   }
 }

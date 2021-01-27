@@ -131,12 +131,12 @@ class Tree {
     }
   }
 
-  static void getAllPeople(parsedJson, List<Map> result) {
+  static void getAllPeople(parsedJson, List result) {
     if (parsedJson is Map<String, dynamic>) {
       parsedJson.forEach((key, value) {
         getAllPeople(parsedJson[key], result);
       });
-    } else if (parsedJson is List<Map>) {
+    } else if (parsedJson is List) {
       print("11");
       result.addAll(parsedJson);
     }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/tabs/friendList.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -121,7 +122,17 @@ class _LogRecordPageState extends State<LogRecordPage> {
     }
   }
 
-  _awaitReturnChooseStaff(BuildContext context) {}
+  _awaitReturnChooseStaff(BuildContext context) {
+    List<Map> users = _getSubs();
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new ChooseFriendPage(users)));
+    // if (chosedTag != null) {
+    //   _curchosedTag = chosedTag;
+    //   _updateChooseTagButton();
+    // }
+  }
 
   _updateChooseTagButton() {
     if (_curchosedTag != '') {
@@ -158,7 +169,9 @@ class _LogRecordPageState extends State<LogRecordPage> {
     final ps = Provider.of<ProviderServices>(context);
     String jsonTree = ps.tree;
     var parsedJson = json.decode(jsonTree);
-    List<Map> result;
-    Tree.getAllPeople(parsedJson, result);
+    List users = [];
+    Tree.getAllPeople(parsedJson, users);
+    users = List<Map>.from(users);
+    return users;
   }
 }
