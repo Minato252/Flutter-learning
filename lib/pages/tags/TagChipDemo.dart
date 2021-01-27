@@ -134,7 +134,7 @@ class _TagState extends State<TagChipDemo> {
 
   void _saveTags() async {
     //执行保存操作
-    saveKeyWords();
+    await saveKeyWords();
     Navigator.of(context).pop();
   }
 }

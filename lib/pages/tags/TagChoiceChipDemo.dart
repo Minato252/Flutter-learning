@@ -11,7 +11,7 @@ class TagChoiceChipDemo extends StatefulWidget {
 
 class _TagChoiceState extends State<TagChoiceChipDemo> {
   @override
-  List _tags;
+  List<String> _tags;
   // = [
   //   '111',
   //   '222',

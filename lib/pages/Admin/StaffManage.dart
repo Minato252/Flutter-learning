@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
@@ -156,7 +157,7 @@ class _RightWidgetState extends State<RightWidget> {
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     List<String> illegalText = [];
-    getAllKeyName(parsedJson, illegalText);
+    Tree.getAllKeyName(parsedJson, illegalText);
     //这里写新增孩子的函数
     final newRight = await Navigator.push(
       context,
@@ -165,7 +166,7 @@ class _RightWidgetState extends State<RightWidget> {
               illegalText: illegalText)),
     );
     if (newRight != null) {
-      parsedJson = insertNode(parsedJson, rightName, newRight);
+      parsedJson = Tree.insertNode(parsedJson, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
 
@@ -181,7 +182,7 @@ class _RightWidgetState extends State<RightWidget> {
 
     var parsedJson = json.decode(jsonTree);
     List<String> illegalText = [];
-    getAllKeyName(parsedJson, illegalText);
+    Tree.getAllKeyName(parsedJson, illegalText);
     final newRight = await Navigator.push(
       context,
       new MaterialPageRoute(
@@ -189,7 +190,7 @@ class _RightWidgetState extends State<RightWidget> {
               illegalText: illegalText)),
     );
     if (newRight != null) {
-      parsedJson = editNode(parsedJson, parentName, rightName, newRight);
+      parsedJson = Tree.editNode(parsedJson, parentName, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
 
@@ -207,127 +208,12 @@ class _RightWidgetState extends State<RightWidget> {
     final tree = Provider.of<ProviderServices>(context);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
-    parsedJson = deleteNode(parsedJson, parentName, rightName);
+    parsedJson = Tree.deleteNode(parsedJson, parentName, rightName);
     jsonTree = json.encode(parsedJson);
 
     EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
 
     tree.upDataTree(jsonTree);
-  }
-
-  void getAllKeyName(parsedJson, List<String> result) {
-    if (parsedJson is Map<String, dynamic>) {
-      parsedJson.forEach((key, value) {
-        if (!result.contains(key)) {
-          result.add(key);
-        }
-        getAllKeyName(parsedJson[key], result);
-        return;
-      });
-    } else {
-      return;
-    }
-  }
-}
-
-bool mapIsEmpty(Map<String, dynamic> m) {
-  bool isEmpty = true;
-  if (m["$staff"].length != 0) {
-    isEmpty = false;
-    return isEmpty;
-  }
-  if (m.keys.length > 1) {
-    isEmpty = false;
-    return isEmpty;
-  }
-  return isEmpty;
-}
-
-dynamic insertNode(parsedJson, parent, child) {
-  if (parent == null) {
-    parsedJson[child] = {
-      "$staff": [],
-    };
-    return parsedJson;
-  }
-  if (parsedJson is Map<String, dynamic>) {
-    parsedJson.forEach((key, value) {
-      if (key == parent) {
-        value[child] = {
-          "$staff": [],
-        };
-      } else {
-        parsedJson[key] = insertNode(parsedJson[key], parent, child);
-      }
-    });
-  }
-  return parsedJson;
-}
-
-dynamic editNode(parsedJson, parentName, String oldName, String newName) {
-  if (parsedJson is Map<String, dynamic>) {
-    if (parentName == null) {
-      //在第一级一定会有
-      parsedJson[newName] = Map.from(parsedJson[oldName]);
-      parsedJson.remove(oldName);
-      return parsedJson;
-    } else {
-      parsedJson.forEach((key, value) {
-        if (key == parentName) {
-          //一定在这一级
-          Map<String, dynamic> m = Map.from(value);
-          m[newName] = m[oldName];
-          m.remove(oldName);
-          parsedJson[key] = m;
-        } else {
-          parsedJson[key] =
-              editNode(parsedJson[key], parentName, oldName, newName);
-        }
-      });
-      return parsedJson;
-    }
-  } else {
-    return parsedJson;
-  }
-}
-
-dynamic deleteNode(parsedJson, parentName, deleteName) {
-  if (parsedJson is Map<String, dynamic>) {
-    if (parentName == null) {
-      //在第一级一定会有待删除结点
-      if (mapIsEmpty(parsedJson[deleteName])) {
-        //待删除结点里面为空
-        parsedJson.remove(deleteName);
-      } else {
-        //这里需要调用另一个类的函数
-        print("非空");
-        //在这里eventBus====================
-        EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
-//==========================================
-      }
-    } else {
-      parsedJson.forEach((key, value) {
-        if (key == parentName) {
-          //一定在这一级
-          Map<String, dynamic> m = Map.from(value);
-          if (mapIsEmpty(m[deleteName])) {
-            //待删除结点里面为空
-            m.remove(deleteName);
-            parsedJson[key] = m;
-          } else {
-            //这里需要调用另一个类的函数
-            print("非空");
-            EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
-          }
-        } else {
-          parsedJson[key] = deleteNode(parsedJson[key], parentName, deleteName);
-        }
-      });
-    }
-
-    return parsedJson;
-  } else {
-    return parsedJson;
   }
 }
 
@@ -391,7 +277,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
                 final tree = Provider.of<ProviderServices>(context);
                 String jsonTree = tree.tree;
                 var parsedJson = json.decode(jsonTree);
-                parsedJson = insertNode(parsedJson, null, newRight);
+                parsedJson = Tree.insertNode(parsedJson, null, newRight);
                 jsonTree = json.encode(parsedJson);
                 //这里应该刷新tree的UI,目前只能用按钮实现
 

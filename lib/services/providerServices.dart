@@ -15,4 +15,11 @@ class ProviderServices with ChangeNotifier {
     _keyWords = keyWords;
     notifyListeners();
   }
+
+  Map _userInfo;
+  Map get userInfo => _userInfo;
+  void upDatauserInfo(Map userInfo) {
+    _userInfo = userInfo;
+    notifyListeners();
+  }
 }

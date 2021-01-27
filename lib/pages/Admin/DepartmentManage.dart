@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/routers/router.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'UsersList.dart';
@@ -179,7 +180,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
     var parsedJson = json.decode(jsonTree);
     List<String> idList = [];
-    getAllPeopleId(parsedJson, idList);
+    Tree.getAllPeopleId(parsedJson, idList);
     final newUser = await Navigator.push(context,
         new MaterialPageRoute(builder: (context) => new AddUser(idList)));
     if (newUser != null) {
@@ -255,33 +256,9 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
   List<Map> getUsers(String jsonTree) {
     //在这里根据json提取所有人员（获得users）
-    List users = [];
+    List<Map> users;
     var parsedJson = json.decode(jsonTree);
-    getAllPeopleName(parsedJson, users);
-    users = List<Map>.from(users);
+    Tree.getAllPeople(parsedJson, users);
     return users;
-  }
-
-  void getAllPeopleId(parsedJson, List result) {
-    if (parsedJson is Map<String, dynamic>) {
-      parsedJson.forEach((key, value) {
-        getAllPeopleId(parsedJson[key], result);
-      });
-    } else if (parsedJson is List) {
-      for (int i = 0; i < parsedJson.length; i++) {
-        result.add(parsedJson[i]["id"]);
-      }
-    }
-  }
-
-  void getAllPeopleName(parsedJson, List result) {
-    if (parsedJson is Map<String, dynamic>) {
-      parsedJson.forEach((key, value) {
-        getAllPeopleName(parsedJson[key], result);
-      });
-    } else if (parsedJson is List) {
-      print("11");
-      result.addAll(parsedJson);
-    }
   }
 }

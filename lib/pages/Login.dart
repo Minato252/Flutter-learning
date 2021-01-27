@@ -214,9 +214,11 @@ class _LoginPageState extends State<LoginPage> {
             )));
   }
 
-  void _saveUserInfo(String id, String token) async {
+  void _saveUserInfo(Map userInfo, String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("id", id);
+    prefs.setString("id", userInfo["id"]);
+    prefs.setString("right", userInfo["right"]);
+
     prefs.setString("token", token);
     // prefs.setString("phone", _assount.text);
     // prefs.setString("password", _password.text);
@@ -249,6 +251,23 @@ class _LoginPageState extends State<LoginPage> {
     return keyWords;
   }
 
+  void getUserInfo(parsedJson, String id) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        getUserInfo(parsedJson[key], id);
+      });
+    } else if (parsedJson is List) {
+      for (int i = 0; i < parsedJson.length; i++) {
+        if (parsedJson[i]["id"] == id) {
+          Map user = parsedJson[i];
+          final ps = Provider.of<ProviderServices>(context);
+          ps.upDatauserInfo(user);
+        }
+      }
+    }
+    return null;
+  }
+
   void _loginAction() async {
     var rel = await Dio().post("http://47.110.150.159:8080/login",
         data: {"id": id, "password": password});
@@ -266,8 +285,6 @@ class _LoginPageState extends State<LoginPage> {
     // }
 
     if (this.role == "user" && rel2["code"] == "200") {
-      _saveUserInfo(id, rel2["token"]);
-
       //把树从内存里取出 这个之后变成网络请求
       final ps = Provider.of<ProviderServices>(context);
       String jsonTreeNet = await getTree();
@@ -276,6 +293,12 @@ class _LoginPageState extends State<LoginPage> {
       //把关键词从内存里取出
       List<String> keyWords = await getKeyWords();
       ps.upDataKeyWords(keyWords);
+
+      //在树里读取user的information,放provider里
+      var parsedJson = json.decode(jsonTreeNet);
+      getUserInfo(parsedJson, id);
+      Map userInfo = ps.userInfo;
+      _saveUserInfo(userInfo, rel2["token"]);
 
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),
