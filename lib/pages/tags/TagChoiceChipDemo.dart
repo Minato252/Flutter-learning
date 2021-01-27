@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
 class TagChoiceChipDemo extends StatefulWidget {
@@ -9,15 +11,18 @@ class TagChoiceChipDemo extends StatefulWidget {
 
 class _TagChoiceState extends State<TagChoiceChipDemo> {
   @override
-  List<String> _tags = [
-    '111',
-    '222',
-    '333',
-  ];
+  List _tags;
+  // = [
+  //   '111',
+  //   '222',
+  //   '333',
+  // ];
   String _choice = "";
   // void initState() {}
 
   Widget build(BuildContext context) {
+    final ps = Provider.of<ProviderServices>(context);
+    _tags = ps.keyWords;
     return Scaffold(
         appBar: AppBar(
           title: Text("关键词"),

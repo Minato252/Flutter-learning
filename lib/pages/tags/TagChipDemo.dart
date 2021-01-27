@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -10,13 +12,12 @@ class TagChipDemo extends StatefulWidget {
 
 class _TagState extends State<TagChipDemo> {
   @override
-  List<String> _tags = [
-    '111',
-    '222',
-    '333',
-  ];
-
-  // void initState() {}
+  // List<String> _tags = [
+  //   '111',
+  //   '222',
+  //   '333',
+  // ];
+  List<String> _tags;
 
   _awaitReturnNewTag(BuildContext context) async {
     final newTag = await Navigator.push(
@@ -25,13 +26,19 @@ class _TagState extends State<TagChipDemo> {
           builder: (context) => new Input("新建关键词", "输入您要新建的关键词", 12, "关键词")),
     );
     if (newTag != null) {
+      final ps = Provider.of<ProviderServices>(context);
+      _tags = ps.keyWords;
+
       setState(() {
         _tags.add(newTag);
+        ps.upDataKeyWords(_tags);
       });
     }
   }
 
   Widget build(BuildContext context) {
+    final ps = Provider.of<ProviderServices>(context);
+    _tags = ps.keyWords;
     return Scaffold(
         appBar: AppBar(
           title: Text("关键词"),
@@ -64,8 +71,12 @@ class _TagState extends State<TagChipDemo> {
                     return Chip(
                       label: Text(tag),
                       onDeleted: () {
+                        final ps = Provider.of<ProviderServices>(context);
+
                         setState(() {
                           _tags.remove(tag);
+
+                          ps.upDataKeyWords(_tags);
                         });
                       },
                       deleteButtonTooltipMessage: "删除这个关键词",
@@ -104,8 +115,26 @@ class _TagState extends State<TagChipDemo> {
         ))));
   }
 
+  Future<void> saveKeyWords() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final ps = Provider.of<ProviderServices>(context);
+    List<String> tags = ps.keyWords;
+    prefs.setString("keyWords", listToString(tags));
+  }
+
+  String listToString(List<String> list) {
+    if (list == null) {
+      return null;
+    }
+    String result;
+    list.forEach((string) =>
+        {if (result == null) result = string else result = '$result,$string'});
+    return result.toString();
+  }
+
   void _saveTags() async {
     //执行保存操作
+    saveKeyWords();
     Navigator.of(context).pop();
   }
 }

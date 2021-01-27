@@ -1,8 +1,10 @@
 //https://material.io/tools/icons/?icon=favorite&style=baseline
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import '../../services/ScreenAdapter.dart';
 import '../Login.dart';
@@ -102,6 +104,7 @@ class _UserPageState extends State<UserPage> {
     RongIMClient.disconnect(false);
 
     cleanToken();
+    saveKeyWords();
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(builder: (context) => new LoginPage()),
         (route) => route == null);
@@ -110,6 +113,23 @@ class _UserPageState extends State<UserPage> {
   Future<void> cleanToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", null);
+  }
+
+  String listToString(List<String> list) {
+    if (list == null) {
+      return null;
+    }
+    String result;
+    list.forEach((string) =>
+        {if (result == null) result = string else result = '$result,$string'});
+    return result.toString();
+  }
+
+  Future<void> saveKeyWords() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final ps = Provider.of<ProviderServices>(context);
+    List<String> tags = ps.keyWords;
+    prefs.setString("keyWords", listToString(tags));
   }
 
   _getUserInfo() async {

@@ -233,10 +233,20 @@ class _LoginPageState extends State<LoginPage> {
   Future<String> getTree() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String tree = prefs.get("tree");
+    print("tree: " + tree);
     if (tree == null) {
       tree = "{}";
     }
     return tree;
+  }
+
+  Future<List<String>> getKeyWords() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> keyWords = prefs.get("keyWords").split(",");
+    if (keyWords == null) {
+      keyWords = [];
+    }
+    return keyWords;
   }
 
   void _loginAction() async {
@@ -259,9 +269,13 @@ class _LoginPageState extends State<LoginPage> {
       _saveUserInfo(id, rel2["token"]);
 
       //把树从内存里取出 这个之后变成网络请求
-      final tree = Provider.of<ProviderServices>(context);
+      final ps = Provider.of<ProviderServices>(context);
       String jsonTreeNet = await getTree();
-      tree.upDataTree(jsonTreeNet);
+      ps.upDataTree(jsonTreeNet);
+
+      //把关键词从内存里取出
+      List<String> keyWords = await getKeyWords();
+      ps.upDataKeyWords(keyWords);
 
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),

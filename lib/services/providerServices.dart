@@ -8,4 +8,11 @@ class ProviderServices with ChangeNotifier {
     _tree = tree;
     notifyListeners();
   }
+
+  List<String> _keyWords;
+  List<String> get keyWords => _keyWords;
+  void upDataKeyWords(List<String> keyWords) {
+    _keyWords = keyWords;
+    notifyListeners();
+  }
 }
