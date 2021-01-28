@@ -88,9 +88,12 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
   }
 
   _addUser(BuildContext context) async {
-    //这里用了jsontree
-    final tree = Provider.of<ProviderServices>(context);
-    String jsonTree = tree.tree;
+    //获取id
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("adminId");
+
+    //从服务器获得最新的树
+    String jsonTree = await Tree.getTreeFormSer(id, true, context);
 
     var parsedJson = json.decode(jsonTree);
     List<String> idList = [];
@@ -101,7 +104,9 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
       insertStaff(parsedJson, newUser, newUser["right"]);
       jsonTree = json.encode(parsedJson);
 
-      tree.upDataTree(jsonTree);
+      //上传到服务器去
+      await Tree.setTreeInSer(id, jsonTree, context);
+
       //这里需要利用jsonTree更新页面了======
       setState(() {
         final tree = Provider.of<ProviderServices>(context);
@@ -114,25 +119,28 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
   }
 
   Future<bool> deleteAccount(String id) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.get("adminId");
-    var rel = await Dio()
-        .post("http://47.110.150.159:8080/deleteMember?type=$adminId&id=$id");
     return true;
   }
 
-  bool _deleteUser(Map staff) {
-    deleteAccount(staff["id"]);
-    final tree = Provider.of<ProviderServices>(context);
-    String jsonTree = tree.tree;
+  Future<bool> _deleteUser(Map staff) async {
+    //先删了服务器里的这个人员
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminId = prefs.get("adminId");
+    await Dio().post(
+        "http://47.110.150.159:8080/deleteMember?type=$adminId&id=${staff["id"]}");
 
+// 从远程拉取最新的树放进provider里
+    String jsonTree = await Tree.getTreeFormSer(adminId, true, context);
+
+//修改jsonTree字符串
     var parsedJson = json.decode(jsonTree);
     deleteStaff(parsedJson, staff);
     jsonTree = json.encode(parsedJson);
 
     //这里需要更新jsonTree===================
 
-    tree.upDataTree(jsonTree);
+    await Tree.setTreeInSer(adminId, jsonTree, context);
+
     return true; //成功返回true
   }
 

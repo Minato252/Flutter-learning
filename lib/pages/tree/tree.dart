@@ -194,13 +194,13 @@ class Tree {
       if (response.statusCode == 200) {
         print('下载请求成功');
         var contents = await File('$tempPath/tree.json').readAsString();
-        print(contents);
+        print("从服务器拉取的树：" + contents);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("tree", contents);
 
         final ps = Provider.of<ProviderServices>(context);
         ps.upDataTree(contents);
-        return;
+        return contents;
       } else {
         throw Exception('接口出错');
       }
