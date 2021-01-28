@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
@@ -22,9 +23,13 @@ class LogRecordPage extends StatefulWidget {
 class _LogRecordPageState extends State<LogRecordPage> {
   String _curchosedTag = "";
   String _curchosedStaff = "";
+  String _curchosedTime = "";
 
   String _actionChipStaffString = "选择创建人";
   IconData _actionChipStaffIconData = Icons.add;
+
+  String _actionChipTime = "选择创建日";
+  IconData _actionChipTimeIconData = Icons.add;
 
   String _actionChipString = "选择关键词";
   IconData _actionChipIconData = Icons.add;
@@ -51,6 +56,8 @@ class _LogRecordPageState extends State<LogRecordPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: _containerList = [
+                // Text("在此进行信息查询，至少选择下列一个参数。"),
+                Divider(),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -58,7 +65,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
                         children: [
                           Text("关键词:"),
                           SizedBox(
-                            width: 15,
+                            width: 20,
                           ),
                           ActionChip(
                             label: Text(
@@ -89,7 +96,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
                   children: <Widget>[
                     Text("创建人:"),
                     SizedBox(
-                      width: 15,
+                      width: 20,
                     ),
                     ActionChip(
                       label: Text(
@@ -103,6 +110,32 @@ class _LogRecordPageState extends State<LogRecordPage> {
                       },
                       avatar: Icon(
                         _actionChipStaffIconData,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text("创建日:"),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    ActionChip(
+                      label: Text(
+                        _actionChipTime,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.blue,
+                      onPressed: () {
+                        //_awaitReturnNewTag(context);
+                        // _awaitReturnChooseStaff(context);
+                        _awaitReturnChooseTime(context);
+                      },
+                      avatar: Icon(
+                        _actionChipTimeIconData,
                         color: Colors.white,
                       ),
                     ),
@@ -132,9 +165,38 @@ class _LogRecordPageState extends State<LogRecordPage> {
             builder: (BuildContext context) => new ChooseFriendPage(users)));
     if (userDetails != null) {
       _curchosedStaff =
-          "${userDetails["name"]}(${userDetails["id"]},${userDetails["job"]})";
+          "姓名:${userDetails["name"]} 手机:${userDetails["id"]} 职务:${userDetails["job"]}";
       _updateChooseStaffButton();
     }
+  }
+
+  _awaitReturnChooseTime(BuildContext context) async {
+    DateTime time;
+
+    await DatePicker.showDatePicker(context,
+        // 是否展示顶部操作按钮
+        showTitleActions: true,
+        // 最小时间
+        minTime: DateTime(2021, 1, 1),
+        // 最大时间
+        maxTime: DateTime.now(),
+        // change事件
+        onChanged: (date) {
+      print('change $date');
+    },
+        // 确定事件
+        onConfirm: (date) {
+      print('confirm $date');
+      time = date;
+    },
+        // 当前时间
+        currentTime: DateTime.now(),
+        // 语言
+        locale: LocaleType.zh);
+    if (time != null) {
+      _curchosedTime = "${time.year}年 ${time.month}月 ${time.day}日";
+    }
+    _updateChooseTimeButton();
   }
 
   _updateChooseTagButton() {
@@ -163,6 +225,21 @@ class _LogRecordPageState extends State<LogRecordPage> {
       setState(() {
         _actionChipStaffString = "选择创建人";
         _actionChipStaffIconData = Icons.add;
+      });
+    }
+  }
+
+  _updateChooseTimeButton() {
+    if (_curchosedTime != '') {
+      setState(() {
+        _actionChipTime = _curchosedTime;
+        _actionChipTimeIconData = Icons.date_range;
+      });
+    } else {
+      print("null");
+      setState(() {
+        _actionChipTime = "选择创建日";
+        _actionChipTimeIconData = Icons.add;
       });
     }
   }
