@@ -102,7 +102,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
                         _awaitReturnChooseStaff(context);
                       },
                       avatar: Icon(
-                        _actionChipIconData,
+                        _actionChipStaffIconData,
                         color: Colors.white,
                       ),
                     ),
@@ -126,14 +126,15 @@ class _LogRecordPageState extends State<LogRecordPage> {
   _awaitReturnChooseStaff(BuildContext context) async {
     List<Map> users = await _getSubs();
 
-    Navigator.push(
+    final Map userDetails = await Navigator.push(
         context,
         new MaterialPageRoute(
             builder: (BuildContext context) => new ChooseFriendPage(users)));
-    // if (chosedTag != null) {
-    //   _curchosedTag = chosedTag;
-    //   _updateChooseTagButton();
-    // }
+    if (userDetails != null) {
+      _curchosedStaff =
+          "${userDetails["name"]}(${userDetails["id"]},${userDetails["job"]})";
+      _updateChooseStaffButton();
+    }
   }
 
   _updateChooseTagButton() {
@@ -152,16 +153,16 @@ class _LogRecordPageState extends State<LogRecordPage> {
   }
 
   _updateChooseStaffButton() {
-    if (_curchosedTag != '') {
+    if (_curchosedStaff != '') {
       setState(() {
-        _actionChipString = _curchosedTag;
-        _actionChipIconData = Icons.turned_in_not;
+        _actionChipStaffString = _curchosedStaff;
+        _actionChipStaffIconData = Icons.people;
       });
     } else {
       print("null");
       setState(() {
-        _actionChipString = "选择关键词";
-        _actionChipIconData = Icons.add;
+        _actionChipStaffString = "选择创建人";
+        _actionChipStaffIconData = Icons.add;
       });
     }
   }

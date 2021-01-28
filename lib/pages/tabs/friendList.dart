@@ -52,12 +52,8 @@ class _ChooseFriendPageState extends State<ChooseFriendPage> {
         ));
   }
 
-  void _sendDataBack(BuildContext context) {
-    //   newTagFormKey.currentState.save();
-    //   if (newTagFormKey.currentState.validate()) {
-    //     String textToSendBack = newTag;
-    //     Navigator.pop(context, textToSendBack);
-    //   }
+  void _sendDataBack(Map userDetails) {
+    Navigator.pop(context, userDetails);
   }
 }
 
@@ -106,9 +102,7 @@ class _FriendSliverListState extends State<FriendSliverList> {
                       IconButton(
                           icon: Icon(Icons.check),
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    UserDetails(widget.users[index])));
+                            callback(widget.users[index]);
                           }),
                     ],
                   )
