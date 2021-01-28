@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/user_data.dart';
@@ -33,6 +34,8 @@ class _TabsState extends State<Tabs> {
 
     print("init");
     initPlatformState();
+
+    // initTree();
   }
 
   initPlatformState() async {
@@ -109,6 +112,10 @@ class _TabsState extends State<Tabs> {
           {"message": msg, "left": left, "hasPackage": hasPackage});
       // }
     };
+  }
+
+  initTree() async {
+    var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
   }
 
   Future<void> cleanToken() async {

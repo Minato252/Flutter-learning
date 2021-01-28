@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/routers/router.dart';
+import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'UsersList.dart';
 
@@ -54,20 +55,15 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
                 },
                 icon: Icon(Icons.add)),
             IconButton(
-                onPressed: () {
-                  String jsons = """{
-	{
-		"id": "minato",
-		"password": "minato"
-	}: {
-		"id": "minato",
-		"password": "minato"
-	}
-}""";
-                  Map m = json.decode(jsons);
-                  print(m.toString());
-                },
-                icon: Icon(Icons.ac_unit)),
+              icon: Icon(Icons.refresh),
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String id = prefs.getString("adminId");
+                await Tree.getTreeFormSer(id, true, context);
+
+                EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+              },
+            ),
           ],
         ),
         body: Column(

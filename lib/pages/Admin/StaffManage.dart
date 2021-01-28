@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -280,13 +281,25 @@ class _StaffManagePageState extends State<StaffManagePage> {
                 parsedJson = Tree.insertNode(parsedJson, null, newRight);
                 jsonTree = json.encode(parsedJson);
                 //这里应该刷新tree的UI,目前只能用按钮实现
-
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String id = prefs.getString("adminId");
+                await Tree.setTreeInSer(id, jsonTree, context);
                 tree.upDataTree(jsonTree);
 
                 EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
               }
             },
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String id = prefs.getString("adminId");
+              await Tree.getTreeFormSer(id, true, context);
+
+              EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+            },
+          ),
         ],
       ),
       body: Scrollbar(

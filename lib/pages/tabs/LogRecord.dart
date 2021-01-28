@@ -122,8 +122,9 @@ class _LogRecordPageState extends State<LogRecordPage> {
     }
   }
 
-  _awaitReturnChooseStaff(BuildContext context) {
+  _awaitReturnChooseStaff(BuildContext context) async {
     List<Map> users = _getSubs();
+
     Navigator.push(
         context,
         new MaterialPageRoute(

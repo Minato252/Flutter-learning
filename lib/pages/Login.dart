@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/Tabs.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/toast.dart';
@@ -244,9 +246,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<List<String>> getKeyWords() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> keyWords = prefs.get("keyWords").split(",");
-    if (keyWords == null) {
+    String k = prefs.get("keyWords");
+    List<String> keyWords;
+    if (k == null) {
       keyWords = [];
+    } else {
+      keyWords = k.split(",");
     }
     return keyWords;
   }
@@ -306,10 +311,12 @@ class _LoginPageState extends State<LoginPage> {
     } else if (this.role == "admin" && rel2["管理员登录成功"] == "successful") {
       _saveAdminInfo(id, password);
 
-      //把树从内存里取出 这个之后变成网络请求
-      final tree = Provider.of<ProviderServices>(context);
-      String jsonTreeNet = await getTree();
-      tree.upDataTree(jsonTreeNet);
+      await Tree.getTreeFormSer(id, true, context);
+
+      // //把内存里的树存到provider
+      // final tree = Provider.of<ProviderServices>(context);
+      // String jsonTreeNet = await getTree();
+      // tree.upDataTree(jsonTreeNet);
 
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),
@@ -331,4 +338,5 @@ class _LoginPageState extends State<LoginPage> {
   //       textColor: Colors.white,
   //       fontSize: 16.0);
   // }
+
 }
