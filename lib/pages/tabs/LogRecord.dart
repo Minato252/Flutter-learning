@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
@@ -123,7 +124,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
   }
 
   _awaitReturnChooseStaff(BuildContext context) async {
-    List<Map> users = _getSubs();
+    List<Map> users = await _getSubs();
 
     Navigator.push(
         context,
@@ -165,13 +166,19 @@ class _LogRecordPageState extends State<LogRecordPage> {
     }
   }
 
-  List<Map> _getSubs() {
-    //这里可能需要通过网络获取树，暂时只能本地
+  Future<List<Map>> _getSubs() async {
+    //通过网络获取树
+
     final ps = Provider.of<ProviderServices>(context);
-    String jsonTree = ps.tree;
+    Map userInfo = ps.userInfo;
+
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+
     var parsedJson = json.decode(jsonTree);
     List users = [];
-    Tree.getAllPeople(parsedJson, users);
+    Map subRight = Tree.getSubRight(parsedJson, userInfo["right"]);
+    print("subRight" + subRight.toString());
+    Tree.getAllPeople(subRight, users);
     users = List<Map>.from(users);
     return users;
   }

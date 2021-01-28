@@ -170,8 +170,9 @@ class _RightWidgetState extends State<RightWidget> {
       parsedJson = Tree.insertNode(parsedJson, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
-
-      tree.upDataTree(jsonTree);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String id = prefs.getString("adminId");
+      await Tree.setTreeInSer(id, jsonTree, context);
 
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
     }
@@ -194,6 +195,9 @@ class _RightWidgetState extends State<RightWidget> {
       parsedJson = Tree.editNode(parsedJson, parentName, rightName, newRight);
       jsonTree = json.encode(parsedJson);
       //这里应该刷新tree的UI,目前只能用按钮实现
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String id = prefs.getString("adminId");
+      await Tree.setTreeInSer(id, jsonTree, context);
 
       setState(() {
         rightName = newRight;
@@ -201,20 +205,21 @@ class _RightWidgetState extends State<RightWidget> {
       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
       // setState(() {});
 
-      tree.upDataTree(jsonTree);
     }
   }
 
-  onTapDelete() {
+  onTapDelete() async {
     final tree = Provider.of<ProviderServices>(context);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     parsedJson = Tree.deleteNode(parsedJson, parentName, rightName);
     jsonTree = json.encode(parsedJson);
 
-    EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("adminId");
+    await Tree.setTreeInSer(id, jsonTree, context);
 
-    tree.upDataTree(jsonTree);
+    EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
   }
 }
 
@@ -284,7 +289,6 @@ class _StaffManagePageState extends State<StaffManagePage> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String id = prefs.getString("adminId");
                 await Tree.setTreeInSer(id, jsonTree, context);
-                tree.upDataTree(jsonTree);
 
                 EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
               }

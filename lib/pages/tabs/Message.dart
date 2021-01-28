@@ -63,7 +63,9 @@ class _MessagePageState extends State<MessagePage>
   }
 
   void _renfreshUI() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   addIMhandler() {

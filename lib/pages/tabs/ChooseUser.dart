@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
@@ -107,18 +108,32 @@ class _ChooseUserPageState extends State<ChooseUserPage> {
     sss2 = EventBusUtil.getInstance().on<UpdataNode>().listen((data) {
       if (data.type == "checkChange") {
         sss2.cancel();
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       }
     });
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String id = prefs.getString("id");
+              await Tree.getTreeFormSer(id, false, context);
+
+              if (mounted) {
+                setState(() {});
+              }
+            },
+          ),
           FlatButton(
               onPressed: () {
                 EventBusUtil.getInstance().fire(PageEvent(targIdList));
                 Navigator.pop(context);
               },
-              child: Text("完成"))
+              child: Text("完成")),
         ],
       ),
       // body: new ListView.builder(
@@ -219,7 +234,9 @@ class _ChooseUserPageState extends State<ChooseUserPage> {
               targIdList.remove(staff['id']);
 
               EventBusUtil.getInstance().fire(UpdataNode("checkChange"));
-              setState(() {});
+              if (mounted) {
+                setState(() {});
+              }
               // value = false;
             } else {
               // targIdList.add(friends);
@@ -227,7 +244,9 @@ class _ChooseUserPageState extends State<ChooseUserPage> {
 
               // value = true;
               EventBusUtil.getInstance().fire(UpdataNode("checkChange"));
-              setState(() {});
+              if (mounted) {
+                setState(() {});
+              }
             }
           },
         ),
@@ -278,7 +297,9 @@ class _RightButton2State extends State<RightButton2> {
                       }
                       EventBusUtil.getInstance()
                           .fire(UpdataNode("checkChange"));
-                      setState(() {});
+                      if (mounted) {
+                        setState(() {});
+                      }
                       // value = false;
                     } else {
                       // targIdList.add(friends);
@@ -288,7 +309,9 @@ class _RightButton2State extends State<RightButton2> {
                       // value = true;
                       EventBusUtil.getInstance()
                           .fire(UpdataNode("checkChange"));
-                      setState(() {});
+                      if (mounted) {
+                        setState(() {});
+                      }
                     }
                   },
                 )

@@ -142,7 +142,7 @@ class Tree {
   }
 
   static void getAllPeople(parsedJson, List result) {
-    if (parsedJson is Map<String, dynamic>) {
+    if (parsedJson is Map) {
       parsedJson.forEach((key, value) {
         getAllPeople(parsedJson[key], result);
       });
@@ -150,6 +150,49 @@ class Tree {
       print("11");
       result.addAll(parsedJson);
     }
+  }
+
+  static Map getUserInfoAndSave(parsedJson, String id, BuildContext context) {
+    if (parsedJson is Map<String, dynamic>) {
+      Map result;
+      parsedJson.forEach((key, value) {
+        var temp = getUserInfoAndSave(parsedJson[key], id, context);
+
+        if (temp != null) {
+          result = Map.from(temp);
+        }
+      });
+      return result;
+    } else if (parsedJson is List) {
+      for (int i = 0; i < parsedJson.length; i++) {
+        if (parsedJson[i]["id"] == id) {
+          Map user = parsedJson[i];
+          final ps = Provider.of<ProviderServices>(context);
+          ps.upDatauserInfo(user);
+          return user;
+        }
+      }
+    }
+    return null;
+  }
+
+  static Map getSubRight(parsedJson, String right) {
+    if (parsedJson is Map<String, dynamic>) {
+      if (parsedJson.containsKey(right)) {
+        //一定在这一级
+        return parsedJson[right];
+      } else {
+        Map result;
+        parsedJson.forEach((key, value) {
+          var temp = getSubRight(parsedJson[key], right);
+          if (temp != null) {
+            result = Map.from(temp);
+          }
+        });
+        return result;
+      }
+    }
+    return null;
   }
 
   static getTreeFormSer(String id, bool isAdmin, BuildContext context) async {

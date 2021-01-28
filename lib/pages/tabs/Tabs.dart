@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/user_data.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_bus.dart';
+import 'package:weitong/services/providerServices.dart';
 import '../Login.dart';
 import 'LogRecord.dart';
 import 'MessageCreate.dart';
@@ -35,7 +41,9 @@ class _TabsState extends State<Tabs> {
     print("init");
     initPlatformState();
 
-    // initTree();
+    initTreeAndUserInfo();
+
+    initKeyWords();
   }
 
   initPlatformState() async {
@@ -114,8 +122,29 @@ class _TabsState extends State<Tabs> {
     };
   }
 
-  initTree() async {
-    var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
+  initTreeAndUserInfo() async {
+    // var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    print(userInfo.toString());
+  }
+
+  initKeyWords() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String k = prefs.getString("keyWords");
+    List<String> keyWords;
+    if (k == null || k == "null") {
+      keyWords = [];
+    } else {
+      keyWords = k.split(",");
+    }
+
+    final ps = Provider.of<ProviderServices>(context);
+    ps.upDataKeyWords(keyWords);
   }
 
   Future<void> cleanToken() async {
