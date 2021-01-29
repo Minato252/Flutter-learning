@@ -7,17 +7,25 @@ class MessageModel {
   String title; //标题
   String keyWord; //关键词
   String htmlCode; //内容代码
+  DateTime time;
+  String fromuserid;
   bool isJson = true;
 
   String hadLook;
 
   bool modify = false;
 
-  MessageModel({String htmlCode, String title, String keyWord, String hadLook})
+  MessageModel(
+      {String htmlCode,
+      String title,
+      String keyWord,
+      String hadLook,
+      DateTime dateTime})
       : htmlCode = htmlCode,
         title = title,
         hadLook = hadLook,
-        keyWord = keyWord;
+        keyWord = keyWord,
+        time = dateTime;
 
   MessageModel.fromJson(Map<String, dynamic> json) {
     //通过Map转换
@@ -38,6 +46,10 @@ class MessageModel {
     return data;
   }
 
+  DateTime getTime() {
+    return time;
+  }
+
   String toJsonString() {
     //转换成json字符串
     Map<String, dynamic> m = toJson();
@@ -56,5 +68,54 @@ class MessageModel {
     } catch (e) {
       isJson = false;
     }
+  }
+
+  MessageModel.formServerJsonString(String s) {
+    //处理服务器发来的json，把他转换为messageModel
+//     {
+//     "mId": 29,
+//     "mTitle": "ok",
+//     "mKeywords": "im",
+//     "mPostmessages": "Hello Word",
+//     "mStatus": "0",
+//     "mTime": "2021-01-22 00:00:00.000000",
+//     "mFromuserid": "188777777",
+//     "mTouserid": "173XXXXXX"
+//     "hadLook": ""
+// }
+
+    try {
+      Map json = jsonDecode(s);
+      title = json['mTitle'];
+      keyWord = json['mKeywords'];
+      htmlCode = json['mPostmessages'];
+      hadLook = json['hadLook'];
+      time = strToTime(json["mTime"]);
+      fromuserid = json["mFromuserid"];
+      content = jsonEncode(json);
+    } catch (e) {
+      isJson = false;
+    }
+  }
+
+  DateTime strToTime(String str) {
+// "2021-01-22 00:00:00.000000"
+    List ymAndTim = str.split(" ");
+    List ym = ymAndTim[0].split('-');
+    List time = ymAndTim[1].split(":");
+    int year = int.parse(ym[0]);
+    int month = int.parse(ym[1]);
+    int day = int.parse(ym[2]);
+
+    int hour = int.parse(time[0]);
+    int minute = int.parse(time[1]);
+    int second = int.parse(time[2].split(".")[0]);
+    int millisecond = int.parse(time[2].split(".")[1]);
+
+    DateTime datetime =
+        DateTime(year, month, day, hour, minute, second, millisecond);
+
+    print(datetime);
+    return datetime;
   }
 }

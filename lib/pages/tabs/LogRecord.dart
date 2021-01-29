@@ -1,13 +1,17 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
+import 'package:weitong/pages/tabs/searchedResult.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
+import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/widget/toast.dart';
 
 String staff = "人员";
 
@@ -21,6 +25,10 @@ class LogRecordPage extends StatefulWidget {
 }
 
 class _LogRecordPageState extends State<LogRecordPage> {
+  String _searchTag;
+  String _searchStaffId;
+  DateTime _searchTime;
+
   String _curchosedTag = "";
   String _curchosedStaff = "";
   String _curchosedTime = "";
@@ -44,8 +52,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
         actions: [
           // IconButton(
           //     onPressed: () {
-          //       print("***************打印选择的联系人************");
-          //       print(targIdList.toString());
+          //       MessageModel.strToTime("2021-01-22 00:00:00.000000");
           //     },
           //     icon: Icon(Icons.ac_unit)),
         ],
@@ -92,59 +99,136 @@ class _LogRecordPageState extends State<LogRecordPage> {
                     ]),
                 Divider(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text("创建人:"),
-                    SizedBox(
-                      width: 20,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text("创建人:"),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        ActionChip(
+                          label: Text(
+                            _actionChipStaffString,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.blue,
+                          onPressed: () {
+                            //_awaitReturnNewTag(context);
+                            _awaitReturnChooseStaff(context);
+                          },
+                          avatar: Icon(
+                            _actionChipStaffIconData,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                    ActionChip(
-                      label: Text(
-                        _actionChipStaffString,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: Colors.blue,
+                    IconButton(
+                      icon: Icon(Icons.refresh),
                       onPressed: () {
-                        //_awaitReturnNewTag(context);
-                        _awaitReturnChooseStaff(context);
+                        _searchStaffId = "";
+                        _curchosedStaff = "";
+                        _updateChooseStaffButton();
                       },
-                      avatar: Icon(
-                        _actionChipStaffIconData,
-                        color: Colors.white,
-                      ),
-                    ),
+                    )
                   ],
                 ),
                 Divider(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text("创建日:"),
-                    SizedBox(
-                      width: 20,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text("创建日:"),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        ActionChip(
+                          label: Text(
+                            _actionChipTime,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.blue,
+                          onPressed: () {
+                            //_awaitReturnNewTag(context);
+                            // _awaitReturnChooseStaff(context);
+                            _awaitReturnChooseTime(context);
+                          },
+                          avatar: Icon(
+                            _actionChipTimeIconData,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                    ActionChip(
-                      label: Text(
-                        _actionChipTime,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: Colors.blue,
+                    IconButton(
+                      icon: Icon(Icons.refresh),
                       onPressed: () {
-                        //_awaitReturnNewTag(context);
-                        // _awaitReturnChooseStaff(context);
-                        _awaitReturnChooseTime(context);
+                        _searchTime = null;
+                        _curchosedTime = "";
+                        _updateChooseTimeButton();
                       },
-                      avatar: Icon(
-                        _actionChipTimeIconData,
-                        color: Colors.white,
-                      ),
-                    ),
+                    )
                   ],
                 ),
+                Divider(),
+                // Text("注意：选择后一项时，请先确保选择了前一项。"),
+
+                // Divider(),
+                JdButton(
+                    text: "查询",
+                    cb: () {
+                      searchMessage();
+                      // print("123");
+                    }),
               ]),
         ),
       ),
     );
+  }
+
+  searchMessage() {
+    //首先通过验证数据来判断是哪种查找
+    if (_searchTag == "") {
+      MyToast.AlertMesaage("请先选择关键词");
+    } else if (_searchStaffId == "") {
+      //有关键词没id
+
+      if (_searchTime != null) {
+        //有关键词没id但是又有日期
+        MyToast.AlertMesaage("请先选择创建者");
+      } else {
+        //有关键词没id且没日期，按照关键词查找
+
+      }
+    } else if (_searchTime == null) {
+      //有关键词有id但没日期
+      //按照关键词+id查找
+
+    } else {
+      //有关键词有id且有日期
+      //按照关键词+id+日期查找
+      List<MessageModel> l = [
+        MessageModel.formServerJsonString("""
+            {
+        "mId": 29,
+        "mTitle": "ok",
+        "mKeywords": "im",
+        "mPostmessages": "Hello Word",
+        "mStatus": "0",
+        "mTime": "2021-01-22 00:00:00.000000",
+        "mFromuserid": "188777777",
+        "mTouserid": "173XXXXXX"
+    }
+        
+        """)
+      ];
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new SearchedResult(l)));
+    }
   }
 
   _awaitReturnChooseTag(BuildContext context) async {
@@ -152,6 +236,8 @@ class _LogRecordPageState extends State<LogRecordPage> {
     final chosedTag = await Navigator.pushNamed(context, '/chooseTags');
     if (chosedTag != null) {
       _curchosedTag = chosedTag;
+      _searchTag = chosedTag;
+      print(_searchTag);
       _updateChooseTagButton();
     }
   }
@@ -166,6 +252,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
     if (userDetails != null) {
       _curchosedStaff =
           "姓名:${userDetails["name"]} 手机:${userDetails["id"]} 职务:${userDetails["job"]}";
+      _searchStaffId = userDetails["id"];
       _updateChooseStaffButton();
     }
   }
@@ -195,6 +282,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
         locale: LocaleType.zh);
     if (time != null) {
       _curchosedTime = "${time.year}年 ${time.month}月 ${time.day}日";
+      _searchTime = time;
     }
     _updateChooseTimeButton();
   }
@@ -256,7 +344,12 @@ class _LogRecordPageState extends State<LogRecordPage> {
     List users = [];
     Map subRight = Tree.getSubRight(parsedJson, userInfo["right"]);
     print("subRight" + subRight.toString());
-    Tree.getAllPeople(subRight, users);
+    subRight.forEach((key, value) {
+      if (key != staff) {
+        Tree.getAllPeople(value, users);
+      }
+    });
+    users.add(userInfo);
     users = List<Map>.from(users);
     return users;
   }
