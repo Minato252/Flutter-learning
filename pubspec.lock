@@ -99,6 +99,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.15.0-nullsafety.3"
+  common_utils:
+    dependency: transitive
+    description:
+      name: common_utils
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.1"
   convert:
     dependency: transitive
     description:
@@ -141,6 +148,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  decimal:
+    dependency: transitive
+    description:
+      name: decimal
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.5"
   dio:
     dependency: "direct main"
     description:
@@ -176,6 +190,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "5.2.1"
+  flustars:
+    dependency: "direct main"
+    description:
+      name: flustars
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.3"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -465,7 +486,7 @@ packages:
     source: hosted
     version: "0.1.4"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       url: "https://pub.flutter-io.cn"
@@ -562,6 +583,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.5"
+  rational:
+    dependency: transitive
+    description:
+      name: rational
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.8"
   react:
     dependency: "direct main"
     description:
@@ -686,8 +714,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.0-nullsafety.2"
-  sqflite:
+  sp_util:
     dependency: transitive
+    description:
+      name: sp_util
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
+  sqflite:
+    dependency: "direct main"
     description:
       name: sqflite
       url: "https://pub.flutter-io.cn"
