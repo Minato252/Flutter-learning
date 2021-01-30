@@ -46,10 +46,6 @@ class MessageModel {
     return data;
   }
 
-  DateTime getTime() {
-    return time;
-  }
-
   String toJsonString() {
     //转换成json字符串
     Map<String, dynamic> m = toJson();
@@ -70,7 +66,7 @@ class MessageModel {
     }
   }
 
-  MessageModel.formServerJsonString(String s) {
+  MessageModel.formServerJsonString(Map json) {
     //处理服务器发来的json，把他转换为messageModel
 //     {
 //     "mId": 29,
@@ -85,21 +81,21 @@ class MessageModel {
 // }
 
     try {
-      Map json = jsonDecode(s);
+      // Map json = jsonDecode(s);
       title = json['mTitle'];
       keyWord = json['mKeywords'];
       htmlCode = json['mPostmessages'];
-      hadLook = json['hadLook'];
+      hadLook = json['mHadLook'];
       time = strToTime(json["mTime"]);
       fromuserid = json["mFromuserid"];
-      content = jsonEncode(json);
+      // content = jsonEncode(json);
     } catch (e) {
       isJson = false;
     }
   }
 
   DateTime strToTime(String str) {
-// "2021-01-22 00:00:00.000000"
+// "2021-01-30 22:03:31"
     List ymAndTim = str.split(" ");
     List ym = ymAndTim[0].split('-');
     List time = ymAndTim[1].split(":");
@@ -109,11 +105,9 @@ class MessageModel {
 
     int hour = int.parse(time[0]);
     int minute = int.parse(time[1]);
-    int second = int.parse(time[2].split(".")[0]);
-    int millisecond = int.parse(time[2].split(".")[1]);
+    int second = int.parse(time[2]);
 
-    DateTime datetime =
-        DateTime(year, month, day, hour, minute, second, millisecond);
+    DateTime datetime = DateTime(year, month, day, hour, minute, second);
 
     print(datetime);
     return datetime;

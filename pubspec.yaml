@@ -81,7 +81,6 @@ flutter:
    - images/user.png
    - images/2.0x/user.png
    - images/3.0x/user.png
-   - images/json/tree.json
 
 
   # To add assets to your application, add an assets section, like this:

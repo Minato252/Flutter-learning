@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
@@ -12,6 +13,8 @@ import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/toast.dart';
+
+import 'NullResult.dart';
 
 String staff = "人员";
 
@@ -180,8 +183,8 @@ class _LogRecordPageState extends State<LogRecordPage> {
                 // Divider(),
                 JdButton(
                     text: "查询",
-                    cb: () {
-                      searchMessage();
+                    cb: () async {
+                      await searchMessage();
                       // print("123");
                     }),
               ]),
@@ -190,45 +193,79 @@ class _LogRecordPageState extends State<LogRecordPage> {
     );
   }
 
-  searchMessage() {
-    //首先通过验证数据来判断是哪种查找
-    if (_searchTag == "") {
-      MyToast.AlertMesaage("请先选择关键词");
-    } else if (_searchStaffId == "") {
-      //有关键词没id
+  searchMessage() async {
+    bool isEmpty = true;
+    String url = "http://47.110.150.159:8080/messages/selectId?";
+    if (_searchTag != "" && _searchTag != null) {
+      //有关键词
+      isEmpty = false;
+      url += "keyWords=$_searchTag&";
+    }
 
-      if (_searchTime != null) {
-        //有关键词没id但是又有日期
-        MyToast.AlertMesaage("请先选择创建者");
-      } else {
-        //有关键词没id且没日期，按照关键词查找
+    if (_searchTime != null) {
+      //有时间
 
+      isEmpty = false;
+      url += "time=${_searchTime.toString().split(" ")[0]}&";
+    }
+
+    if (_searchStaffId != "" && _searchStaffId != null) {
+      //有id
+      isEmpty = false;
+      url += "id=$_searchStaffId&";
+    } else if (!isEmpty) {
+      //没id,且别的不为空，需要查找
+      List<Map> subStaff = await _getSubs();
+      for (int i = 0; i < subStaff.length; i++) {
+        url += "id=${subStaff[i]["id"]}&";
       }
-    } else if (_searchTime == null) {
-      //有关键词有id但没日期
-      //按照关键词+id查找
-
     } else {
-      //有关键词有id且有日期
-      //按照关键词+id+日期查找
-      List<MessageModel> l = [
-        MessageModel.formServerJsonString("""
-            {
-        "mId": 29,
-        "mTitle": "ok",
-        "mKeywords": "im",
-        "mPostmessages": "Hello Word",
-        "mStatus": "0",
-        "mTime": "2021-01-22 00:00:00.000000",
-        "mFromuserid": "188777777",
-        "mTouserid": "173XXXXXX"
+      //没id，别的也没，就不用查找
+      MyToast.AlertMesaage("请至少选择一项");
+      print("请至少选择一项");
+      return;
     }
-        
-        """)
-      ];
+
+    var rel = await Dio().post(url);
+    Map m = rel.data;
+    if (m.isEmpty) {
       Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new SearchedResult(l)));
+          new MaterialPageRoute(builder: (context) => new NullResult()));
+    } else {
+      List<MessageModel> l = new List<MessageModel>();
+      m.forEach((key, value) {
+        if (value is List) {
+          for (int i = 0; i < value.length; i++) {
+            MessageModel mm = MessageModel.formServerJsonString(value[i]);
+            l.add(mm);
+          }
+        }
+      });
+
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (context) =>
+                  new SearchedResult(new List<MessageModel>.from(l.reversed))));
     }
+
+    //有关键词有id且有日期
+    //按照关键词+id+日期查找
+    // List<MessageModel> l = [
+    //   MessageModel.formServerJsonString("""
+    //         {
+    //     "mId": 29,
+    //     "mTitle": "ok",
+    //     "mKeywords": "im",
+    //     "mPostmessages": "Hello Word",
+    //     "mStatus": "0",
+    //     "mTime": "2021-01-22 00:00:00.000000",
+    //     "mFromuserid": "188777777",
+    //     "mTouserid": "173XXXXXX"
+    // }
+
+    //     """)
+    // ];
   }
 
   _awaitReturnChooseTag(BuildContext context) async {
