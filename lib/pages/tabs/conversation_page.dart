@@ -5,6 +5,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
@@ -268,10 +269,22 @@ class _ConversationPageState extends State<ConversationPage>
 
     List msgs = await RongIMClient.getHistoryMessage(
         conversationType, targetId, -1, 20);
+
+    var db = DatabaseHelper();
+    db.initDb();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List msgs2 = await db.getItem(prefs.get("id"), targetId);
+    print("***********长度历史************");
+    print(msgs.length);
     if (msgs != null) {
       msgs.sort((a, b) => b.sentTime.compareTo(a.sentTime));
       messageDataSource = msgs;
     }
+    // if (msgs != null) {
+    //   msgs.sort(
+    //       (a, b) => int.parse(b.sentTime).compareTo(int.parse(a.sentTime)));
+    //   messageDataSource = msgs;
+    // }
     if (isFirstGetHistoryMessages) {
       _sendReadReceipt();
     }
@@ -282,8 +295,13 @@ class _ConversationPageState extends State<ConversationPage>
   onLoadMoreHistoryMessages(int messageId) async {
     developer.log("get more history message", name: pageName);
 
-    List msgs = await RongIMClient.getHistoryMessage(
-        conversationType, targetId, messageId, 20);
+    // List msgs = await RongIMClient.getHistoryMessage(
+    //     conversationType, targetId, messageId, 20);
+
+    var db = DatabaseHelper();
+    db.initDb();
+    List msgs = await db.getItem('003', targetId);
+
     if (msgs != null) {
       msgs.sort((a, b) => b.sentTime.compareTo(a.sentTime));
       messageDataSource += msgs;

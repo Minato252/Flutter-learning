@@ -1,10 +1,14 @@
+import 'dart:ffi';
+
 class MessageHistoryModel {
   String userId;
   String targetId;
   String keyWords;
   String title;
   String htmlCode;
-  int sendTime;
+  int sentTime;
+
+  int conversationType; //会话类型 参见 RCConversationType,应该为1
   // MessageHistoryModel(
   //     this.htmlCode, this.targetId, this.keyWords, this.title, this.userId);
 
@@ -15,7 +19,7 @@ class MessageHistoryModel {
     map['keyWords'] = keyWords;
     map['title'] = title;
     map['htmlCode'] = htmlCode;
-    map['sendTime'] = sendTime;
+    map['sentTime'] = sentTime;
     return map;
   }
 
@@ -26,7 +30,7 @@ class MessageHistoryModel {
     message.targetId = map['targetId'];
     message.userId = map['userId'];
     message.title = map['title'];
-    message.sendTime = map['sendTime'];
+    message.sentTime = map['sentTime'];
     return message;
   }
 

@@ -173,8 +173,8 @@ class _PreAndSendState extends State<PreAndSend> {
 
   _sendMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var db = DatabaseHelper();
-    db.initDb();
+    // var db = DatabaseHelper();
+    // db.initDb();
 
     //在这里写选择联系人，并将targetId改为联系人id
     print("****************这里打印targetIdList****");
@@ -191,15 +191,15 @@ class _PreAndSendState extends State<PreAndSend> {
 
     for (String item in targetIdList) {
       IM.sendMessage(content, item);
-      MessageHistoryModel m = new MessageHistoryModel();
-      m.htmlCode = messageModel.htmlCode;
-      m.keyWords = messageModel.keyWord;
-      m.title = messageModel.title;
-      m.userId = prefs.get("id");
-      m.targetId = item;
+      // MessageHistoryModel m = new MessageHistoryModel();
+      // m.htmlCode = messageModel.htmlCode;
+      // m.keyWords = messageModel.keyWord;
+      // m.title = messageModel.title;
+      // m.userId = prefs.get("id");
+      // m.targetId = item;
 
-      m.sendTime = DateTime.now().millisecondsSinceEpoch;
-      db.insert(m, "message");
+      // m.sentTime = DateTime.now().millisecondsSinceEpoch;
+      // db.insert(m, "message");
 
       await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {

@@ -18,10 +18,25 @@ class DatabaseHelper {
   initDb() async {
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'sqflite.db');
-    var ourDb = await openDatabase(path, version: 1, onCreate: _onCreate);
+    var ourDb = await openDatabase(path, version: 2, onCreate: _onCreate);
     return ourDb;
   }
 
+  void onCreate(Database db, int version) async {
+    await db.execute('''
+    CREATE TABLE message (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
+    userId TEXT NOT NULL, 
+    targetId TEXT NOT NULL, 
+    keyWords TEXT NOT NULL, 
+    title TEXT NOT NULL,
+    sentTime INTEGER NOT NULL,
+    htmlCode TEXT NOT NULL);
+    ''');
+    print("Table is created");
+  }
+
+//sendTime TEXT NOT NULL
   //创建数据库表
   void _onCreate(Database db, int version) async {
     await db.execute('''
@@ -31,7 +46,7 @@ class DatabaseHelper {
     targetId TEXT NOT NULL, 
     keyWords TEXT NOT NULL, 
     title TEXT NOT NULL,
-    sendTime INTEGER NOT NULL
+    sentTime INTEGER NOT NULL,
     htmlCode TEXT NOT NULL);
     ''');
     print("Table is created");
@@ -60,8 +75,13 @@ class DatabaseHelper {
   //按照发送方和接收方id查询
   Future<List> getItem(String userId, String targetId) async {
     var dbClient = await db;
-    var result = await dbClient.rawQuery(
-        "SELECT * FROM message WHERE userId=${userId} AND targetId=${targetId}");
+    // var result = await dbClient.rawQuery(
+    //     "SELECT * FROM message WHERE userId=${userId} AND targetId=${targetId}");
+    String sql =
+        "select * from message where userId='${userId}' and targetId='${targetId}'";
+    print("***************************sql语句**************");
+    print(sql);
+    var result = await dbClient.rawQuery(sql);
     if (result.length == 0) return null;
     return result.toList();
   }

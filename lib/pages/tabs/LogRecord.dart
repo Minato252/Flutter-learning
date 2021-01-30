@@ -358,6 +358,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/DB/provider.dart';
@@ -372,14 +373,28 @@ class LogRecordPage extends StatefulWidget {
 
 class _LogRecordPageState extends State<LogRecordPage> {
   var db = DatabaseHelper();
+
   List<MessageHistoryModel> list = new List();
   List<MessageHistoryModel> list2 = new List();
 
   MessageHistoryModel m = new MessageHistoryModel();
 
+  _insertDemo() {
+    m.htmlCode = '1';
+    m.keyWords = '1';
+    m.sentTime = DateTime.now().millisecondsSinceEpoch;
+    m.targetId = '1';
+    m.userId = '1';
+    m.title = '1';
+    db.insert(m, 'message');
+  }
+
   _getDataFromDb() async {
     // List datas = await db.getTotalList("select * from message");
-    List datas = await db.getItem('66666', '77777');
+    // List datas = await db.getTotalList(
+    //     "select * from message where userId='003' and targetId='004'");
+
+    List datas = await db.getItem('1', '1');
     // Future<int> c = db.getCount();
     // print(c);
     if (datas.length > 0) {
@@ -404,6 +419,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
     // }
     // list2 = db.getItem('1', '1');
     // var c = db.getCount();
+    _insertDemo();
     _getDataFromDb();
     return Scaffold(
         appBar: AppBar(
@@ -413,11 +429,15 @@ class _LogRecordPageState extends State<LogRecordPage> {
           child: IconButton(
             icon: Icon(Icons.ac_unit),
             onPressed: () {
-              print("**********时间****************");
-              print(DateTime.now().millisecondsSinceEpoch);
-              print("**********时间****************");
+              // print("**********时间****************");
+              // print(DateTime.now().millisecondsSinceEpoch);
+              // print("**********时间****************");
+              print("***********会话长度**************");
+              print(list.length);
               list.forEach((element) {
-                print(element.htmlCode);
+                // print(
+                //     "发送人： " + element.userId + "     接收人： " + element.targetId);
+                print(element.sentTime);
               });
             },
           ),
