@@ -237,6 +237,7 @@ class _LogRecordPageState extends State<LogRecordPage> {
         if (value is List) {
           for (int i = 0; i < value.length; i++) {
             MessageModel mm = MessageModel.formServerJsonString(value[i]);
+            mm.modify = true;
             l.add(mm);
           }
         }
