@@ -176,8 +176,7 @@ class _TabsState extends State<Tabs> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.textsms), title: Text("消息")),
           BottomNavigationBarItem(icon: Icon(Icons.create), title: Text("创建")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle), title: Text("联系人")),
+          BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("查询")),
           BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("我的"))
         ],
       ),

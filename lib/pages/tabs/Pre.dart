@@ -17,26 +17,34 @@ import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 Scrollbar getPre(MessageModel messageModel, bool modify,
-    SimpleRichEditController controller) {
+    SimpleRichEditController controller, BuildContext context) {
   return Scrollbar(
     child: SingleChildScrollView(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("标题：${messageModel.title}"),
-              Row(
-                children: [
-                  Text("关键词:"),
-                  Chip(label: Text(messageModel.keyWord)),
-                ],
-              ),
-            ],
-          ),
           Align(
             alignment: new FractionalOffset(0.0, 0.0),
-            child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              // alignment: WrapAlignment.start,
+              spacing: 8.0,
+              children: [
+                Text("标题："),
+                Text(
+                  "${messageModel.title}",
+                  style: TextStyle(fontSize: 25),
+                ),
+                Chip(label: Text(messageModel.keyWord)),
+              ],
+            ),
+          ),
+
+          Align(
+            alignment: new FractionalOffset(0.0, 0.0),
+            child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}",
+                style: TextStyle(
+                  color: Theme.of(context).accentColor,
+                )),
           ),
           // Html(
           //   data: messageModel.htmlCode,
@@ -46,12 +54,13 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           //     // '#12': Style(width: 400, height: 400),
           //   },
           // ),
-
+          Divider(),
           HtmlWidget(
             messageModel.htmlCode,
             webView: true,
           ),
 
+          Divider(),
           messageModel.modify
               ? SafeArea(
                   child: SizedBox(
@@ -109,12 +118,46 @@ class _PreAndSendState extends State<PreAndSend> {
           actions: [
             Row(
               children: [
+                IconButton(
+                  tooltip: "发送",
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    if (targetIdList == null) {
+                      sendMessageSuccess("请选择您要发送的联系人！");
+                    } else {
+                      _sendMessage();
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Align(
+            //   alignment: new FractionalOffset(0.0, 0.0),
+            //   child: Text("已选择联系人：${targetIdList.toString()}"),
+            // ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              // alignment: WrapAlignment.start,
+              spacing: 8.0,
+              children: [
+                Text("已选择联系人："),
+                Wrap(
+                  spacing: 8.0,
+                  children: _buildTarget(),
+                ),
                 ActionChip(
+                  backgroundColor: Theme.of(context).accentColor,
                   label: Text(
                     '选择联系人',
                     style: TextStyle(color: Colors.white),
                   ),
-                  backgroundColor: Colors.grey[600],
+                  // backgroundColor: Colors.grey[600],
                   onPressed: () {
                     sss = EventBusUtil.getInstance()
                         .on<PageEvent>()
@@ -135,37 +178,36 @@ class _PreAndSendState extends State<PreAndSend> {
                     color: Colors.white,
                   ),
                 ),
-                IconButton(
-                  tooltip: "发送",
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    if (targetIdList == null) {
-                      sendMessageSuccess("请选择您要发送的联系人！");
-                    } else {
-                      _sendMessage();
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
               ],
-            )
-          ],
-        ),
-        body: Column(
-          children: [
-            Align(
-              alignment: new FractionalOffset(0.0, 0.0),
-              child: Text("已选择联系人：${targetIdList.toString()}"),
             ),
+            Divider(),
             // Align(
             //   alignment: new FractionalOffset(0.0, 0.0),
             //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
             // ),
             Expanded(
-              child: getPre(messageModel, false, controller),
+              child: getPre(messageModel, false, controller, context),
             ),
           ],
         ));
+  }
+
+  List<Widget> _buildTarget() {
+    var content;
+    if (targetIdList != null && targetIdList.isNotEmpty) {
+      //如果数据不为空，则显示Text
+      content = targetIdList.map((tag) {
+        return Chip(
+          label: Text(tag),
+        );
+      }).toList();
+    } else {
+      //当数据为空我们需要隐藏这个Text
+      //我们又不能返回一个null给当前的Widget Tree
+      //只能返回一个长宽为0的widget占位
+      content = [new Container(height: 0.0, width: 0.0)];
+    }
+    return content;
   }
 
   _sendMessage() async {
