@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
@@ -226,6 +227,16 @@ class _PreAndSendState extends State<PreAndSend> {
     }
     for (String item in targetIdList) {
       IM.sendMessage(content, item);
+
+      var rel = await Dio()
+          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+        "keywords": messageModel.keyWord,
+        "messages": messageModel.htmlCode,
+        "touserid": item,
+        "fromuserid": prefs.get("id"),
+        "title": messageModel.title,
+        "hadLook": prefs.get("id")
+      });
     }
     // IM.sendMessage(content, targetId);
 

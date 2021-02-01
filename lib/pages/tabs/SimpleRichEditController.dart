@@ -96,6 +96,14 @@ class SimpleRichEditController extends RichEditController {
   //   sb.write("<\/p>");
   // }
 
+  void generateTextHtml(StringBuffer sb, RichEditData element) {
+    sb.write("<p>");
+    sb.write("<span style=\"font-size:15px;\">");
+    sb.write(element.data);
+    sb.write("<\/span>");
+    sb.write("<\/p>");
+  }
+
   Future<void> generateImageHtmlUrl(
       StringBuffer sb, RichEditData element) async {
     String url = await UploadFile.fileUplod(element.data);
