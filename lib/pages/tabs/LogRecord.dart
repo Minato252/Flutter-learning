@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +15,11 @@ import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/toast.dart';
 
 import 'NullResult.dart';
+import 'dart:convert';
 
 String staff = "人员";
 
-List<String> targIdList = [];
+// import 'package:flutter_plugin_record/index.dart';
 
 class LogRecordPage extends StatefulWidget {
   LogRecordPage({Key key}) : super(key: key);

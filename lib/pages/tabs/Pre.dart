@@ -7,8 +7,10 @@ import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_util.dart';
@@ -213,6 +215,9 @@ class _PreAndSendState extends State<PreAndSend> {
 
   _sendMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var db = DatabaseHelper();
+    // db.initDb();
+
     //在这里写选择联系人，并将targetId改为联系人id
     print("****************这里打印targetIdList****");
     print(targetIdList);
@@ -225,6 +230,7 @@ class _PreAndSendState extends State<PreAndSend> {
       messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
       content = messageModel.toJsonString();
     }
+
     for (String item in targetIdList) {
       IM.sendMessage(content, item);
 
@@ -238,6 +244,7 @@ class _PreAndSendState extends State<PreAndSend> {
         "hadLook": prefs.get("id")
       });
     }
+
     // IM.sendMessage(content, targetId);
 
     sendMessageSuccess("发送成功");
