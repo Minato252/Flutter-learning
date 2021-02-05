@@ -6,7 +6,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
@@ -18,6 +20,9 @@ import 'package:weitong/widget/JdButton.dart';
 
 import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+
+// import 'package:uuid/uuid.dart';
+// import 'package:uuid/uuid_util.dart';
 
 Scrollbar getPre(MessageModel messageModel, bool modify,
     SimpleRichEditController controller, BuildContext context) {
@@ -230,9 +235,17 @@ class _PreAndSendState extends State<PreAndSend> {
       messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
       content = messageModel.toJsonString();
     }
-
+    var uuid = Uuid();
+    var messageId = uuid.v1();
+    messageModel.messageId = messageId;
+    content = messageModel.toJsonString();
     for (String item in targetIdList) {
-      IM.sendMessage(content, item);
+      Message message = await IM.sendMessage(content, item);
+      // IM.sendMessage(content, item).whenComplete(() => null)
+
+      print("*************该消息的id是" +
+          messageModel.messageId +
+          "**********************");
 
       var rel = await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {
@@ -241,7 +254,8 @@ class _PreAndSendState extends State<PreAndSend> {
         "touserid": item,
         "fromuserid": prefs.get("id"),
         "title": messageModel.title,
-        "hadLook": prefs.get("id")
+        "hadLook": prefs.get("id"),
+        "MesId": messageModel.messageId
       });
     }
 

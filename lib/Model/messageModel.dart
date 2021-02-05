@@ -12,6 +12,7 @@ class MessageModel {
   bool isJson = true;
 
   String hadLook;
+  String messageId = "";
 
   bool modify = false;
 
@@ -33,6 +34,7 @@ class MessageModel {
     keyWord = json['keyWord'];
     htmlCode = json['htmlCode'];
     hadLook = json['hadLook'];
+    messageId = json['messageId'];
     content = jsonEncode(json);
   }
 
@@ -43,6 +45,7 @@ class MessageModel {
     data['keyWord'] = this.keyWord;
     data['htmlCode'] = this.htmlCode;
     data['hadLook'] = this.hadLook;
+    data['messageId'] = this.messageId;
     return data;
   }
 
@@ -61,6 +64,7 @@ class MessageModel {
       keyWord = json['keyWord'];
       htmlCode = json['htmlCode'];
       hadLook = json['hadLook'];
+      messageId = json['messageId'];
     } catch (e) {
       isJson = false;
     }
@@ -88,6 +92,7 @@ class MessageModel {
       hadLook = json['mHadLook'];
       time = strToTime(json["mTime"]);
       fromuserid = json["mFromuserid"];
+      messageId = json['messageId'];
       // content = jsonEncode(json);
     } catch (e) {
       isJson = false;

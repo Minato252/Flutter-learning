@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -295,12 +296,12 @@ class _ConversationPageState extends State<ConversationPage>
   onLoadMoreHistoryMessages(int messageId) async {
     developer.log("get more history message", name: pageName);
 
-    // List msgs = await RongIMClient.getHistoryMessage(
-    //     conversationType, targetId, messageId, 20);
+    List msgs = await RongIMClient.getHistoryMessage(
+        conversationType, targetId, messageId, 20);
 
-    var db = DatabaseHelper();
-    db.initDb();
-    List msgs = await db.getItem('003', targetId);
+    // var db = DatabaseHelper();
+    // db.initDb();
+    // List msgs = await db.getItem('003', targetId);
 
     if (msgs != null) {
       msgs.sort((a, b) => b.sentTime.compareTo(a.sentTime));
@@ -806,18 +807,35 @@ class _ConversationPageState extends State<ConversationPage>
     print(
       message.content,
     );
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // );
     // Navigator.pushNamed(context, '/readMessage',
     //     arguments: {'conversation': msg.content});
 
     MessageModel messageModel = MessageModel.fromJsonString(msg.content);
+    String uri = "http://47.110.150.159:8080/messages/select?mesId=" +
+        messageModel.messageId;
+
+    var rel = await Dio().get(uri);
+    String hadlook = rel.data[0]['mHadLook']; //从服务器获取最新hadlook
+
     // hadlook = messageModel.hadLook;
 
     messageModel.modify = true;
-    if (!messageModel.hadLook.contains(prefs.get("id"))) {
-      messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
+    if (!hadlook.contains(prefs.get("id"))) {
+      // messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
+      hadlook = hadlook + ' , ' + prefs.get("id");
+
+      String updataUrl = "http://47.110.150.159:8080/messages/update?mesId=" +
+          messageModel.messageId +
+          "&mHadLook=" +
+          hadlook;
+      await Dio().get(updataUrl);
+      //更新服务器中的hadlook
     }
+
+    messageModel.hadLook = hadlook;
 
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       // return Pre(
