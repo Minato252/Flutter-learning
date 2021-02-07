@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-//import 'package:react/react.dart';
 import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:flutter_html/flutter_html.dart';
 //import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/style.dart';
+import 'package:weitong/pages/Note/PreEdit.dart';
+import 'package:weitong/pages/Note/PreEdit.dart';
 
 Scrollbar getPre(htmlCode, ntitle) {
   return Scrollbar(
@@ -12,10 +12,11 @@ Scrollbar getPre(htmlCode, ntitle) {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "标题：              $ntitle",
+                "\n$ntitle \n",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20),
               ),
@@ -26,7 +27,7 @@ Scrollbar getPre(htmlCode, ntitle) {
             data: htmlCode,
             style: {
               'img': Style(width: 250, height: 250),
-              'video': Style(width: 150, height: 150),
+              'video': Style(width: 50, height: 50),
               // '#12': Style(width: 400, height: 400),
             },
           ),
@@ -40,28 +41,38 @@ class Note extends StatelessWidget {
   SimpleRichEditController controller = SimpleRichEditController();
   final htmlCode;
   String ntitle;
-  Note({Key key, this.htmlCode, this.ntitle}) : super(key: key);
+  String nCategory;
+  Note({Key key, this.htmlCode, this.nCategory, this.ntitle}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
         home: new Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepOrangeAccent,
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             }),
         title: Text("内容"),
+        centerTitle: true,
         //backgroundColor: Colors.yellow,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              /*Navigator.push(context, MaterialPageRoute(builder: (c) {
-                      return Pre(
-                        data: controller.generateHtml(),
-                      );
-                    }));*/
+              //Navigator.of(context).pushNamed('/preedit');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) {
+                    return PreEdit(
+                        htmlCode: '$htmlCode',
+                        nCategory: '$nCategory',
+                        ntitle: '$ntitle');
+                  },
+                ),
+              );
             },
           )
         ],

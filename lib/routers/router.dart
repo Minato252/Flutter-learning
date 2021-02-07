@@ -13,6 +13,7 @@ import '../pages/tabs/MessageItem.dart';
 import 'package:weitong/pages/Note/EditCreate.dart';
 import 'package:weitong/pages/Note/CategoryPage.dart';
 import 'package:weitong/pages/Note/NewCategory.dart';
+import 'package:weitong/pages/Note/PreEdit.dart';
 
 //配置路由
 final routes = {
@@ -36,6 +37,7 @@ final routes = {
   '/category': (BuildContext context) => new CategoryPage(),
   '/edit': (BuildContext context) => new EditCreate(),
   '/newcategory': (context) => NewCategory(),
+  '/preedit': (context) => PreEdit(),
 };
 
 //固定写法

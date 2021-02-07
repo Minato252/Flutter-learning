@@ -27,21 +27,26 @@ class _NewCategory extends State<NewCategory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('新建类别')),
+        appBar: (AppBar(
+          title: Text('新建类别'),
+          centerTitle: true,
+          backgroundColor: Colors.deepOrangeAccent,
+        )),
         body: Container(
             padding: EdgeInsets.all(20),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
                     height: 32.0,
                   ),
                   Text(
-                    "输入类别名称",
-                    style: TextStyle(fontSize: 32.0),
+                    "请输入类别名称",
+                    style: TextStyle(fontSize: 22.0),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
                     height: 32.0,

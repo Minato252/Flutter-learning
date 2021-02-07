@@ -7,15 +7,26 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 //import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
-class EditCreate extends StatelessWidget {
-  SimpleRichEditController controller = SimpleRichEditController();
-  String newTitle;
+class EditCreate extends StatefulWidget {
   String category;
   String id;
-  final _formKey = GlobalKey<FormState>();
   EditCreate({Key key, this.category, this.id}) : super(key: key);
+
+  @override
+  _EditCreateState createState() => _EditCreateState();
+}
+
+class _EditCreateState extends State<EditCreate> {
+//class EditCreate extends StatelessWidget {
+  SimpleRichEditController controller = SimpleRichEditController();
+  String newTitle;
+  //String category;
+  //String id;
+  final _formKey = GlobalKey<FormState>();
+  //EditCreate({Key key, this.category, this.id}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -24,26 +35,28 @@ class EditCreate extends StatelessWidget {
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, null);
                   }),
               title: Text("编辑页面"),
+              centerTitle: true,
+              backgroundColor: Colors.deepOrangeAccent,
               //backgroundColor: Colors.yellow,
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.save),
+                  icon: Icon(Icons.check_sharp),
                   onPressed: () {
                     var _state = _formKey.currentState;
                     if (_state.validate()) {
                       _state.save();
-                      _sendMessage(controller, id, context);
+                      _sendMessage(controller, '${widget.id}', context);
                     }
                   },
                 )
               ],
             ),
             body: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Form(
                     key: _formKey,
@@ -59,6 +72,7 @@ class EditCreate extends StatelessWidget {
                           decoration: InputDecoration(
                               icon: Icon(Icons.title),
                               labelText: "标题",
+
                               // border: OutlineInputBorder(),
                               hintText: "请输入标题"),
                           onSaved: (value) {
@@ -80,6 +94,15 @@ class EditCreate extends StatelessWidget {
                     ),
                   ),
                 ])));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.controllers.forEach((key, value) {
+      value.videoPlayerController.dispose();
+      value.dispose();
+    });
   }
 
   _sendMessage(SimpleRichEditController controller, String id,
@@ -109,7 +132,7 @@ class EditCreate extends StatelessWidget {
       "nNotetitle": "$title",
       "nNote": "$htmlCode",
       "uId": "$id",
-      "nCategory": "$category"
+      "nCategory": '${widget.category}'
     });
     print(response.data);
     print(id);

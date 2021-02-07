@@ -1,64 +1,111 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/html_parser.dart';
+import 'package:flutter_html/style.dart';
+import 'package:weitong/pages/Note/NoteContent.dart';
 
 class CategorySliverList extends StatefulWidget {
-  List _leftCateList;
-  CategorySliverList(List _leftCateList) {
-    this._leftCateList = _leftCateList;
+  List _titleList;
+  CategorySliverList(List _titleList) {
+    this._titleList = _titleList;
   }
   @override
   _CategorySliverListState createState() =>
-      _CategorySliverListState(_leftCateList);
+      _CategorySliverListState(_titleList);
 }
 
 class _CategorySliverListState extends State<CategorySliverList> {
   @override
-  List _leftCateList;
-  _CategorySliverListState(List _leftCateList) {
-    this._leftCateList = _leftCateList;
+  List _titleList;
+  _CategorySliverListState(List _titleList) {
+    this._titleList = _titleList;
   }
   Widget build(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate(
       (BuildContext context, int index) {
         return Padding(
-          padding: EdgeInsets.only(bottom: 32),
+          padding: EdgeInsets.only(bottom: 15),
           child: Material(
             borderRadius: BorderRadius.circular(12.0),
-            elevation: 14.0,
+            elevation: 50.0,
             shadowColor: Colors.grey.withOpacity(0.5),
-            child: Container(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.title),
+                  title: Text(
+                    _titleList[index]["nNotetitle"],
+                    style: TextStyle(
+                      fontSize: 23,
+                      color: Colors.black,
+                    ),
+                  ),
+                  subtitle: Text(
+                    "内容:${_titleList[index]["ncontent"]}",
+                    style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) {
+                          return Note(
+                              htmlCode: _titleList[index]["nNote"],
+                              ntitle: _titleList[index]["nNotetitle"]);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          /*Container(
                 padding: EdgeInsets.all(20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(_leftCateList[index]["category"]),
+                    Text(_titleList[index]["nNotetitle"]),
                     Row(
                       children: [
                         IconButton(
-                            icon: Icon(Icons.more_horiz), onPressed: () {}),
-                        IconButton(
+                            icon: Icon(Icons.more_horiz),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (c) {
+                                    return Note(
+                                        htmlCode: _titleList[index]["nNote"],
+                                        ntitle: _titleList[index]
+                                            ["nNotetitle"]);
+                                  },
+                                ),
+                              );
+                            }),
+                        /*IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
-                              _alertDialog(_leftCateList, index);
-                            }),
+                             // _alertDialog(_titleList, index);
+                            }),*/
                       ],
                     )
                   ],
-                )),
-          ),
+                )),*/
         );
       },
-      childCount: _leftCateList.length,
+      childCount: _titleList.length,
     ));
   }
 
-  Future _alertDialog(_leftCateList, index) async {
+  /* Future _alertDialog(_leftCateList, index) async {
     var result = await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text("提示信息"),
-            content: Text("您确定要删除此人员吗,该操作会删除有关此人员的所有数据"),
+            content: Text(""),
             actions: <Widget>[
               RaisedButton(
                 child: Text("取消"),
@@ -84,5 +131,5 @@ class _CategorySliverListState extends State<CategorySliverList> {
           );
         });
     return result;
-  }
+  }*/
 }

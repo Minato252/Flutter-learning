@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:weitong/pages/Note/DeleteCategory.dart';
+//import 'package:dio/dio.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as dom;
 
 class SearchCategory extends SearchDelegate<String> {
   // 搜索条右侧的按钮执行方法，我们在这里方法里放入一个clear图标。 当点击图片时，清空搜索的内容。
-  List _leftCateList;
-  SearchCategory(List _leftCateList) {
-    this._leftCateList = _leftCateList;
+  List _titleList;
+  SearchCategory(List _titleList) {
+    this._titleList = _titleList;
   }
 
   @override
@@ -52,13 +55,154 @@ class SearchCategory extends SearchDelegate<String> {
 //从users表中搜索结果，生成新的List<Map>
   List<Map> search(String searchText) {
     List<Map> result = [];
-    for (int i = 0; i < _leftCateList.length; i++) {
-      if (_leftCateList[i]["category"].contains(searchText)) {
-        print(_leftCateList[i]["category"]);
-        result.add(_leftCateList[i]);
+    // List contentlist = [];
+    int j = 0;
+    String content;
+    for (int i = 0; i < _titleList.length; i++) {
+      content = _content(_titleList[i]["nNote"], searchText);
+      if (content != null) {
+        if (_titleList[i]["nNotetitle"].contains(searchText) ||
+            content.contains(searchText)) {
+          // print(_titleList[i]["nNotetitle"]);
+          result.add(_titleList[i]);
+          print(_content(_titleList[i]["nNote"], searchText));
+          result[j]["ncontent"] =
+              "${_content(_titleList[i]["nNote"], searchText)}";
+          j++;
+        }
+      } else {
+        if (_titleList[i]["nNotetitle"].contains(searchText)) {
+          result.add(_titleList[i]);
+          print(_content(_titleList[i]["nNote"], searchText));
+          result[j]["ncontent"] =
+              "${_content(_titleList[i]["nNote"], searchText)}";
+          j++;
+        }
       }
     }
+    //print(result);
     return result;
+  }
+
+  String _content(htmlCode, searchText) {
+    //提取出内容
+    var str = "$htmlCode";
+    print(str);
+
+    List resultList = [];
+    var document = parse(str);
+    List<dom.Element> children = document.children;
+    Function fn;
+    fn = (children) {
+      for (int i = 0; i < children.length; i++) {
+        dom.Element ele = children[i];
+        String localName = ele.localName;
+        if (localName == 'html' || localName == 'head' || localName == 'body') {
+          if (ele.children.length > 0) {
+            fn(ele.children);
+          }
+          continue;
+        }
+
+        // print(
+        //    '===============================标签名: <$localName>=================================\n');
+        // print(ele);
+        // print('toString: ' + ele.toString());
+        //print('innerHTML: ' + ele.innerHtml);
+        // print('outerHTML: ' + ele.outerHtml);
+        // print('localName: ' + ele.localName);
+        // print('text: ' + ele.text);
+        // print('attributes: ' + ele.attributes.toString());
+
+        if (ele.children.length > 0) {
+          dom.Element firstChildEle = ele.children.first;
+          String preTag = '<${ele.localName}>';
+          String firstChildTag = '<${firstChildEle.localName}';
+          // print('preTag: $preTag, fistChildTag: $firstChildTag');
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "<${ele.localName}\.*>(.*)$firstChildTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            //print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+
+          //  print(
+          //     '==============================================================================\n\n');
+          fn(ele.children);
+
+          dom.Element lastChildEle = ele.children.last;
+          String lastChildTag = '</${lastChildEle.localName}>';
+          preTag = '</${ele.localName}';
+          //  print('lastChildTag: $lastChildTag, preTag: $preTag');
+
+          regStr = "$lastChildTag(.*)$preTag";
+          matches = RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            // print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+        } else {
+          String text = ele.innerHtml;
+          //  print('~~~提取出文本: $text');
+          if (text != null && text.length > 0) {
+            resultList.add(text);
+          }
+
+          /* if (localName == 'img') {
+            String src = ele.attributes['src'];
+            print('--> 提取出图片: $src');
+            resultList.add(src);
+          } else if (localName == 'video') {
+            String src = ele.attributes['src'];
+            print('--> 提取出视频: $src');
+            resultList.add(src);
+          }*/
+
+        }
+
+        if (i < children.length - 1) {
+          dom.Element netEle = children[i + 1];
+          String currentTag = '</${ele.localName}>';
+          String netTag = netEle != null ? '<${netEle.localName}' : '';
+          print('currentTag: $currentTag, netTag: $netTag');
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "$currentTag(.*)$netTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+        }
+      }
+    };
+    fn(children);
+
+    // print(resultList);
+    //print("${resultList[1]}");
+    for (int i = 0; i < resultList.length; i++) {
+      if (resultList[i].contains(searchText)) {
+        return resultList[i];
+      }
+    }
+    if (resultList.length != 0) {
+      return resultList[0];
+    } else {
+      return null;
+    }
   }
 
   // 输入时的推荐及搜索结果

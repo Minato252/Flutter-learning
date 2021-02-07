@@ -1,25 +1,295 @@
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:flutter/material.dart';
+import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
+import 'package:rich_edit/rich_edit.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as dom;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
-void getRichContent() {
-  var str =
-      '''<p><span style="font-size:30px;">123</span></p><p><image style="padding: 10px;max-width: 90%;" src="http://47.110.150.159:8080/picture/20210119/c311effd92fb4db38c6267340e4d5a08.jpg"></image></p><p><span style="font-size:30px;"></span></p><p><video src="http://47.120.150.159:8080/videos/20210119/5f5088f93e534395a7d87c5f49e9287a.mp4;" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video></p><p><span style="font-size:30px;"></span></p>''';
-  Document document = parse(str);
-  var a = document.createElement("div");
-  a.innerHtml = str;
-  //console.log(a)
-  var child = a.children;
-  fn(child);
-  //console.log(arr)
+class PreEdit extends StatefulWidget {
+  final htmlCode;
+  String ntitle;
+  String nCategory;
+
+  PreEdit({Key key, this.htmlCode, this.nCategory, this.ntitle})
+      : super(key: key);
+  @override
+  _PreEditState createState() => _PreEditState();
 }
 
-void fn(obj) {
-  var arr = [];
-  for (var i = 0; i < obj.length; i++) {
-    if (obj[i].children) {
-      fn(obj[i].children);
-    }
-    arr.add(obj[i]); //遍历到的元素添加到arr这个数组中间
+class _PreEditState extends State<PreEdit> {
+  @override
+  SimpleRichEditController controller = SimpleRichEditController();
+  String id;
+  void initState() {
+    super.initState();
+    _getUserInfo();
+    getContext('${widget.htmlCode}');
+    print(resultList);
+    controller.setData(resultList.toString());
+    //setState(() {});
   }
-  print(arr);
+
+  _getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.id = prefs.get("id");
+    setState(() {
+      id;
+    });
+  }
+
+  List resultList = [];
+  /*String spacial =
+      '[我是最我好大家好我;;;;回电话无法whhuhu前面文字,http://47.110.150.159:8080/picture/20210130/77d7ac9a450f40cf8775ac4d60fa3d6d.jpg;,我在图wdwf片之后,下面是一个fff视频, http://47.110.150.159:8080/videos/20210130/e0c77abbd1964c82969653ace7c778dc.mp4;,我在sodas视频后面]';
+      */
+  void getContext(String htmlCode) {
+    var str = htmlCode;
+    var document = parse(str);
+    List<dom.Element> children = document.children;
+    Function fn;
+    fn = (children) {
+      for (int i = 0; i < children.length; i++) {
+        dom.Element ele = children[i];
+        String localName = ele.localName;
+        if (localName == 'html' || localName == 'head' || localName == 'body') {
+          if (ele.children.length > 0) {
+            fn(ele.children);
+          }
+          continue;
+        }
+
+        /*print(
+            '===============================标签名: <$localName>=================================\n');
+        print(ele);
+        print('toString: ' + ele.toString());
+        print('innerHTML: ' + ele.innerHtml);
+        print('outerHTML: ' + ele.outerHtml);
+        print('localName: ' + ele.localName);
+        print('text: ' + ele.text);
+        print('attributes: ' + ele.attributes.toString());*/
+
+        if (ele.children.length > 0) {
+          dom.Element firstChildEle = ele.children.first;
+          String preTag = '<${ele.localName}>';
+          String firstChildTag = '<${firstChildEle.localName}';
+          // print('preTag: $preTag, fistChildTag: $firstChildTag');
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "<${ele.localName}\.*>(.*)$firstChildTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            // print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+
+          // print(
+          //     '==============================================================================\n\n');
+          fn(ele.children);
+
+          dom.Element lastChildEle = ele.children.last;
+          String lastChildTag = '</${lastChildEle.localName}>';
+          preTag = '</${ele.localName}';
+          // print('lastChildTag: $lastChildTag, preTag: $preTag');
+
+          regStr = "$lastChildTag(.*)$preTag";
+          matches = RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            //print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+        } else {
+          String text = ele.innerHtml;
+          //print('~~~提取出文本: $text');
+          if (text != null && text.length > 0) {
+            resultList.add(text);
+          }
+
+          if (localName == 'img') {
+            String src = ele.attributes['src'];
+            //print('--> 提取出图片: $src');
+            resultList.add(src);
+          } else if (localName == 'video') {
+            String src = ele.attributes['src'];
+            // print('--> 提取出视频: $src');
+            resultList.add(src);
+          }
+
+          //  print(
+          //     '==============================================================================\n\n');
+        }
+
+        if (i < children.length - 1) {
+          dom.Element netEle = children[i + 1];
+          String currentTag = '</${ele.localName}>';
+          String netTag = netEle != null ? '<${netEle.localName}' : '';
+          //  print('currentTag: $currentTag, netTag: $netTag');
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "$currentTag(.*)$netTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            //  print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              resultList.add(text);
+            }
+          });
+        }
+      }
+    };
+    fn(children);
+
+    // print('提取结果：${resultList}');
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  String newTitle;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          //title: Text("目录界面"),
+          // centerTitle: true,
+          backgroundColor: Colors.deepOrangeAccent,
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            /*IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              /*print('数据::$spacial');
+              controller.setData(spacial);
+              setState(() {});*/
+            },
+          ),*/
+            IconButton(
+              icon: Icon(Icons.check_sharp),
+              onPressed: () {
+                var _state = _formKey.currentState;
+                if (_state.validate()) {
+                  _state.save();
+                  //print("22222222222222" + '${widget.nCategory}');
+                  _sendMessage(controller, id, '${widget.nCategory}', context);
+                }
+                /*Navigator.push(context, MaterialPageRoute(builder: (c) {
+                return Pre(
+                  data: controller.generateHtml(),
+                );
+              }));*/
+              },
+            )
+          ],
+        ),
+        body: //RichEdit(controller),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      // controller: textFieldController,
+                      initialValue: '${widget.ntitle}',
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      decoration: InputDecoration(
+                          icon: Icon(Icons.title),
+                          labelText: "标题",
+                          // border: OutlineInputBorder(),
+                          hintText: "请输入标题"),
+                      onSaved: (value) {
+                        newTitle = value;
+                      },
+                      validator: (String value) {
+                        return value.length > 0 ? null : '标题不能为空';
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Divider(),
+              SafeArea(
+                child: SizedBox(
+                  height: ScreenUtil.getInstance().setHeight(1100),
+                  child: RichEdit(
+                      controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                ),
+              ),
+            ]));
+  }
+
+  _sendMessage(SimpleRichEditController controller, String id, String nCategory,
+      BuildContext context) async {
+    var htmlCode = await controller.generateHtmlUrl();
+    //print(htmlCode);
+    //修改内容时先把之前的内容删除然后在上传
+    postDeleteTitle(id, '${widget.ntitle}');
+    postRequestFunction(htmlCode, newTitle, id, nCategory);
+    // controller.generateHtml();
+    //这里是用html初始化一个页面
+
+    /*Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return Pre(
+        htmlCode: htmlCode,
+      );
+    }));*/
+    print("发送成功");
+    Navigator.of(context).pushNamed('/category');
+
+    // }
+  }
+
+  void postDeleteTitle(String id, String value) async {
+    print(id);
+    print(value);
+    String url =
+        "http://47.110.150.159:8080/note/delete?uId=${id}&noteTitle=${value}";
+
+    ///创建Dio
+    Dio dio = new Dio();
+
+    ///创建Map 封装参数
+    /*FormData formData = FormData.fromMap({
+      "userid": "$id",
+      "noteTitle": "$value",
+    });*/
+
+    ///发起post请求
+    Response response = await dio.post(url);
+    //var data = response.data;
+    print(response.data);
+    //Navigator.pop(context);
+  }
+
+  void postRequestFunction(
+      String htmlCode, String title, String id, String nCategory) async {
+    String url = "http://47.110.150.159:8080/insertNote";
+
+    ///发起post请求
+    Response response = await Dio().post(url, data: {
+      "nNotetitle": "$title",
+      "nNote": "$htmlCode",
+      "uId": "$id",
+      "nCategory": "$nCategory"
+    });
+    print(response.data);
+  }
 }
