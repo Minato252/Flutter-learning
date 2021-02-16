@@ -77,7 +77,7 @@ class SimpleRichEditController extends RichEditController {
 
     sb.write("<p>");
     //sb.write("<image style=\"width:${element.imgWith}px\" src=\"");
-    sb.write("<image style=\"padding: 10px;max-width: 90%;\" src=\"");
+    sb.write("<image style=\"width:200px\" src=\"");
 
     // sb.write(url);
     sb.write(element.data);
@@ -95,15 +95,15 @@ class SimpleRichEditController extends RichEditController {
     // String url = await UploadFile.fileUplod(element.data, fileName: name);
     //videourl = await UploadFile.fileUplod(element.data, fileName: name);
     sb.write("<p>");
-    sb.write('''
-           <video src="${element.data}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
-           ''');
+    // sb.write('''
+    //        <video src="${element.data}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
+    //        ''');
     //videourl
     // sb.write("<\/p>");
 
-    //sb.write('''
-    //  <video style="width:300px;height:150px" controls> <source src="${url}"></video>
-    //  ''');
+    sb.write('''
+     <video style="width:300px;height:150px" controls> <source src="${element.data}"></video>
+     ''');
     sb.write("<\/p>");
   }
 
