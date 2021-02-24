@@ -28,24 +28,59 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
     SimpleRichEditController controller, BuildContext context) {
   return Scrollbar(
     child: SingleChildScrollView(
+        child: Container(
+      padding: EdgeInsets.all(5),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Align(
-            alignment: new FractionalOffset(0.0, 0.0),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              // alignment: WrapAlignment.start,
-              spacing: 8.0,
-              children: [
-                Text("标题："),
-                Text(
-                  "${messageModel.title}",
-                  style: TextStyle(fontSize: 25),
+          Row(
+            children: [
+              // Icon(Icons.title),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "标题",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        ),
+                        Chip(label: Text(messageModel.keyWord)),
+                      ],
+                    ),
+                    Align(
+                      alignment: new FractionalOffset(0.0, 0.0),
+                      child: Text(
+                        "${messageModel.title}",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )
+                  ],
                 ),
-                Chip(label: Text(messageModel.keyWord)),
-              ],
-            ),
+              ),
+            ],
           ),
+
+          //   Wrap(
+          //     crossAxisAlignment: WrapCrossAlignment.center,
+          //     // alignment: WrapAlignment.start,
+          //     spacing: 8.0,
+          //     children: [
+          //       // Text("标题："),
+          //       Icon(Icons.title),
+          //       Text(
+          //         "${messageModel.title}",
+          //         style: TextStyle(fontSize: 20),
+          //       ),
+          //       Chip(label: Text(messageModel.keyWord)),
+          //     ],
+          //   ),
+          // ),
 
           Align(
             alignment: new FractionalOffset(0.0, 0.0),
@@ -63,9 +98,23 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           //   },
           // ),
           Divider(),
-          HtmlWidget(
-            messageModel.htmlCode,
-            webView: true,
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Material(
+              borderRadius: BorderRadius.circular(10.0),
+              elevation: 14.0,
+              shadowColor: Colors.grey.withOpacity(0.5),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: messageModel.htmlCode ==
+                        """<p><span style="font-size:15px;"></span></p>"""
+                    ? SizedBox(width: double.infinity)
+                    : HtmlWidget(
+                        messageModel.htmlCode,
+                        webView: true,
+                      ),
+              ),
+            ),
           ),
 
           Divider(),
@@ -82,7 +131,7 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           // Text("测试"),
         ],
       ),
-    ),
+    )),
   );
 }
 
