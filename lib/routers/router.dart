@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tabs/ChooseUser.dart';
 import 'package:weitong/pages/tabs/Message.dart';
+import 'package:weitong/pages/tabs/Setting.dart';
 import 'package:weitong/pages/tabs/conversation_page.dart';
 import 'package:weitong/pages/tags/TagChoiceChipDemo.dart';
 import '../pages/tabs/Tabs.dart';
@@ -38,6 +39,7 @@ final routes = {
   '/edit': (BuildContext context) => new EditCreate(),
   '/newcategory': (context) => NewCategory(),
   '/preedit': (context) => PreEdit(),
+  '/setting': (context) => SettingPage(),
 };
 
 //固定写法
