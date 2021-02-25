@@ -32,6 +32,10 @@ class SimpleRichEditController extends RichEditController {
     super.data = data;
   }
 
+  void setDataFromList(List<RichEditData> data) {
+    super.data = data;
+  }
+
   Future<String> generateHtmlUrl() async {
     StringBuffer sb = StringBuffer();
     List<RichEditData> _data = getDataList();
@@ -65,7 +69,10 @@ class SimpleRichEditController extends RichEditController {
   void generateTextHtml(StringBuffer sb, RichEditData element) {
     sb.write("<p>");
     sb.write("<span style=\"font-size:15px;\">");
-    sb.write(element.data);
+    //实现了换行
+    sb.write("${element.data}"
+        .replaceAll("\r\n", "<\/br>")
+        .replaceAll("\n", "<\/br>"));
     sb.write("<\/span>");
     sb.write("<\/p>");
   }

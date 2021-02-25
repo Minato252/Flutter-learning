@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/tabs/PretoRichEdit.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
@@ -141,27 +142,43 @@ _sendMessage(SimpleRichEditController controller) async {}
 class PreAndSend extends StatefulWidget {
   MessageModel messageModel;
   String content;
-  PreAndSend({MessageModel messageModel}) {
+  bool editable;
+  List<RichEditData> data;
+  PreAndSend(
+      {MessageModel messageModel,
+      bool editable = false,
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
+    this.editable = editable;
+    this.data = data;
   }
   @override
-  _PreAndSendState createState() =>
-      _PreAndSendState(messageModel: messageModel);
+  _PreAndSendState createState() => _PreAndSendState(
+      messageModel: messageModel, editable: editable, data: data);
 }
 
 class _PreAndSendState extends State<PreAndSend> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
+
+  bool editable;
+  List<RichEditData> data;
   // List targetIdList;
   List<String> targetIdList;
   StreamSubscription<PageEvent> sss; //eventbus传值
   SimpleRichEditController controller = SimpleRichEditController();
 
-  _PreAndSendState({MessageModel messageModel}) {
+  _PreAndSendState(
+      {MessageModel messageModel,
+      bool editable = false,
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
+
+    this.editable = editable;
+    this.data = data;
   }
   @override
   @override
@@ -183,10 +200,23 @@ class _PreAndSendState extends State<PreAndSend> {
                       sendMessageSuccess("请选择您要发送的联系人！");
                     } else {
                       _sendMessage();
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
                     }
                   },
                 ),
+                editable
+                    ? IconButton(
+                        tooltip: "编辑",
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (context) => new PretoRichEdit(data,
+                                  messageModel.title, messageModel.keyWord)));
+                        })
+                    : SizedBox(
+                        width: 0,
+                        height: 0,
+                      ),
               ],
             )
           ],
