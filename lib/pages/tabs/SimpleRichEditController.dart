@@ -67,14 +67,14 @@ class SimpleRichEditController extends RichEditController {
   // }
 
   void generateTextHtml(StringBuffer sb, RichEditData element) {
-    for (var i in "${element.data}".replaceAll("\r\n", "\n").split("\n")) {
-      sb.write("<p>");
-      sb.write("<span style=\"font-size:15px;\">");
-      //实现了换行
-      sb.write("${i}");
-      sb.write("<\/span>");
-      sb.write("<\/p>");
-    }
+    sb.write("<p>");
+    sb.write("<span style=\"font-size:15px;\">");
+    // sb.write(element.data);
+    sb.write("${element.data}"
+        .replaceAll("\r\n", "<\/span><\/p>")
+        .replaceAll("\n", "<p><span style=\"font-size:15px;\">"));
+    sb.write("<\/span>");
+    sb.write("<\/p>");
   }
 
   Future<void> generateImageHtmlUrl(
