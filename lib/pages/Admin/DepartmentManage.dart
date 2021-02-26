@@ -48,12 +48,12 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
                     context: context, delegate: SearchBarDelegate(users));
               },
             ),
-            IconButton(
-                onPressed: () {
-                  print("addUser");
-                  _addUser(context);
-                },
-                icon: Icon(Icons.add)),
+            // IconButton(
+            //     onPressed: () {
+            //       print("addUser");
+            //       _addUser(context);
+            //     },
+            //     icon: Icon(Icons.add)),
             IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () async {

@@ -90,18 +90,23 @@ class RightWidget extends StatefulWidget {
   bool deleteable;
   bool editable;
   bool addable;
+  Color c;
   RightWidget(String rightName, String parentName,
-      {bool deleteable = true, bool editable = true, bool addable = true}) {
+      {bool deleteable = true,
+      bool editable = true,
+      bool addable = true,
+      Color c}) {
     this.rightName = rightName;
     this.parentName = parentName;
     this.deleteable = deleteable;
     this.editable = editable;
     this.addable = addable;
+    this.c = c;
   }
 
   @override
-  _RightWidgetState createState() =>
-      _RightWidgetState(rightName, parentName, deleteable, editable, addable);
+  _RightWidgetState createState() => _RightWidgetState(
+      rightName, parentName, deleteable, editable, addable, c);
 }
 
 class _RightWidgetState extends State<RightWidget> {
@@ -110,13 +115,15 @@ class _RightWidgetState extends State<RightWidget> {
   bool deleteable;
   bool editable;
   bool addable;
+  Color c;
   _RightWidgetState(String rightName, String parentName, bool deleteable,
-      bool editable, bool addable) {
+      bool editable, bool addable, Color c) {
     this.rightName = rightName;
     this.parentName = parentName;
     this.deleteable = deleteable;
     this.editable = editable;
     this.addable = addable;
+    this.c = c;
   }
 
   StreamSubscription<UpdataNode> sss; //eventbus传值
@@ -142,9 +149,12 @@ class _RightWidgetState extends State<RightWidget> {
         : Container(height: 0.0, width: 0.0);
     return Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$rightName"),
+          Text(
+            "$rightName",
+            style: TextStyle(color: c),
+          ),
           Row(
             children: [addButton, editButton, deleteButton],
           )
@@ -266,34 +276,34 @@ class _StaffManagePageState extends State<StaffManagePage> {
       appBar: AppBar(
         title: Text("安全生产经营管理体系"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () async {
-              final newRight = await Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) => new Input(
-                          "新建最高权限",
-                          "输入您要新建的权限名称",
-                          12,
-                          "权限名称",
-                        )),
-              );
-              if (newRight != null) {
-                final tree = Provider.of<ProviderServices>(context);
-                String jsonTree = tree.tree;
-                var parsedJson = json.decode(jsonTree);
-                parsedJson = Tree.insertNode(parsedJson, null, newRight);
-                jsonTree = json.encode(parsedJson);
-                //这里应该刷新tree的UI,目前只能用按钮实现
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                String id = prefs.getString("adminId");
-                await Tree.setTreeInSer(id, jsonTree, context);
+          // IconButton(
+          //   icon: Icon(Icons.add),
+          //   onPressed: () async {
+          //     final newRight = await Navigator.push(
+          //       context,
+          //       new MaterialPageRoute(
+          //           builder: (context) => new Input(
+          //                 "新建最高权限",
+          //                 "输入您要新建的权限名称",
+          //                 12,
+          //                 "权限名称",
+          //               )),
+          //     );
+          //     if (newRight != null) {
+          //       final tree = Provider.of<ProviderServices>(context);
+          //       String jsonTree = tree.tree;
+          //       var parsedJson = json.decode(jsonTree);
+          //       parsedJson = Tree.insertNode(parsedJson, null, newRight);
+          //       jsonTree = json.encode(parsedJson);
+          //       //这里应该刷新tree的UI,目前只能用按钮实现
+          //       SharedPreferences prefs = await SharedPreferences.getInstance();
+          //       String id = prefs.getString("adminId");
+          //       await Tree.setTreeInSer(id, jsonTree, context);
 
-                EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
-              }
-            },
-          ),
+          //       EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+          //     }
+          //   },
+          // ),
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () async {
@@ -308,7 +318,8 @@ class _StaffManagePageState extends State<StaffManagePage> {
       ),
       body: Scrollbar(
         child: SingleChildScrollView(
-          child: buildTree(),
+          child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal, child: buildTree()),
         ),
       ),
       //   TreeNode(content: Text("权限1")),
@@ -398,7 +409,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
                 children: [
                   Icon(Icons.person),
                   Text(
-                    '[${element["name"]}123]',
+                    '[${element["name"]}]',
                     style: TextStyle(color: Colors.red),
                   )
                 ],
