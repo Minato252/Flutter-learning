@@ -204,7 +204,8 @@ class SimpleRichEditController extends RichEditController {
   }
 
   Future<String> showImgDialog() async {
-    return await showModalBottomSheet(
+    String imgPath = null;
+    await showModalBottomSheet(
         context: navigatorKey.currentState.overlay.context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
@@ -223,10 +224,10 @@ class SimpleRichEditController extends RichEditController {
                     children: <Widget>[
                       InkWell(
                         onTap: () async {
-                          Navigator.pop(context);
-                          var imgPath = await _getImageFromCamera();
+                          imgPath = await _getImageFromCamera();
 
-                          Navigator.pop(context, imgPath);
+                          Navigator.pop(context);
+                          // Navigator.pop(context, imgPath);
                           //   switch (type) {
                           //     case 0:
                           //       notifyImg = imgPath;
@@ -259,9 +260,9 @@ class SimpleRichEditController extends RichEditController {
                       ),
                       InkWell(
                         onTap: () async {
-                          var imgPath = await _getImageFromGallery();
+                          imgPath = await _getImageFromGallery();
 
-                          Navigator.pop(context, imgPath);
+                          Navigator.pop(context);
 
                           // switch (type) {
                           //   case 0:
@@ -297,7 +298,7 @@ class SimpleRichEditController extends RichEditController {
                     // NavigatorUtils.goBack(context);
 
                     Navigator.pop(context);
-                    return null;
+                    // return null;
                   },
                   child: Container(
                     margin: EdgeInsets.only(
@@ -324,6 +325,7 @@ class SimpleRichEditController extends RichEditController {
             ),
           );
         });
+    return imgPath;
   }
 
   Future _getImageFromCamera() async {
