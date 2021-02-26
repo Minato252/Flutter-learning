@@ -51,15 +51,10 @@ class SimpleRichEditController extends RichEditController {
   //添加视频方法
   @override
   Future<String> addVideo() async {
-    PickedFile pickedFile =
-        await ImagePicker().getVideo(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      //模拟上传后返回的路径
-      var path = pickedFile.path;
-
-      return path;
+    String oldPath = await showVidDialog();
+    if (oldPath != null && oldPath != "") {
+      return oldPath;
     }
-    return null;
   }
 
   //添加图片方法
@@ -340,6 +335,147 @@ class SimpleRichEditController extends RichEditController {
   Future<String> _getImageFromGallery() async {
     PickedFile image =
         await ImagePicker().getImage(source: ImageSource.gallery);
+    if (image != null) {
+      return image.path;
+    }
+  }
+
+  Future<String> showVidDialog() async {
+    String imgPath = null;
+    await showModalBottomSheet(
+        context: navigatorKey.currentState.overlay.context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: 171,
+            margin: EdgeInsets.only(left: 15, right: 15), //控制底部的距离
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 101,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () async {
+                          imgPath = await _getVideoFromCamera();
+
+                          Navigator.pop(context);
+                          // Navigator.pop(context, imgPath);
+                          //   switch (type) {
+                          //     case 0:
+                          //       notifyImg = imgPath;
+                          //       break;
+                          //     case 1:
+                          //       emergencyImg = imgPath;
+                          //       break;
+                          //     case 2:
+                          //       promiseImg = imgPath;
+                          //       break;
+                          //   }
+                          //   setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '录制',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          imgPath = await _getVideoFromGallery();
+
+                          Navigator.pop(context);
+
+                          // switch (type) {
+                          //   case 0:
+                          //     notifyImg = imgPath;
+                          //     break;
+                          //   case 1:
+                          //     emergencyImg = imgPath;
+                          //     break;
+                          //   case 2:
+                          //     promiseImg = imgPath;
+                          //     break;
+                          // }
+                          // setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '本地相册',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    // NavigatorUtils.goBack(context);
+
+                    Navigator.pop(context);
+                    // return null;
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '取消',
+                        style: TextStyle(
+                            color: Colors.red,
+//                          fontSize: Config.fontSize17,
+                            fontWeight: FontWeight.w200),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+    return imgPath;
+  }
+
+  Future _getVideoFromCamera() async {
+    PickedFile image = await ImagePicker().getVideo(source: ImageSource.camera);
+    if (image != null) {
+      return image.path;
+    }
+  }
+
+  //相册选择
+  Future<String> _getVideoFromGallery() async {
+    PickedFile image =
+        await ImagePicker().getVideo(source: ImageSource.gallery);
     if (image != null) {
       return image.path;
     }
