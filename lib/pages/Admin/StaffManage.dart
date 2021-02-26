@@ -391,8 +391,18 @@ class _StaffManagePageState extends State<StaffManagePage> {
     if (parsedJson is List<dynamic>) {
       return parsedJson
           .asMap()
-          .map((i, element) =>
-              MapEntry(i, TreeNode(content: Text('[${element["name"]}]'))))
+          .map((i, element) => MapEntry(
+              i,
+              TreeNode(
+                  content: Row(
+                children: [
+                  Icon(Icons.person),
+                  Text(
+                    '[${element["name"]}123]',
+                    style: TextStyle(color: Colors.red),
+                  )
+                ],
+              ))))
           .values
           .toList();
     }

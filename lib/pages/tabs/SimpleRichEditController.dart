@@ -40,6 +40,10 @@ class SimpleRichEditController extends RichEditController {
     super.data = data;
   }
 
+  void setDataFromList(List<RichEditData> data) {
+    super.data = data;
+  }
+
   Future<String> generateHtmlUrl() async {
     StringBuffer sb = StringBuffer();
     List<RichEditData> _data = getDataList();

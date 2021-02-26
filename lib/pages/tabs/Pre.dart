@@ -12,6 +12,7 @@ import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/tabs/PretoRichEdit.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
@@ -30,24 +31,59 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
     SimpleRichEditController controller, BuildContext context) {
   return Scrollbar(
     child: SingleChildScrollView(
+        child: Container(
+      padding: EdgeInsets.all(5),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Align(
-            alignment: new FractionalOffset(0.0, 0.0),
-            child: Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              // alignment: WrapAlignment.start,
-              spacing: 8.0,
-              children: [
-                Text("标题："),
-                Text(
-                  "${messageModel.title}",
-                  style: TextStyle(fontSize: 25),
+          Row(
+            children: [
+              // Icon(Icons.title),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "标题",
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        ),
+                        Chip(label: Text(messageModel.keyWord)),
+                      ],
+                    ),
+                    Align(
+                      alignment: new FractionalOffset(0.0, 0.0),
+                      child: Text(
+                        "${messageModel.title}",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )
+                  ],
                 ),
-                Chip(label: Text(messageModel.keyWord)),
-              ],
-            ),
+              ),
+            ],
           ),
+
+          //   Wrap(
+          //     crossAxisAlignment: WrapCrossAlignment.center,
+          //     // alignment: WrapAlignment.start,
+          //     spacing: 8.0,
+          //     children: [
+          //       // Text("标题："),
+          //       Icon(Icons.title),
+          //       Text(
+          //         "${messageModel.title}",
+          //         style: TextStyle(fontSize: 20),
+          //       ),
+          //       Chip(label: Text(messageModel.keyWord)),
+          //     ],
+          //   ),
+          // ),
 
           Align(
             alignment: new FractionalOffset(0.0, 0.0),
@@ -65,9 +101,23 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           //   },
           // ),
           Divider(),
-          HtmlWidget(
-            messageModel.htmlCode,
-            webView: true,
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Material(
+              borderRadius: BorderRadius.circular(10.0),
+              elevation: 14.0,
+              shadowColor: Colors.grey.withOpacity(0.5),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: messageModel.htmlCode ==
+                        """<p><span style="font-size:15px;"></span></p>"""
+                    ? SizedBox(width: double.infinity)
+                    : HtmlWidget(
+                        messageModel.htmlCode,
+                        webView: true,
+                      ),
+              ),
+            ),
           ),
 
           Divider(),
@@ -93,7 +143,7 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           // Text("测试"),
         ],
       ),
-    ),
+    )),
   );
 }
 
@@ -103,27 +153,43 @@ _sendMessage(SimpleRichEditController controller) async {}
 class PreAndSend extends StatefulWidget {
   MessageModel messageModel;
   String content;
-  PreAndSend({MessageModel messageModel}) {
+  bool editable;
+  List<RichEditData> data;
+  PreAndSend(
+      {MessageModel messageModel,
+      bool editable = false,
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
+    this.editable = editable;
+    this.data = data;
   }
   @override
-  _PreAndSendState createState() =>
-      _PreAndSendState(messageModel: messageModel);
+  _PreAndSendState createState() => _PreAndSendState(
+      messageModel: messageModel, editable: editable, data: data);
 }
 
 class _PreAndSendState extends State<PreAndSend> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
+
+  bool editable;
+  List<RichEditData> data;
   // List targetIdList;
   List<String> targetIdList;
   StreamSubscription<PageEvent> sss; //eventbus传值
   SimpleRichEditController controller = SimpleRichEditController();
 
-  _PreAndSendState({MessageModel messageModel}) {
+  _PreAndSendState(
+      {MessageModel messageModel,
+      bool editable = false,
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
+
+    this.editable = editable;
+    this.data = data;
   }
   @override
   @override
@@ -145,10 +211,23 @@ class _PreAndSendState extends State<PreAndSend> {
                       sendMessageSuccess("请选择您要发送的联系人！");
                     } else {
                       _sendMessage();
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
                     }
                   },
                 ),
+                editable
+                    ? IconButton(
+                        tooltip: "编辑",
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: (context) => new PretoRichEdit(data,
+                                  messageModel.title, messageModel.keyWord)));
+                        })
+                    : SizedBox(
+                        width: 0,
+                        height: 0,
+                      ),
               ],
             )
           ],

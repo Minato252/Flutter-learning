@@ -213,9 +213,12 @@ class _MessageCreateState extends State<MessageCreate> {
           title: newTitle,
           keyWord: _curchosedTag,
           hadLook: prefs.get("id"));
+      List<RichEditData> l = new List<RichEditData>.from(controller.data);
       Navigator.push(context, MaterialPageRoute(builder: (c) {
         return PreAndSend(
           messageModel: messageModel,
+          editable: true,
+          data: l,
         );
       }));
       print("发送成功");

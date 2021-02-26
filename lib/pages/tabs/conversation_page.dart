@@ -975,23 +975,24 @@ class _ConversationPageState extends State<ConversationPage>
     Map<String, String> actionMap = {
       RCLongPressAction.DeleteKey: RCLongPressAction.DeleteValue,
     };
-    // 引用消息
-    if (_isShowReference(message)) {
-      actionMap[RCLongPressAction.ReferenceKey] =
-          RCLongPressAction.ReferenceValue;
-    }
-    actionMap[RCLongPressAction.MutiSelectKey] =
-        RCLongPressAction.MutiSelectValue;
-    if (message.messageDirection == RCMessageDirection.Send) {
-      actionMap[RCLongPressAction.RecallKey] = RCLongPressAction.RecallValue;
-    }
+    // // 引用消息
+    // if (_isShowReference(message)) {
+    //   actionMap[RCLongPressAction.ReferenceKey] =
+    //       RCLongPressAction.ReferenceValue;
+    // }
+    // actionMap[RCLongPressAction.MutiSelectKey] =
+    //     RCLongPressAction.MutiSelectValue;
+    // if (message.messageDirection == RCMessageDirection.Send) {
+    //   actionMap[RCLongPressAction.RecallKey] = RCLongPressAction.RecallValue;
+    // }
 
     WidgetUtil.showLongPressMenu(context, tapPos, actionMap, (String key) {
       if (key == RCLongPressAction.DeleteKey) {
         _deleteMessage(message);
-      } else if (key == RCLongPressAction.RecallKey) {
-        _recallMessage(message);
       }
+      // } else if (key == RCLongPressAction.RecallKey) {
+      //   _recallMessage(message);
+      // }
       // else if (key == RCLongPressAction.MutiSelectKey) {
       //   this.multiSelect = true;
       //   currentInputStatus = InputBarStatus.Normal;
