@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+//import 'package:react/react.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/pages/Note/SearchCategory.dart';
 import 'package:weitong/pages/Note/NoteContent.dart';
@@ -554,14 +555,23 @@ class _CategoryPageState extends State<CategoryPage>
     //获取计算后的高度
     var rightItemHeight = rightItemWidth + ScreenAdapter.height(75);
     return Scaffold(
-        // backgroundColor: Colors.white,
-        appBar: AppBar(title: Text("目录界面"), centerTitle: true,
-            // backgroundColor: Colors.deepOrangeAccent,
+        //backgroundColor: Colors.white,
+        appBar: AppBar(
+            title: Text(
+              '目录',
+              style: TextStyle(
+                  fontSize: 18.0,
+                  //fontWeight: FontWeight.w400,
+                  color: Colors.black),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.white,
             actions: <Widget>[
               IconButton(
                 icon: Icon(
                   Icons.search,
-                  color: Colors.white,
+                  size: 25.0,
+                  color: Colors.black,
                 ),
                 onPressed: () {
                   showSearch(
@@ -571,7 +581,8 @@ class _CategoryPageState extends State<CategoryPage>
               IconButton(
                 icon: Icon(
                   Icons.add,
-                  color: Colors.white,
+                  size: 25.0,
+                  color: Colors.black,
                 ),
                 onPressed: () {
                   _showDialog(context);

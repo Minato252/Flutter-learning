@@ -86,7 +86,7 @@ class _EditCreateState extends State<EditCreate> {
                   Divider(),
                   SafeArea(
                     child: SizedBox(
-                        height: ScreenUtil.getInstance().setHeight(1100),
+                        height: ScreenUtil.getInstance().setHeight(1000),
                         child: MultiProvider(
                           providers: [
                             ChangeNotifierProvider(
