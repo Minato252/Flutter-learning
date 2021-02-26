@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,6 +44,19 @@ class _MessageCreateState extends State<MessageCreate> {
     return Scaffold(
       appBar: AppBar(
         title: Text("创建消息"),
+        actions: <Widget>[
+          FlatButton(
+              onPressed: () {
+                _sendMessage(controller);
+              },
+              child: Text(
+                "预览",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.black),
+              )),
+        ],
       ),
       body: SafeArea(
           child: Container(
@@ -149,12 +163,12 @@ class _MessageCreateState extends State<MessageCreate> {
                     //   ],
                     // ),
                   ]),
-              JdButton(
-                text: "发送",
+              /*JdButton(
+                text: "预览",
                 cb: () {
                   _sendMessage(controller);
                 },
-              ),
+              ),*/
             ]),
       )),
     );
