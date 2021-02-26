@@ -13,6 +13,8 @@ import 'package:weitong/widget/JdButton.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'SimpleRichEditController.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/services/voiceprovider.dart';
+import 'package:provider/provider.dart';
 
 class MessageCreate extends StatefulWidget {
   MessageCreate({Key key}) : super(key: key);
@@ -113,8 +115,17 @@ class _MessageCreateState extends State<MessageCreate> {
                     SafeArea(
                       child: SizedBox(
                         height: ScreenAdapter.height(500),
-                        child: RichEdit(
-                            controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                        child: MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(
+                              builder: (_) => VoiceRecordProvider(),
+                            )
+                          ],
+                          child: RichEdit(
+                              controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                        ),
+                        /* RichEdit(
+                            controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                       ),
                     ),
                     // Container(

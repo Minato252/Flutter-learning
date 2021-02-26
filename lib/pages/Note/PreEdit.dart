@@ -7,6 +7,8 @@ import 'package:html/dom.dart' as dom;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import 'package:weitong/services/voiceprovider.dart';
+import 'package:provider/provider.dart';
 
 class PreEdit extends StatefulWidget {
   final htmlCode;
@@ -41,9 +43,6 @@ class _PreEditState extends State<PreEdit> {
   }
 
   List resultList = [];
-  /*String spacial =
-      '[我是最我好大家好我;;;;回电话无法whhuhu前面文字,http://47.110.150.159:8080/picture/20210130/77d7ac9a450f40cf8775ac4d60fa3d6d.jpg;,我在图wdwf片之后,下面是一个fff视频, http://47.110.150.159:8080/videos/20210130/e0c77abbd1964c82969653ace7c778dc.mp4;,我在sodas视频后面]';
-      */
   void getContext(String htmlCode) {
     var str = htmlCode;
     var document = parse(str);
@@ -117,10 +116,16 @@ class _PreEditState extends State<PreEdit> {
             String src = ele.attributes['src'];
             //print('--> 提取出图片: $src');
             resultList.add(src);
+            //  resultList.add(" ");
           } else if (localName == 'video') {
             String src = ele.attributes['src'];
             // print('--> 提取出视频: $src');
             resultList.add(src);
+            // resultList.add(" ");
+          } else if (localName == 'audio') {
+            String src = ele.attributes['src'];
+            resultList.add(src);
+            // resultList.add(" ");
           }
 
           //  print(
@@ -158,23 +163,10 @@ class _PreEditState extends State<PreEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          //title: Text("目录界面"),
+          // title:Text("目录界面"),
           // centerTitle: true,
-          backgroundColor: Colors.deepOrangeAccent,
+          //backgroundColor: Colors.deepOrangeAccent,
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            /*IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              /*print('数据::$spacial');
-              controller.setData(spacial);
-              setState(() {});*/
-            },
-          ),*/
             IconButton(
               icon: Icon(Icons.check_sharp),
               onPressed: () {
@@ -229,8 +221,23 @@ class _PreEditState extends State<PreEdit> {
               SafeArea(
                 child: SizedBox(
                   height: ScreenUtil.getInstance().setHeight(1100),
-                  child: RichEdit(
-                      controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                  child: MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                        builder: (_) => VoiceRecordProvider(),
+                      )
+                    ],
+                    child: RichEdit(controller),
+                  ),
+                  /*SizedBox(
+                  height: ScreenUtil.getInstance().setHeight(1100),
+                  child: MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(
+                              builder: (_) => VoiceRecordProvider(),
+                            )
+                          ],RichEdit(
+                      controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                 ),
               ),
             ]));

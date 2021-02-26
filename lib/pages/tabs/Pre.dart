@@ -18,6 +18,8 @@ import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/services/voiceprovider.dart';
+import 'package:provider/provider.dart';
 
 import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -123,8 +125,17 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
               ? SafeArea(
                   child: SizedBox(
                     height: ScreenAdapter.height(500),
-                    child: RichEdit(
-                        controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                    child: MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                          builder: (_) => VoiceRecordProvider(),
+                        )
+                      ],
+                      child: RichEdit(
+                          controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                    ),
+                    /*RichEdit(
+                        controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                   ),
                 )
               : Text(""),

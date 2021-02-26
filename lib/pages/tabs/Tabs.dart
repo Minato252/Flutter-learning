@@ -25,7 +25,7 @@ class Tabs extends StatefulWidget {
 
 class _TabsState extends State<Tabs> {
   int _currentIndex = 0;
-  List _pagelist = [
+  List<Widget> _pagelist = [
     MessagePage(),
     MessageCreate(),
     LogRecordPage(),
@@ -163,7 +163,10 @@ class _TabsState extends State<Tabs> {
       //     cleanToken();
       //   },
       // ),
-      body: this._pagelist[this._currentIndex],
+      body: IndexedStack(
+        index: this._currentIndex,
+        children: this._pagelist,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: this._currentIndex,
         onTap: (index) {

@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 //import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:flutter_html/style.dart';
 import 'package:weitong/pages/Note/PreEdit.dart';
-import 'package:weitong/pages/Note/PreEdit.dart';
+//import 'package:weitong/pages/Note/PreEdit.dart';
 
 Scrollbar getPre(htmlCode, ntitle) {
   return Scrollbar(
@@ -25,9 +25,22 @@ Scrollbar getPre(htmlCode, ntitle) {
           Divider(),
           Html(
             data: htmlCode,
+            /*onLinkTap: (String url) {
+                print(url);
+              },
+              onImageTap: (String url) {
+                print("image" + url);
+                //open image in webview, or launch image in browser, or any other logic here
+              }*/
             style: {
               'img': Style(width: 250, height: 250),
               'video': Style(width: 50, height: 50),
+              'audio': Style(
+                width: 300,
+                // whiteSpace: WhiteSpace.PRE,
+                //display: Display.BLOCK,
+                //backgroundColor: Colors.red,
+              )
               // '#12': Style(width: 400, height: 400),
             },
           ),
@@ -48,7 +61,7 @@ class Note extends StatelessWidget {
     return new MaterialApp(
         home: new Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent,
+        // backgroundColor: Colors.deepOrangeAccent,
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
