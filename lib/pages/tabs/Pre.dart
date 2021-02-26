@@ -179,8 +179,7 @@ class _PreAndSendState extends State<PreAndSend> {
   // List targetIdList;
   List<String> targetIdList;
   StreamSubscription<PageEvent> sss; //eventbus传值
-  SimpleRichEditController controller = SimpleRichEditController();
-
+  SimpleRichEditController controller;
   _PreAndSendState(
       {MessageModel messageModel,
       bool editable = false,
@@ -190,6 +189,7 @@ class _PreAndSendState extends State<PreAndSend> {
 
     this.editable = editable;
     this.data = data;
+    this.controller = SimpleRichEditController(context);
   }
   @override
   @override

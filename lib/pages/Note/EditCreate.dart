@@ -18,13 +18,15 @@ class EditCreate extends StatefulWidget {
 
 class _EditCreateState extends State<EditCreate> {
 //class EditCreate extends StatelessWidget {
-  SimpleRichEditController controller = SimpleRichEditController();
+  SimpleRichEditController controller;
   String newTitle;
   //String category;
   //String id;
   final _formKey = GlobalKey<FormState>();
   //EditCreate({Key key, this.category, this.id}) : super(key: key);
-
+  _EditCreateState() {
+    controller = new SimpleRichEditController(context);
+  }
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(

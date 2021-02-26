@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,19 +19,20 @@ import 'editor/extended_image_editor.dart';
 import 'editor/extended_image_editor_utils.dart';
 import 'extended_image.dart';
 import 'extended_image_utils.dart';
+import 'image_editor_demo.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/8/22
 ///
 
-class ImageEditorDemo extends StatefulWidget {
+class ImageShowerDemo extends StatefulWidget {
   @override
-  Uint8List _memoryImage;
-  ImageEditorDemo(this._memoryImage);
-  _ImageEditorDemoState createState() => _ImageEditorDemoState(_memoryImage);
+  String path;
+  ImageShowerDemo(this.path);
+  _ImageShowerDemoState createState() => _ImageShowerDemoState(path);
 }
 
-class _ImageEditorDemoState extends State<ImageEditorDemo> {
+class _ImageShowerDemoState extends State<ImageShowerDemo> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   final GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>
@@ -50,7 +52,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   ExtendedImageCropLayerCornerPainter _cornerPainter;
   Uint8List _memoryImage;
-  _ImageEditorDemoState(this._memoryImage);
+  String path;
+  bool isEdited = false;
+  _ImageShowerDemoState(this.path);
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
@@ -60,14 +64,15 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   Widget build(BuildContext context) {
+    this._memoryImage = File(path).readAsBytesSync();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('image editor demo'),
+        title: const Text('图片'),
         actions: <Widget>[
-          // IconButton(
-          //   icon: const Icon(Icons.photo_library),
-          //   onPressed: _getImage,
-          // ),
+          IconButton(
+            icon: const Icon(Icons.photo_library),
+            onPressed: _getImage,
+          ),
           IconButton(
             icon: const Icon(Icons.done),
             onPressed: () async {
@@ -75,9 +80,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 _cropImage(false);
               } else {
                 // _showCropDialog(context);
-                String url = await _cropImage(true);
-
-                Navigator.pop(context, url);
+                if (isEdited) {
+                  String url = await _cropImage(true);
+                  Navigator.pop(context, url);
+                } else {
+                  Navigator.pop(context, path);
+                }
               }
             },
           ),
@@ -126,160 +134,15 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         child: ButtonTheme(
           minWidth: 0.0,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.crop),
-                label: const Text(
-                  'Crop',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
+              FlatButton(
+                child: Text("编辑"),
                 onPressed: () {
-                  showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Column(
-                          children: <Widget>[
-                            const Expanded(
-                              child: SizedBox(),
-                            ),
-                            SizedBox(
-                              height: ScreenUtil.instance.setWidth(200.0),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.all(20.0),
-                                itemBuilder: (_, int index) {
-                                  final AspectRatioItem item =
-                                      _aspectRatios[index];
-                                  return GestureDetector(
-                                    child: AspectRatioWidget(
-                                      aspectRatio: item.value,
-                                      aspectRatioS: item.text,
-                                      isSelected: item == _aspectRatio,
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      setState(() {
-                                        _aspectRatio = item;
-                                      });
-                                    },
-                                  );
-                                },
-                                itemCount: _aspectRatios.length,
-                              ),
-                            ),
-                          ],
-                        );
-                      });
-                },
-              ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.flip),
-                label: const Text(
-                  'Flip',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  editorKey.currentState.flip();
-                },
-              ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.rotate_left),
-                label: const Text(
-                  'Rotate Left',
-                  style: TextStyle(fontSize: 8.0),
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  editorKey.currentState.rotate(right: false);
-                },
-              ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.rotate_right),
-                label: const Text(
-                  'Rotate Right',
-                  style: TextStyle(fontSize: 8.0),
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  editorKey.currentState.rotate(right: true);
-                },
-              ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.rounded_corner_sharp),
-                label: PopupMenuButton<ExtendedImageCropLayerCornerPainter>(
-                  key: popupMenuKey,
-                  enabled: false,
-                  offset: const Offset(100, -300),
-                  child: const Text(
-                    'Corner',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
-                  initialValue: _cornerPainter,
-                  itemBuilder: (BuildContext context) {
-                    return <
-                        PopupMenuEntry<ExtendedImageCropLayerCornerPainter>>[
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.rounded_corner_sharp,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('NinetyDegrees'),
-                          ],
-                        ),
-                        value:
-                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.circle,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('Circle'),
-                          ],
-                        ),
-                        value:
-                            const ExtendedImageCropLayerPainterCircleCorner(),
-                      ),
-                    ];
-                  },
-                  onSelected: (ExtendedImageCropLayerCornerPainter value) {
-                    if (_cornerPainter != value) {
-                      setState(() {
-                        _cornerPainter = value;
-                      });
-                    }
-                  },
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  popupMenuKey.currentState.showButtonMenu();
-                },
-              ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.restore),
-                label: const Text(
-                  'Reset',
-                  style: TextStyle(fontSize: 10.0),
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  editorKey.currentState.reset();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          new ImageEditorDemo(_memoryImage)));
                 },
               ),
             ],
@@ -448,15 +311,20 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  // Future<void> _getImage() async {
-  //   _memoryImage = await pickImage(context); //这里之后换成imagepicker方法=========
-  //   //when back to current page, may be editorKey.currentState is not ready.
-  //   Future<void>.delayed(const Duration(milliseconds: 200), () {
-  //     setState(() {
-  //       editorKey.currentState.reset();
-  //     });
-  //   });
-  // }
+  Future<void> _getImage() async {
+    // _memoryImage = await pickImage(context); //这里之后换成imagepicker方法=========
+    PickedFile pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      _memoryImage = File(pickedFile.path).readAsBytesSync();
+      Future<void>.delayed(const Duration(milliseconds: 200), () {
+        setState(() {
+          editorKey.currentState.reset();
+        });
+      });
+    }
+    //when back to current page, may be editorKey.currentState is not ready.
+  }
 }
 
 class ImageSaver {

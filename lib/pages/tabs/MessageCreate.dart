@@ -32,13 +32,16 @@ class _MessageCreateState extends State<MessageCreate> {
   IconData _actionChipIconData = Icons.add;
   List<Widget> _containerList;
 
+  SimpleRichEditController controller;
+  _MessageCreateState() {
+    //富文本的controller
+    controller = SimpleRichEditController(context);
+  }
   @override
   Widget build(BuildContext context) {
     // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     ScreenAdapter.init(context);
-    //富文本的controller
-    SimpleRichEditController controller = SimpleRichEditController();
 
     return Scaffold(
       appBar: AppBar(

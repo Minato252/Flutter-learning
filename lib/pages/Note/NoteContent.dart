@@ -51,13 +51,14 @@ Scrollbar getPre(htmlCode, ntitle) {
 }
 
 class Note extends StatelessWidget {
-  SimpleRichEditController controller = SimpleRichEditController();
+  SimpleRichEditController controller;
   final htmlCode;
   String ntitle;
   String nCategory;
   Note({Key key, this.htmlCode, this.nCategory, this.ntitle}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    controller = new SimpleRichEditController(context);
     return new MaterialApp(
         home: new Scaffold(
       appBar: AppBar(
