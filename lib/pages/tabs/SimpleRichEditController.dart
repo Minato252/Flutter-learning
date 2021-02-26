@@ -14,15 +14,8 @@ import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
 class SimpleRichEditController extends RichEditController {
   Map<String, ChewieController> controllers = Map();
 
-<<<<<<< HEAD
-  String imgurl;
-  String videourl;
-  // BuildContext context;
-  // SimpleRichEditController(this.context);
-=======
   // String imgurl;
   //String videourl;
->>>>>>> dev
   //将数据写入
   void setData(String value) {
     String _value = value.replaceAll(' ', '');
