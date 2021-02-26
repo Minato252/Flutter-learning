@@ -173,6 +173,7 @@ class _PreAndSendState extends State<PreAndSend> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
+  String notehtmlCode;
 
   bool editable;
   List<RichEditData> data;
@@ -194,6 +195,7 @@ class _PreAndSendState extends State<PreAndSend> {
   @override
   @override
   Widget build(BuildContext context) {
+    notehtmlCode = messageModel.htmlCode;
     print("html:" + messageModel.htmlCode);
     ScreenAdapter.init(context);
     content = messageModel.toJsonString();
@@ -213,6 +215,13 @@ class _PreAndSendState extends State<PreAndSend> {
                       _sendMessage();
                       // Navigator.pop(context);
                     }
+                  },
+                ),
+                IconButton(
+                  tooltip: "保存",
+                  icon: Icon(Icons.save),
+                  onPressed: () {
+                    postRequestFunction(notehtmlCode);
                   },
                 ),
                 editable
@@ -310,6 +319,7 @@ class _PreAndSendState extends State<PreAndSend> {
 
   _sendMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     // var db = DatabaseHelper();
     // db.initDb();
 
@@ -363,6 +373,23 @@ class _PreAndSendState extends State<PreAndSend> {
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+//将信息内容保存到我的部分类别为“默认类别”
+  void postRequestFunction(String htmlCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var htmlCode = await controller.generateHtmlUrl();
+    String url = "http://47.110.150.159:8080/insertNote";
+    String id = prefs.get("id");
+
+    ///发起post请求
+    Response response = await Dio().post(url, data: {
+      "nNotetitle": "${messageModel.title}",
+      "nNote": "$htmlCode",
+      "uId": "$id",
+      "nCategory": "默认类别"
+    });
+    // print(response.data);
   }
 }
 

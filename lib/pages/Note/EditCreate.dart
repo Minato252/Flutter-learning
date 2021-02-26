@@ -140,8 +140,8 @@ class _EditCreateState extends State<EditCreate> {
       "uId": "$id",
       "nCategory": '${widget.category}'
     });
-    print(response.data);
-    print(id);
+    // print(response.data);
+    // print(id);
   }
 }
 
