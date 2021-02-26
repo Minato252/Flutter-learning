@@ -69,7 +69,7 @@ class _CategoryPageState extends State<CategoryPage>
   }
 
   _getRightCateData(String id, String nCategory) async {
-    print(id);
+    // print(id);
     var api =
         'http://47.110.150.159:8080/note/select?uId=${id}&category=${nCategory}';
     Dio dio = new Dio();
@@ -92,7 +92,7 @@ class _CategoryPageState extends State<CategoryPage>
     Response response = await dio
         .post("http://47.110.150.159:8080/note/selectId", data: formData);
 
-    print(response);
+    // print(response);
     var titleList = response;
     setState(() {
       this._titleList = titleList.data;
@@ -560,18 +560,18 @@ class _CategoryPageState extends State<CategoryPage>
             title: Text(
               '目录',
               style: TextStyle(
-                  fontSize: 18.0,
+                  fontSize: 25.0,
                   //fontWeight: FontWeight.w400,
-                  color: Colors.black),
+                  color: Colors.white),
             ),
             centerTitle: true,
-            backgroundColor: Colors.white,
+            // backgroundColor: Colors.white,
             actions: <Widget>[
               IconButton(
                 icon: Icon(
                   Icons.search,
                   size: 25.0,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 onPressed: () {
                   showSearch(
@@ -582,7 +582,7 @@ class _CategoryPageState extends State<CategoryPage>
                 icon: Icon(
                   Icons.add,
                   size: 25.0,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 onPressed: () {
                   _showDialog(context);
@@ -599,12 +599,66 @@ class _CategoryPageState extends State<CategoryPage>
                 },
               ),
             ]),
-        body: Row(
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: leftWidth,
+                  height: ScreenAdapter.height(70),
+                  padding: EdgeInsets.only(top: ScreenAdapter.height(24)),
+                  child: Text(
+                    '类别',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22, color: Colors.black),
+                  ),
+                ),
+                //垂直分割线
+                SizedBox(
+                  width: 1,
+                  height: ScreenAdapter.height(35),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: Colors.grey),
+                  ),
+                ),
+                Container(
+                  //alignment: Alignment.center,
+                  width: rightItemWidth,
+                  height: ScreenAdapter.height(70),
+                  padding: EdgeInsets.only(top: ScreenAdapter.height(24)),
+                  child: Text(
+                    '标题',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22, color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+            Divider(),
+
+            /*Row(
+              children: [
+                new Expanded(child: Text("类别")),
+                new Expanded(child: Text("标题")),
+              ],
+            ),*/
+            Expanded(
+                child: Row(
+              children: [
+                _leftCateWidget(leftWidth),
+                _rightCateWidget(rightItemWidth, rightItemHeight)
+              ],
+            ))
+          ],
+        ),
+        /*Row(
           children: <Widget>[
             _leftCateWidget(leftWidth),
             _rightCateWidget(rightItemWidth, rightItemHeight)
           ],
-        ),
+        ),*/
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             //Navigator.pushNamed(context, '/newcategory');

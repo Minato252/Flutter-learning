@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_edit/rich_edit.dart';
@@ -11,8 +12,8 @@ import 'uploadFile.dart';
 class SimpleRichEditController extends RichEditController {
   Map<String, ChewieController> controllers = Map();
 
-  String imgurl;
-  String videourl;
+  // String imgurl;
+  //String videourl;
   //将数据写入
   void setData(String value) {
     String _value = value.replaceAll(' ', '');
@@ -32,8 +33,12 @@ class SimpleRichEditController extends RichEditController {
         return RichEditData(RichEditDataType.VIDEO, _e);
       } else if (_isHttp && _e.contains('mp3')) {
         return RichEditData(RichEditDataType.VOICE, _e);
+      } else if (_isHttp && _e.contains('m4a')) {
+        //ios系统
+        return RichEditData(RichEditDataType.VOICE, _e);
+      } else {
+        return RichEditData(RichEditDataType.TEXT, e);
       }
-      return RichEditData(RichEditDataType.TEXT, e);
     }).toList();
     int index = data.length;
     data.insert(index, RichEditData(RichEditDataType.TEXT, ""));
@@ -77,13 +82,17 @@ class SimpleRichEditController extends RichEditController {
         autoPlay: false,
         autoInitialize: true,
         aspectRatio: 16 / 9,
-        looping: false,
+        //aspectRatio: 3 / 2,
+        //looping: false,
+
         showControls: true,
 
         // 占位图
         placeholder: new Container(
-          color: Colors.grey,
-        ),
+
+            //color: Colors.grey,
+            // color: Colors.black,
+            ),
       );
       controllers[data.data] = controller;
     }
@@ -153,8 +162,12 @@ class SimpleRichEditController extends RichEditController {
 
   Future<void> generateImageHtmlUrl(
       StringBuffer sb, RichEditData element) async {
-    String url = await UploadFile.fileUplod(element.data);
-
+    String url;
+    if (element.data.startsWith('http')) {
+      url = element.data;
+    } else {
+      url = await UploadFile.fileUplod(element.data);
+    }
     sb.write("<div style=\"text-align: center;\">");
     sb.write("<image style=\"width:${element.imgWith}px\" src=\"");
 
@@ -165,13 +178,17 @@ class SimpleRichEditController extends RichEditController {
 
   Future<void> generateVideoHtmlUrl(
       StringBuffer sb, RichEditData element) async {
-    String path = element.data;
-    String suffix = path.substring(0, path.lastIndexOf(".") + 1);
-    int num = new DateTime.now().millisecondsSinceEpoch;
-    String name = suffix + 'mp4';
-    print("fileName: " + name);
-    String url = await UploadFile.fileUplod(element.data, fileName: name);
-
+    String url;
+    if (element.data.startsWith('http')) {
+      url = element.data;
+    } else {
+      String path = element.data;
+      String suffix = path.substring(0, path.lastIndexOf(".") + 1);
+      int num = new DateTime.now().millisecondsSinceEpoch;
+      String name = suffix + 'mp4';
+      print("fileName: " + name);
+      url = await UploadFile.fileUplod(element.data, fileName: name);
+    }
     sb.write("<p>");
     sb.write('''
            <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
@@ -179,7 +196,7 @@ class SimpleRichEditController extends RichEditController {
     sb.write("<\/p>");
 
     // sb.write('''
-    //      <video style="width:300px;height:150px" controls> <source src="${url}"></video>
+    //   <video style="width:300px;height:150px" controls> <source src="${url}"></video>
     //      ''');
     // sb.write("<\/p>");
   }
@@ -187,7 +204,12 @@ class SimpleRichEditController extends RichEditController {
   Future<void> generateVoiceHtmlUrl(
       StringBuffer sb, RichEditData element) async {
     //String path = element.data;
-    String path = await UploadFile.fileUplod(element.data);
+    String path;
+    if (element.data.startsWith('http')) {
+      path = element.data;
+    } else {
+      path = await UploadFile.fileUplod(element.data);
+    }
     sb.write("<p>");
     sb.write('''<audio controls="true" src="$path"></audio>''');
     //上传服务器

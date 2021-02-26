@@ -249,7 +249,12 @@ class _PreEditState extends State<PreEdit> {
     //print(htmlCode);
     //修改内容时先把之前的内容删除然后在上传
     postDeleteTitle(id, '${widget.ntitle}');
-    postRequestFunction(htmlCode, newTitle, id, nCategory);
+    //controller.generateHtml();
+    Future.delayed(Duration(seconds: 1), () {
+      postRequestFunction(htmlCode, newTitle, id, nCategory);
+      Navigator.of(context).pushNamed('/category');
+    });
+
     // controller.generateHtml();
     //这里是用html初始化一个页面
 
@@ -258,8 +263,8 @@ class _PreEditState extends State<PreEdit> {
         htmlCode: htmlCode,
       );
     }));*/
-    print("发送成功");
-    Navigator.of(context).pushNamed('/category');
+    //print("发送成功");
+    //Navigator.of(context).pushNamed('/category');
 
     // }
   }
