@@ -62,7 +62,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('image editor demo'),
+        title: const Text('编辑图片'),
         actions: <Widget>[
           // IconButton(
           //   icon: const Icon(Icons.photo_library),
@@ -76,7 +76,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               } else {
                 // _showCropDialog(context);
                 String url = await _cropImage(true);
-
                 Navigator.pop(context, url);
               }
             },

@@ -32,7 +32,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
     this.data.addAll(data);
     this.title = title;
     this.keyWords = keyWords;
-    this.controller = SimpleRichEditController(context);
+    this.controller = SimpleRichEditController();
 
     List<RichEditData> l = _getList(data);
 

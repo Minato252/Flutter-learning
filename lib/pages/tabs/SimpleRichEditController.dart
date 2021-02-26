@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:video_player/video_player.dart';
+import '../../main.dart';
 import 'uploadFile.dart';
 import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
 //import 'package:flutter_sound/flutter_sound.dart';
@@ -14,8 +15,8 @@ class SimpleRichEditController extends RichEditController {
 
   String imgurl;
   String videourl;
-  BuildContext context;
-  SimpleRichEditController(this.context);
+  // BuildContext context;
+  // SimpleRichEditController(this.context);
   //将数据写入
   void setData(String value) {
     String _value = value.replaceAll(' ', '');
@@ -67,8 +68,10 @@ class SimpleRichEditController extends RichEditController {
     PickedFile pickedFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      String path = await Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => new ImageShowerDemo(pickedFile.path)));
+      String path =
+          await Navigator.of(navigatorKey.currentState.overlay.context).push(
+              MaterialPageRoute(
+                  builder: (context) => new ImageShowerDemo(pickedFile.path)));
 
       return path;
     }

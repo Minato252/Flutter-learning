@@ -58,7 +58,7 @@ class Note extends StatelessWidget {
   Note({Key key, this.htmlCode, this.nCategory, this.ntitle}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    controller = new SimpleRichEditController(context);
+    controller = new SimpleRichEditController();
     return new MaterialApp(
         home: new Scaffold(
       appBar: AppBar(

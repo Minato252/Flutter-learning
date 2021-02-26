@@ -25,7 +25,7 @@ class _EditCreateState extends State<EditCreate> {
   final _formKey = GlobalKey<FormState>();
   //EditCreate({Key key, this.category, this.id}) : super(key: key);
   _EditCreateState() {
-    controller = new SimpleRichEditController(context);
+    controller = new SimpleRichEditController();
   }
   @override
   Widget build(BuildContext context) {

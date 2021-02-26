@@ -35,7 +35,7 @@ class _MessageCreateState extends State<MessageCreate> {
   SimpleRichEditController controller;
   _MessageCreateState() {
     //富文本的controller
-    controller = SimpleRichEditController(context);
+    controller = SimpleRichEditController();
   }
   @override
   Widget build(BuildContext context) {

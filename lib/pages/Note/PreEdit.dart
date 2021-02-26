@@ -35,7 +35,7 @@ class _PreEditState extends State<PreEdit> {
   }
 
   _PreEditState() {
-    controller = SimpleRichEditController(context);
+    controller = SimpleRichEditController();
   }
   _getUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

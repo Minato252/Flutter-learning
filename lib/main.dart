@@ -13,6 +13,8 @@ void main() {
   runApp(MyApp());
 }
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
 class MyApp extends StatefulWidget {
   MyApp({Key key}) : super(key: key);
 
@@ -41,6 +43,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ProviderServices()),
       ],
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         // home: Tabs(),
         debugShowCheckedModeBanner: false,
         initialRoute: '/',

@@ -189,7 +189,7 @@ class _PreAndSendState extends State<PreAndSend> {
 
     this.editable = editable;
     this.data = data;
-    this.controller = SimpleRichEditController(context);
+    this.controller = SimpleRichEditController();
   }
   @override
   @override

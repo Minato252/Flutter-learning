@@ -19,6 +19,8 @@ import 'editor/extended_image_editor.dart';
 import 'editor/extended_image_editor_utils.dart';
 import 'extended_image.dart';
 import 'extended_image_utils.dart';
+import 'gesture/extended_image_gesture.dart';
+import 'gesture/extended_image_gesture_utils.dart';
 import 'image_editor_demo.dart';
 
 ///
@@ -35,6 +37,8 @@ class ImageShowerDemo extends StatefulWidget {
 class _ImageShowerDemoState extends State<ImageShowerDemo> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
+  final GlobalKey<ExtendedImageGestureState> gestureKey =
+      GlobalKey<ExtendedImageGestureState>();
   final GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>
       popupMenuKey =
       GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>();
@@ -55,6 +59,7 @@ class _ImageShowerDemoState extends State<ImageShowerDemo> {
   String path;
   bool isEdited = false;
   _ImageShowerDemoState(this.path);
+
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
@@ -64,92 +69,228 @@ class _ImageShowerDemoState extends State<ImageShowerDemo> {
 
   @override
   Widget build(BuildContext context) {
-    this._memoryImage = File(path).readAsBytesSync();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('图片'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.photo_library),
-            onPressed: _getImage,
-          ),
-          IconButton(
-            icon: const Icon(Icons.done),
-            onPressed: () async {
-              if (kIsWeb) {
-                _cropImage(false);
-              } else {
-                // _showCropDialog(context);
-                if (isEdited) {
-                  String url = await _cropImage(true);
-                  Navigator.pop(context, url);
-                } else {
-                  Navigator.pop(context, path);
-                }
-              }
-            },
-          ),
-        ],
-      ),
-      body: Column(children: <Widget>[
-        Expanded(
-          child: _memoryImage != null
-              ? ExtendedImage.memory(
-                  _memoryImage,
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.editor,
-                  enableLoadState: true,
-                  extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
-                    return EditorConfig(
-                        maxScale: 8.0,
-                        cropRectPadding: const EdgeInsets.all(20.0),
-                        hitTestSize: 20.0,
-                        cornerPainter: _cornerPainter,
-                        initCropRectType: InitCropRectType.imageRect,
-                        cropAspectRatio: _aspectRatio.value);
-                  },
-                )
-              : ExtendedImage.asset(
-                  'assets/image.jpg',
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.editor,
-                  enableLoadState: true,
-                  extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
-                    return EditorConfig(
-                        maxScale: 8.0,
-                        cropRectPadding: const EdgeInsets.all(20.0),
-                        hitTestSize: 20.0,
-                        cornerPainter: _cornerPainter,
-                        initCropRectType: InitCropRectType.imageRect,
-                        cropAspectRatio: _aspectRatio.value);
-                  },
-                ),
-        ),
-      ]),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.lightBlue,
-        shape: const CircularNotchedRectangle(),
-        child: ButtonTheme(
-          minWidth: 0.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
+    this._memoryImage = File(this.path).readAsBytesSync();
+    return Material(
+      child: Column(
+        children: <Widget>[
+          // AppBar(
+          //   title: const Text('zoom/pan image demo'),
+          //   actions: <Widget>[
+          //     IconButton(
+          //       icon: const Icon(Icons.restore),
+          //       onPressed: () {
+          //         gestureKey.currentState.reset();
+          //         //you can also change zoom manual
+          //         //gestureKey.currentState.gestureDetails=GestureDetails();
+          //       },
+          //     )
+          //   ],
+          // ),
+          AppBar(
+            title: const Text('图片'),
+            actions: <Widget>[
               FlatButton(
-                child: Text("编辑"),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          new ImageEditorDemo(_memoryImage)));
+                child: Text("替换", style: TextStyle(color: Colors.white)),
+                onPressed: _getImage,
+              ),
+              FlatButton(
+                child: Text(
+                  "编辑",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () async {
+                  this.isEdited = true;
+                  print("之前的path" + this.path);
+                  String url = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              new ImageEditorDemo(_memoryImage)));
+
+                  setState(() {
+                    this.path = url;
+                  });
+                  print("现在的" + this.path);
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.done),
+                onPressed: () async {
+                  if (kIsWeb) {
+                    _cropImage(false);
+                  } else {
+                    // _showCropDialog(context);
+
+                    Navigator.pop(context, path);
+                  }
                 },
               ),
             ],
           ),
-        ),
+          // Expanded(
+          //   child: ExtendedImage.network(
+          //     "http://47.110.150.159:8080/picture/20210226/a12cea393aa441d485e6e0a6b80e7181.jpg",
+          //     fit: BoxFit.contain,
+          //     mode: ExtendedImageMode.gesture,
+          //     extendedImageGestureKey: gestureKey,
+          //     initGestureConfigHandler: (ExtendedImageState state) {
+          //       return GestureConfig(
+          //         minScale: 0.9,
+          //         animationMinScale: 0.7,
+          //         maxScale: 4.0,
+          //         animationMaxScale: 4.5,
+          //         speed: 1.0,
+          //         inertialSpeed: 100.0,
+          //         initialScale: 1.0,
+          //         inPageView: false,
+          //         initialAlignment: InitialAlignment.center,
+          //         gestureDetailsIsChanged: (GestureDetails details) {
+          //           //print(details.totalScale);
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
+          Expanded(
+            child: Image.memory(
+              _memoryImage,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ],
       ),
     );
+
+    // Material(
+    //   child: Column(
+    //     children: [
+    //       AppBar(
+    //         title: const Text('图片'),
+    //         actions: <Widget>[
+    //           IconButton(
+    //             icon: const Icon(Icons.photo_library),
+    //             onPressed: _getImage,
+    //           ),
+    //           IconButton(
+    //             icon: const Icon(Icons.done),
+    //             onPressed: () async {
+    //               if (kIsWeb) {
+    //                 _cropImage(false);
+    //               } else {
+    //                 // _showCropDialog(context);
+
+    //                 Navigator.pop(context, path);
+    //               }
+    //             },
+    //           ),
+    //           FlatButton(
+    //             child: Text(
+    //               "编辑",
+    //               style: TextStyle(color: Colors.white),
+    //             ),
+    //             onPressed: () async {
+    //               this.isEdited = true;
+    //               print("之前的path" + this.path);
+    //               String url = await Navigator.of(context).push(
+    //                   MaterialPageRoute(
+    //                       builder: (BuildContext context) =>
+    //                           new ImageEditorDemo(_memoryImage)));
+
+    //               setState(() {
+    //                 this.path = url;
+    //               });
+    //               print("现在的" + this.path);
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //       Column(
+    //           crossAxisAlignment: CrossAxisAlignment.center,
+    //           children: <Widget>[
+    //             Expanded(
+    //                 child: Container(
+    //               decoration: BoxDecoration(color: Colors.green),
+    //               child:
+    //                   // Image.memory(
+    //                   //   _memoryImage,
+    //                   //   fit: BoxFit.contain,
+    //                   // ),
+    //                   ExtendedImage.network(
+    //                 "http://47.110.150.159:8080/picture/20210226/a12cea393aa441d485e6e0a6b80e7181.jpg",
+    //                 fit: BoxFit.contain,
+    //                 mode: ExtendedImageMode.gesture,
+    //                 extendedImageGestureKey: gestureKey,
+    //                 initGestureConfigHandler: (ExtendedImageState state) {
+    //                   return GestureConfig(
+    //                     minScale: 0.9,
+    //                     animationMinScale: 0.7,
+    //                     maxScale: 4.0,
+    //                     animationMaxScale: 4.5,
+    //                     speed: 1.0,
+    //                     inertialSpeed: 100.0,
+    //                     initialScale: 1.0,
+    //                     inPageView: false,
+    //                     initialAlignment: InitialAlignment.center,
+    //                     gestureDetailsIsChanged: (GestureDetails details) {
+    //                       //print(details.totalScale);
+    //                     },
+    //                   );
+    //                 },
+    //               ),
+    //             )),
+    //             Text("ceshi"),
+    //             // child: _memoryImage != null
+    //             //     ? ExtendedImage.memory(
+    //             //         _memoryImage,
+    //             //         fit: BoxFit.contain,
+    //             //         mode: ExtendedImageMode.editor,
+    //             //         enableLoadState: true,
+    //             //         extendedImageEditorKey: editorKey,
+    //             //         initEditorConfigHandler: (ExtendedImageState state) {
+    //             //           return EditorConfig(
+    //             //               maxScale: 8.0,
+    //             //               cropRectPadding: const EdgeInsets.all(20.0),
+    //             //               hitTestSize: 20.0,
+    //             //               cornerPainter: _cornerPainter,
+    //             //               initCropRectType: InitCropRectType.imageRect,
+    //             //               cropAspectRatio: _aspectRatio.value);
+    //             //         },
+    //             //       )
+    //             //     : ExtendedImage.asset(
+    //             //         'assets/image.jpg',
+    //             //         fit: BoxFit.contain,
+    //             //         mode: ExtendedImageMode.editor,
+    //             //         enableLoadState: true,
+    //             //         extendedImageEditorKey: editorKey,
+    //             //         initEditorConfigHandler: (ExtendedImageState state) {
+    //             //           return EditorConfig(
+    //             //               maxScale: 8.0,
+    //             //               cropRectPadding: const EdgeInsets.all(20.0),
+    //             //               hitTestSize: 20.0,
+    //             //               cornerPainter: _cornerPainter,
+    //             //               initCropRectType: InitCropRectType.imageRect,
+    //             //               cropAspectRatio: _aspectRatio.value);
+    //             //         },
+    //             //       ),
+    //           ]),
+    //     ],
+    //   ),
+    // );
+
+    // body:
+    // bottomNavigationBar: BottomAppBar(
+    //   color: Colors.lightBlue,
+    //   shape: const CircularNotchedRectangle(),
+    //   child: ButtonTheme(
+    //     minWidth: 0.0,
+    //     child: Row(
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       mainAxisSize: MainAxisSize.max,
+    //       children: <Widget>[
+
+    //       ],
+    //     ),
+    //   ),
+    // ),
   }
 
   void _showCropDialog(BuildContext context) {
@@ -268,6 +409,12 @@ class _ImageShowerDemoState extends State<ImageShowerDemo> {
         });
   }
 
+  // void updateUI() {
+  //   setState(() {
+
+  //   });
+  // }
+
   Future<String> _cropImage(bool useNative) async {
     if (_cropping) {
       return null;
@@ -312,14 +459,18 @@ class _ImageShowerDemoState extends State<ImageShowerDemo> {
   }
 
   Future<void> _getImage() async {
+    //不知道为啥有bug
     // _memoryImage = await pickImage(context); //这里之后换成imagepicker方法=========
     PickedFile pickedFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       _memoryImage = File(pickedFile.path).readAsBytesSync();
+      this.path = pickedFile.path;
+      // print(_memoryImage);
       Future<void>.delayed(const Duration(milliseconds: 200), () {
         setState(() {
-          editorKey.currentState.reset();
+          // editorKey.currentState.reset();
+          this.path;
         });
       });
     }
