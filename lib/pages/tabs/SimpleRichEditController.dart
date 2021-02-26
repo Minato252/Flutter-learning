@@ -65,16 +65,15 @@ class SimpleRichEditController extends RichEditController {
   //添加图片方法
   @override
   Future addImage() async {
-    PickedFile pickedFile =
-        await ImagePicker().getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    String oldPath = await showImgDialog();
+    if (oldPath != null && oldPath != "") {
       String path =
           await Navigator.of(navigatorKey.currentState.overlay.context).push(
               MaterialPageRoute(
-                  builder: (context) => new ImageShowerDemo(pickedFile.path)));
-
+                  builder: (context) => new ImageShowerDemo(oldPath)));
       return path;
     }
+    return;
   }
 
   //生成视频view方法
@@ -202,5 +201,145 @@ class SimpleRichEditController extends RichEditController {
     //上传服务器
 
     sb.write("<\/p>");
+  }
+
+  Future<String> showImgDialog() async {
+    return await showModalBottomSheet(
+        context: navigatorKey.currentState.overlay.context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: 171,
+            margin: EdgeInsets.only(left: 15, right: 15), //控制底部的距离
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 101,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          var imgPath = await _getImageFromCamera();
+
+                          Navigator.pop(context, imgPath);
+                          //   switch (type) {
+                          //     case 0:
+                          //       notifyImg = imgPath;
+                          //       break;
+                          //     case 1:
+                          //       emergencyImg = imgPath;
+                          //       break;
+                          //     case 2:
+                          //       promiseImg = imgPath;
+                          //       break;
+                          //   }
+                          //   setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '拍照',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          var imgPath = await _getImageFromGallery();
+
+                          Navigator.pop(context, imgPath);
+
+                          // switch (type) {
+                          //   case 0:
+                          //     notifyImg = imgPath;
+                          //     break;
+                          //   case 1:
+                          //     emergencyImg = imgPath;
+                          //     break;
+                          //   case 2:
+                          //     promiseImg = imgPath;
+                          //     break;
+                          // }
+                          // setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '本地相册',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    // NavigatorUtils.goBack(context);
+
+                    Navigator.pop(context);
+                    return null;
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '取消',
+                        style: TextStyle(
+                            color: Colors.red,
+//                          fontSize: Config.fontSize17,
+                            fontWeight: FontWeight.w200),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future _getImageFromCamera() async {
+    PickedFile image =
+        await ImagePicker().getImage(source: ImageSource.camera, maxWidth: 400);
+    if (image != null) {
+      return image.path;
+    }
+  }
+
+  //相册选择
+  Future<String> _getImageFromGallery() async {
+    PickedFile image =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    if (image != null) {
+      return image.path;
+    }
   }
 }
