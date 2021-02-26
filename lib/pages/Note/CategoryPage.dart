@@ -1,14 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-//import 'package:weitong/pages/tabs/Config.dart';
-//import 'package:weitong/pages/tabs/CategoryModel.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/pages/Note/SearchCategory.dart';
 import 'package:weitong/pages/Note/NoteContent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Note/EditCreate.dart';
-//import 'package:weitong/pages/Note/NewCategory.dart';
 import 'package:flutter/cupertino.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -129,7 +126,7 @@ class _CategoryPageState extends State<CategoryPage>
                       margin: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         border: Border.all(
-                            color: Color.fromARGB(9, 0, 0, 0),
+                            color: Colors.white,
                             width: 1,
                             style: BorderStyle.solid),
                         borderRadius: BorderRadius.circular(20.0),
@@ -138,8 +135,8 @@ class _CategoryPageState extends State<CategoryPage>
                               blurRadius: 6,
                               spreadRadius: 4,
                               color: _selectIndex == index
-                                  ? Color.fromARGB(20, 0, 0, 0)
-                                  : Color.fromARGB(7, 0, 0, 0)),
+                                  ? Colors.blue
+                                  : Colors.blue[100]),
                         ],
                       ),
                       width: double.infinity,
@@ -557,11 +554,9 @@ class _CategoryPageState extends State<CategoryPage>
     //获取计算后的高度
     var rightItemHeight = rightItemWidth + ScreenAdapter.height(75);
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-            title: Text("目录界面"),
-            centerTitle: true,
-            backgroundColor: Colors.deepOrangeAccent,
+        // backgroundColor: Colors.white,
+        appBar: AppBar(title: Text("目录界面"), centerTitle: true,
+            // backgroundColor: Colors.deepOrangeAccent,
             actions: <Widget>[
               IconButton(
                 icon: Icon(
@@ -626,7 +621,7 @@ class _CategoryPageState extends State<CategoryPage>
           tooltip: '添加主题',
           child: Icon(
             Icons.add,
-            color: Colors.deepOrange,
+            color: Colors.blue,
           ),
           backgroundColor: Colors.white,
         ));

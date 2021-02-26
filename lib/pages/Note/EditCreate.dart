@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'dart:convert';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
-//import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
-//import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:dio/dio.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/services/voiceprovider.dart';
+import 'package:provider/provider.dart';
 
 class EditCreate extends StatefulWidget {
   String category;
@@ -39,7 +37,7 @@ class _EditCreateState extends State<EditCreate> {
                   }),
               title: Text("编辑页面"),
               centerTitle: true,
-              backgroundColor: Colors.deepOrangeAccent,
+              //backgroundColor: Colors.deepOrangeAccent,
               //backgroundColor: Colors.yellow,
               actions: <Widget>[
                 IconButton(
@@ -88,11 +86,17 @@ class _EditCreateState extends State<EditCreate> {
                   Divider(),
                   SafeArea(
                     child: SizedBox(
-                      height: ScreenUtil.getInstance().setHeight(1100),
-                      child: RichEdit(
-                          controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
-                    ),
-                  ),
+                        height: ScreenUtil.getInstance().setHeight(1100),
+                        child: MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(
+                              builder: (_) => VoiceRecordProvider(),
+                            )
+                          ],
+                          child: RichEdit(
+                              controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                        )),
+                  )
                 ])));
   }
 

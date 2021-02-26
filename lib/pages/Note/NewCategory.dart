@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weitong/widget/JdButton.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -30,7 +29,7 @@ class _NewCategory extends State<NewCategory> {
         appBar: (AppBar(
           title: Text('新建类别'),
           centerTitle: true,
-          backgroundColor: Colors.deepOrangeAccent,
+          //backgroundColor: Colors.deepOrangeAccent,
         )),
         body: Container(
             padding: EdgeInsets.all(20),

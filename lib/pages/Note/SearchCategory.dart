@@ -173,7 +173,7 @@ class SearchCategory extends SearchDelegate<String> {
           dom.Element netEle = children[i + 1];
           String currentTag = '</${ele.localName}>';
           String netTag = netEle != null ? '<${netEle.localName}' : '';
-          print('currentTag: $currentTag, netTag: $netTag');
+          // print('currentTag: $currentTag, netTag: $netTag');
 
           String outerHtml = ele.outerHtml;
           String regStr = "$currentTag(.*)$netTag";
@@ -181,7 +181,7 @@ class SearchCategory extends SearchDelegate<String> {
               RegExp(regStr).allMatches(outerHtml).toList();
           matches.forEach((RegExpMatch match) {
             String text = match.group(1);
-            print('~~~提取出文本: $text');
+            //print('~~~提取出文本: $text');
             if (text != null && text.length > 0) {
               resultList.add(text);
             }

@@ -5,11 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:video_player/video_player.dart';
 import 'uploadFile.dart';
+//import 'package:flutter_sound/flutter_sound.dart';
+//import 'package:uuid/uuid.dart';
 
 class SimpleRichEditController extends RichEditController {
   Map<String, ChewieController> controllers = Map();
+
   String imgurl;
   String videourl;
+  //将数据写入
   void setData(String value) {
     String _value = value.replaceAll(' ', '');
     String result = _value
@@ -26,9 +30,13 @@ class SimpleRichEditController extends RichEditController {
         return RichEditData(RichEditDataType.IMAGE, _e.replaceAll(';', ''));
       } else if (_isHttp && _e.contains('mp4')) {
         return RichEditData(RichEditDataType.VIDEO, _e);
+      } else if (_isHttp && _e.contains('mp3')) {
+        return RichEditData(RichEditDataType.VOICE, _e);
       }
       return RichEditData(RichEditDataType.TEXT, e);
     }).toList();
+    int index = data.length;
+    data.insert(index, RichEditData(RichEditDataType.TEXT, ""));
     super.data = data;
   }
 
@@ -46,6 +54,9 @@ class SimpleRichEditController extends RichEditController {
           break;
         case RichEditDataType.VIDEO:
           await generateVideoHtmlUrl(sb, element);
+          break;
+        case RichEditDataType.VOICE:
+          await generateVoiceHtmlUrl(sb, element);
           break;
       }
     }
@@ -65,7 +76,10 @@ class SimpleRichEditController extends RichEditController {
   void generateTextHtml(StringBuffer sb, RichEditData element) {
     sb.write("<p>");
     sb.write("<span style=\"font-size:15px;\">");
-    sb.write(element.data);
+    // sb.write(element.data);
+    sb.write("${element.data}"
+        .replaceAll("\r\n", "<\/span><\/p>")
+        .replaceAll("\n", "<p><span style=\"font-size:15px;\">"));
     sb.write("<\/span>");
     sb.write("<\/p>");
   }
@@ -95,15 +109,27 @@ class SimpleRichEditController extends RichEditController {
     // String url = await UploadFile.fileUplod(element.data, fileName: name);
     //videourl = await UploadFile.fileUplod(element.data, fileName: name);
     sb.write("<p>");
-    // sb.write('''
-    //        <video src="${element.data}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
-    //        ''');
+    sb.write('''
+            <video src="${element.data}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
+            ''');
     //videourl
     // sb.write("<\/p>");
 
-    sb.write('''
-     <video style="width:300px;height:150px" controls> <source src="${element.data}"></video>
-     ''');
+    //sb.write('''
+    //<video style="width:300px;height:150px" controls> <source src="${element.data}"></video>
+    //''');
+    sb.write("<\/p>");
+  }
+
+  //产生语音的html
+  Future<void> generateVoiceHtmlUrl(
+      StringBuffer sb, RichEditData element) async {
+    //String path = element.data;
+    String path = await UploadFile.fileUplod(element.data);
+    sb.write("<p>");
+    sb.write('''<audio controls="true" src="$path"></audio>''');
+    //上传服务器
+
     sb.write("<\/p>");
   }
 
