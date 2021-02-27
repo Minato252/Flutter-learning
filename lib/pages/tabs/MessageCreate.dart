@@ -57,7 +57,7 @@ class _MessageCreateState extends State<MessageCreate> {
                 style: TextStyle(
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
-                    color: Colors.black),
+                    color: Colors.white),
               )),
         ],
       ),

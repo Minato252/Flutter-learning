@@ -17,6 +17,8 @@ import 'package:weitong/widget/toast.dart';
 import 'NullResult.dart';
 import 'dart:convert';
 
+import 'chooseUser/contacts_list_page.dart';
+
 String staff = "人员";
 
 // import 'package:flutter_plugin_record/index.dart';
@@ -284,13 +286,17 @@ class _LogRecordPageState extends State<LogRecordPage> {
   _awaitReturnChooseStaff(BuildContext context) async {
     List<Map> users = await _getSubs();
 
-    final Map userDetails = await Navigator.push(
+    List result = await Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (BuildContext context) => new ChooseFriendPage(users)));
-    if (userDetails != null) {
-      _curchosedStaff =
-          "姓名:${userDetails["name"]} 手机:${userDetails["id"]} 职务:${userDetails["job"]}";
+            builder: (BuildContext context) => new ContactListPage(
+                  users,
+                  isSingle: true,
+                  title: "选择创建人",
+                )));
+    if (result != null && !result.isEmpty) {
+      final Map userDetails = result[0];
+      _curchosedStaff = "姓名:${userDetails["name"]} 手机:${userDetails["id"]} ";
       _searchStaffId = userDetails["id"];
       _updateChooseStaffButton();
     }

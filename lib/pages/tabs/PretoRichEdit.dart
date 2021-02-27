@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/Pre.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
+import 'package:weitong/services/voiceprovider.dart';
 import 'package:weitong/widget/JdButton.dart';
 
 import 'SimpleRichEditController.dart';
@@ -57,6 +61,19 @@ class _PretoRichEditState extends State<PretoRichEdit> {
     return Scaffold(
       appBar: AppBar(
         title: Text("编辑页面"),
+        actions: [
+          FlatButton(
+              onPressed: () {
+                _sendMessage(controller);
+              },
+              child: Text(
+                "预览",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.all(5),
@@ -98,21 +115,25 @@ class _PretoRichEditState extends State<PretoRichEdit> {
                       ),
                     ],
                   ),
+                  Divider(),
                   SafeArea(
                     child: SizedBox(
-                      height: ScreenUtil.getInstance().setHeight(800),
-                      child: RichEdit(
-                          controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                      height: ScreenAdapter.height(500),
+                      child: MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            builder: (_) => VoiceRecordProvider(),
+                          )
+                        ],
+                        child: RichEdit(
+                            controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                      ),
+                      /*RichEdit(
+                        controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                     ),
-                  ),
+                  )
                 ],
               ),
-            ),
-            JdButton(
-              text: "发送",
-              cb: () {
-                _sendMessage(controller);
-              },
             ),
           ],
         ),
