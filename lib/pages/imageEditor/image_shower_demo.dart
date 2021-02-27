@@ -94,24 +94,25 @@ class _ImageShowerDemoState extends State<ImageShowerDemo> {
                 onPressed: _getImage,
               ),
               FlatButton(
-                child: Text(
-                  "编辑",
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () async {
-                  this.isEdited = true;
-                  print("之前的path" + this.path);
-                  String url = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              new ImageEditorDemo(_memoryImage)));
+                  child: Text(
+                    "编辑",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    this.isEdited = true;
+                    print("之前的path" + this.path);
+                    String url = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                new ImageEditorDemo(_memoryImage)));
 
-                  setState(() {
-                    this.path = url;
-                  });
-                  print("现在的" + this.path);
-                },
-              ),
+                    if (url != null) {
+                      setState(() {
+                        this.path = url;
+                      });
+                      print("现在的" + this.path);
+                    }
+                  }),
               IconButton(
                 icon: const Icon(Icons.done),
                 onPressed: () async {
