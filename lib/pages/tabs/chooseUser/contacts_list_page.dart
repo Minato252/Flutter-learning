@@ -128,7 +128,7 @@ class _ContactListPageState extends State<ContactListPage> {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundColor: Colors.blue[700],
+                backgroundColor: Theme.of(context).accentColor,
                 child: Text(
                   model.name[0],
                   style: TextStyle(color: Colors.white),

@@ -222,14 +222,20 @@ class _RightWidgetState extends State<RightWidget> {
     final tree = Provider.of<ProviderServices>(context);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
-    parsedJson = Tree.deleteNode(parsedJson, parentName, rightName);
-    jsonTree = json.encode(parsedJson);
+    var result = Tree.deleteNode(parsedJson, parentName, rightName);
+    if (result == null) {
+      //非空删除失败
+      EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
+    } else {
+      parsedJson = result;
+      jsonTree = json.encode(parsedJson);
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString("adminId");
-    await Tree.setTreeInSer(id, jsonTree, context);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String id = prefs.getString("adminId");
+      await Tree.setTreeInSer(id, jsonTree, context);
 
-    EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+      EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
+    }
   }
 }
 
@@ -376,6 +382,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
       String jsonTree = tree.tree;
       var parsedJson = json.decode(jsonTree);
 
+      Color cc = Theme.of(context).accentColor;
       return TreeView(
         nodes: toTreeNodes(parsedJson, null),
         // treeController: _treeController,
@@ -385,6 +392,11 @@ class _StaffManagePageState extends State<StaffManagePage> {
     }
   }
 
+  List<Color> myColor = [
+    Colors.blue[100],
+    Colors.blue[200],
+    Colors.blue[300],
+  ];
   List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
     if (parsedJson is Map<String, dynamic>) {
       return parsedJson.keys
@@ -407,11 +419,29 @@ class _StaffManagePageState extends State<StaffManagePage> {
               TreeNode(
                   content: Row(
                 children: [
-                  Icon(Icons.person),
-                  Text(
-                    '[${element["name"]}]',
-                    style: TextStyle(color: Colors.red),
-                  )
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).accentColor,
+                    child: Text(
+                      element["name"][0],
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${element["name"]}',
+                        style: TextStyle(color: Colors.black, fontSize: 15),
+                      ),
+                      Text(
+                        '${element["id"]}',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      )
+                    ],
+                  ),
                 ],
               ))))
           .values

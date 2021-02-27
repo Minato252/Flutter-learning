@@ -265,8 +265,9 @@ class Tree {
         } else {
           //这里需要调用另一个类的函数
           print("非空");
-          //在这里eventBus====================
-          EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
+          return null; //非空删除失败
+          // //在这里eventBus====================
+          // EventBusUtil.getInstance().fire(UpdataNode("rejectDeleteNode"));
 //==========================================
         }
       } else {
