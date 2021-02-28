@@ -99,7 +99,11 @@ class _MessageCreateState extends State<MessageCreate> {
                           ),
                           FlatButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/updateTags');
+                                Map args = {
+                                  "identify": "user",
+                                }; //用于标识是用户维护关键词
+                                Navigator.pushNamed(context, '/updateTags',
+                                    arguments: args);
                               },
                               child: Text("管理关键词")),
                         ]),

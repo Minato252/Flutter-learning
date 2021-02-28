@@ -19,7 +19,7 @@ import 'package:weitong/pages/Note/PreEdit.dart';
 //配置路由
 final routes = {
   '/': (context) => Tabs(),
-  '/updateTags': (context) => TagChipDemo(),
+  '/updateTags': (context, {arguments}) => TagChipDemo(arguments: arguments),
   '/inputNewTag': (context) => TextFieldDemo(),
   '/chooseTags': (context) => TagChoiceChipDemo(),
   '/admin': (context) => AdminTabs(),

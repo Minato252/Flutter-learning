@@ -23,6 +23,7 @@ import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/widget/toast.dart';
 
 import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -106,13 +107,27 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           //   },
           // ),
           Divider(),
+          // Container(
+          //   child: messageModel.htmlCode ==
+          //           """<p><span style="font-size:15px;"></span></p>"""
+          //       ? SizedBox(width: double.infinity)
+          //       : HtmlWidget(
+          //           messageModel.htmlCode,
+          //           webView: true,
+          //         ),
+          // ),
+
           Container(
             child: messageModel.htmlCode ==
                     """<p><span style="font-size:15px;"></span></p>"""
                 ? SizedBox(width: double.infinity)
-                : HtmlWidget(
-                    messageModel.htmlCode,
-                    webView: true,
+                : Html(
+                    data: messageModel.htmlCode,
+                    style: {
+                      'img': Style(width: 150, height: 150),
+                      'video': Style(width: 150, height: 150),
+                      'text': Style(fontSize: FontSize.large)
+                    },
                   ),
           ),
           // Divider(),
@@ -173,7 +188,7 @@ class _PreAndSendState extends State<PreAndSend> {
   bool editable;
   List<RichEditData> data;
   // List targetIdList;
-  List<String> targetIdList;
+  List<String> targetIdList = [];
   StreamSubscription<PageEvent> sss; //eventbus传值
   SimpleRichEditController controller;
   _PreAndSendState(
@@ -417,6 +432,8 @@ class _PreAndSendState extends State<PreAndSend> {
       "nCategory": "默认类别"
     });
     // print(response.data);
+
+    MyToast.AlertMesaage("已将内容保存至草稿中！");
   }
 }
 
