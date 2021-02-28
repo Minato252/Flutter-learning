@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -25,7 +26,9 @@ class _SettingPageState extends State<SettingPage> {
           JdButton(
             text: "测试",
             cb: myText(),
-          )
+          ),
+          FlatButtonWithIcon(
+              onPressed: () {}, icon: Icon(Icons.send), label: Text("发送"))
         ],
       ),
     );

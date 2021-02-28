@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -100,7 +101,11 @@ class _TagState extends State<TagChipDemo> {
     // _getTag(context, arguments['identify'].toString());
     return Scaffold(
         appBar: AppBar(
-          title: Text("关键词"),
+          title: Text(
+            "关键词",
+            style: TextStyle(fontSize: 26.0),
+          ),
+
           // actions: <Widget>[
           //   FlatButton(
           //       onPressed: null,
@@ -121,7 +126,7 @@ class _TagState extends State<TagChipDemo> {
                 SizedBox(height: 15),
                 Text(
                   "管理您的关键词",
-                  style: TextStyle(fontSize: 32.0),
+                  style: TextStyle(fontSize: 20.0),
                 ),
                 SizedBox(height: 15),
                 Wrap(
@@ -167,12 +172,14 @@ class _TagState extends State<TagChipDemo> {
                 SizedBox(
                   height: 15,
                 ),
-                JdButton(
-                  text: '完成',
-                  cb: () {
-                    _saveTags();
-                  },
-                ),
+                arguments['identify'] == "user"
+                    ? JdButton(
+                        text: '完成',
+                        cb: () {
+                          _saveTags();
+                        },
+                      )
+                    : Text(""),
               ]),
         ))));
   }

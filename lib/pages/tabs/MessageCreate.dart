@@ -138,7 +138,7 @@ class _MessageCreateState extends State<MessageCreate>
                     Divider(),
                     SafeArea(
                       child: SizedBox(
-                        height: ScreenAdapter.height(500),
+                        height: ScreenAdapter.height(650),
                         child: MultiProvider(
                           providers: [
                             ChangeNotifierProvider(
