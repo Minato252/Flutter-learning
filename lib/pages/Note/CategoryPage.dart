@@ -127,17 +127,21 @@ class _CategoryPageState extends State<CategoryPage>
                       margin: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         border: Border.all(
-                            color: Colors.white,
-                            width: 1,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(20.0),
+                          color: _selectIndex == index
+                              ? Colors.blue[200]
+                              : Colors.grey[200],
+
+                          width: 1,
+                          // style: BorderStyle.solid
+                        ),
+                        borderRadius: BorderRadius.circular(15.0),
                         boxShadow: [
                           BoxShadow(
-                              blurRadius: 6,
-                              spreadRadius: 4,
+                              //blurRadius: 6,
+                              //spreadRadius: 4,
                               color: _selectIndex == index
-                                  ? Colors.blue
-                                  : Colors.blue[100]),
+                                  ? Colors.blue[100]
+                                  : Colors.white),
                         ],
                       ),
                       width: double.infinity,
@@ -210,16 +214,18 @@ class _CategoryPageState extends State<CategoryPage>
                     margin: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       border: Border.all(
-                          color: Color.fromARGB(9, 0, 0, 0),
+                          color: Colors.blue[200],
+                          // Color.fromARGB(9, 0, 0, 0),
                           width: 1,
                           style: BorderStyle.solid),
                       borderRadius: BorderRadius.circular(13.0),
                       boxShadow: [
                         BoxShadow(
-                          blurRadius: 6,
-                          spreadRadius: 4,
-                          color: Color.fromARGB(20, 0, 0, 0),
-                        ),
+                            // blurRadius: 6,
+                            //spreadRadius: 4,
+                            //  color: Color.fromARGB(20, 0, 0, 0),
+                            color: Colors.blue[100]),
+                        // Colors.blue[100]),
                       ],
                     ),
                     width: double.infinity,
@@ -549,9 +555,10 @@ class _CategoryPageState extends State<CategoryPage>
   Widget build(BuildContext context) {
     ScreenAdapter.init(context);
     var leftWidth = ScreenAdapter.getScreenWidth() / 3;
-    var rightItemWidth = (ScreenAdapter.getScreenWidth() - leftWidth + 50) / 1;
+    //var rightItemWidth = (ScreenAdapter.getScreenWidth() - leftWidth) / 1;
+    var rightItemWidth = 2 * ScreenAdapter.getScreenWidth() / 3;
     //获取计算后的宽度
-    rightItemWidth = ScreenAdapter.width(rightItemWidth);
+    //rightItemWidth = ScreenAdapter.width(rightItemWidth);
     //获取计算后的高度
     var rightItemHeight = rightItemWidth + ScreenAdapter.height(75);
     return Scaffold(
@@ -559,10 +566,10 @@ class _CategoryPageState extends State<CategoryPage>
         appBar: AppBar(
             title: Text(
               '目录',
-              style: TextStyle(
+              /* style: TextStyle(
                   fontSize: 25.0,
                   //fontWeight: FontWeight.w400,
-                  color: Colors.white),
+                  color: Colors.white),*/
             ),
             centerTitle: true,
             // backgroundColor: Colors.white,
@@ -602,7 +609,7 @@ class _CategoryPageState extends State<CategoryPage>
         body: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
@@ -612,26 +619,34 @@ class _CategoryPageState extends State<CategoryPage>
                   child: Text(
                     '类别',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, color: Colors.black),
+                    style: TextStyle(fontSize: 20, color: Colors.black),
                   ),
                 ),
                 //垂直分割线
-                SizedBox(
+                /* SizedBox(
                   width: 1,
-                  height: ScreenAdapter.height(35),
+                  height: ScreenAdapter.height(50),
                   child: DecoratedBox(
                     decoration: BoxDecoration(color: Colors.grey),
                   ),
-                ),
+                ),*/
+                /* Container(
+                  width: 1,
+                  height: ScreenAdapter.height(30),
+                  alignment: Alignment.center,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: Colors.grey),
+                  ),
+                ),*/
                 Container(
                   //alignment: Alignment.center,
-                  width: rightItemWidth,
+                  width: rightItemWidth - 1,
                   height: ScreenAdapter.height(70),
                   padding: EdgeInsets.only(top: ScreenAdapter.height(24)),
                   child: Text(
                     '标题',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, color: Colors.black),
+                    style: TextStyle(fontSize: 20, color: Colors.black),
                   ),
                 ),
               ],

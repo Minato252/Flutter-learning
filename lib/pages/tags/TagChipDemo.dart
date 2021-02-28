@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 
 class TagChipDemo extends StatefulWidget {
   final Map arguments;
@@ -101,6 +102,19 @@ class _TagState extends State<TagChipDemo> {
     return Scaffold(
         appBar: AppBar(
           title: Text("关键词"),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  _saveTags();
+                },
+                child: Text(
+                  "完成",
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+          ],
           // actions: <Widget>[
           //   FlatButton(
           //       onPressed: null,
@@ -119,9 +133,17 @@ class _TagState extends State<TagChipDemo> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 SizedBox(height: 15),
-                Text(
+                /* Text(
                   "管理您的关键词",
                   style: TextStyle(fontSize: 32.0),
+                ),*/
+                Container(
+                  width: ScreenAdapter.getScreenWidth(),
+                  child: Text(
+                    "管理您的关键词",
+                    style: TextStyle(fontSize: 20.0),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 SizedBox(height: 15),
                 Wrap(
@@ -167,12 +189,12 @@ class _TagState extends State<TagChipDemo> {
                 SizedBox(
                   height: 15,
                 ),
-                JdButton(
+                /*  JdButton(
                   text: '完成',
                   cb: () {
                     _saveTags();
                   },
-                ),
+                ),*/
               ]),
         ))));
   }
