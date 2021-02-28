@@ -24,7 +24,10 @@ class MessageCreate extends StatefulWidget {
   _MessageCreateState createState() => _MessageCreateState();
 }
 
-class _MessageCreateState extends State<MessageCreate> {
+class _MessageCreateState extends State<MessageCreate>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final newTitleFormKey = GlobalKey<FormState>();
   String newTitle;
   String _curchosedTag = "";
