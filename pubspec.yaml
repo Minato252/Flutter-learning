@@ -66,6 +66,12 @@ dependencies:
   extended_image_library: ^0.3.0
   photo_manager: 0.5.7
   oktoast: ^2.1.4
+  azlistview: ^1.1.1
+  github_language_colors:
+   git:
+      url: git://github.com/Sky24n/github_language_colors.git
+
+  lpinyin: ^1.0.9
   path:
 
 dev_dependencies:

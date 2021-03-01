@@ -199,11 +199,29 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
               TreeNode(
                   content: Row(
                 children: [
-                  Icon(Icons.person),
-                  Text(
-                    '[${element["name"]}123]',
-                    style: TextStyle(color: Colors.red),
-                  )
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).accentColor,
+                    child: Text(
+                      element["name"][0],
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${element["name"]}',
+                        style: TextStyle(color: Colors.black, fontSize: 15),
+                      ),
+                      Text(
+                        '${element["id"]}',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      )
+                    ],
+                  ),
                 ],
               ))))
           .values

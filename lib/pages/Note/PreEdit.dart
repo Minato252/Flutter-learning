@@ -23,7 +23,7 @@ class PreEdit extends StatefulWidget {
 
 class _PreEditState extends State<PreEdit> {
   @override
-  SimpleRichEditController controller = SimpleRichEditController();
+  SimpleRichEditController controller;
   String id;
   void initState() {
     super.initState();
@@ -34,6 +34,9 @@ class _PreEditState extends State<PreEdit> {
     //setState(() {});
   }
 
+  _PreEditState() {
+    controller = SimpleRichEditController();
+  }
   _getUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     this.id = prefs.get("id");

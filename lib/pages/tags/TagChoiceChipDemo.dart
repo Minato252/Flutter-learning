@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,18 +12,45 @@ class TagChoiceChipDemo extends StatefulWidget {
 
 class _TagChoiceState extends State<TagChoiceChipDemo> {
   @override
-  List<String> _tags;
+  List<String> _tags = [];
   // = [
   //   '111',
   //   '222',
   //   '333',
   // ];
   String _choice = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _getTag();
+  }
+
   // void initState() {}
+  _getTag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print("***********************${arguments['identify']}*******************");
+    String id = prefs.get("id");
+    var rel =
+        await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
+    List<String> s = rel.data.toString().split(',');
+
+    for (int i = 0; i < s.length; i++) {
+      if (!_tags.contains(s[i])) {
+        _tags.add(s[i]);
+      }
+    }
+    setState(() {});
+  }
 
   Widget build(BuildContext context) {
     final ps = Provider.of<ProviderServices>(context);
-    _tags = ps.keyWords;
+    List<String> s = ps.keyWords;
+    for (int i = 0; i < s.length; i++) {
+      if (!_tags.contains(s[i])) {
+        _tags.add(s[i]);
+      }
+    }
     return Scaffold(
         appBar: AppBar(
           title: Text("关键词"),

@@ -25,7 +25,9 @@ import 'extended_image_utils.dart';
 
 class ImageEditorDemo extends StatefulWidget {
   @override
-  _ImageEditorDemoState createState() => _ImageEditorDemoState();
+  Uint8List _memoryImage;
+  ImageEditorDemo(this._memoryImage);
+  _ImageEditorDemoState createState() => _ImageEditorDemoState(_memoryImage);
 }
 
 class _ImageEditorDemoState extends State<ImageEditorDemo> {
@@ -47,7 +49,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   bool _cropping = false;
 
   ExtendedImageCropLayerCornerPainter _cornerPainter;
-
+  Uint8List _memoryImage;
+  _ImageEditorDemoState(this._memoryImage);
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
@@ -59,7 +62,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('image editor demo'),
+        title: const Text('编辑图片'),
         actions: <Widget>[
           // IconButton(
           //   icon: const Icon(Icons.photo_library),
@@ -67,11 +70,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           // ),
           IconButton(
             icon: const Icon(Icons.done),
-            onPressed: () {
+            onPressed: () async {
               if (kIsWeb) {
                 _cropImage(false);
               } else {
-                _showCropDialog(context);
+                // _showCropDialog(context);
+                String url = await _cropImage(true);
+                Navigator.pop(context, url);
               }
             },
           ),
@@ -126,7 +131,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               FlatButtonWithIcon(
                 icon: const Icon(Icons.crop),
                 label: const Text(
-                  'Crop',
+                  "裁剪",
                   style: TextStyle(fontSize: 10.0),
                 ),
                 textColor: Colors.white,
@@ -173,7 +178,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               FlatButtonWithIcon(
                 icon: const Icon(Icons.flip),
                 label: const Text(
-                  'Flip',
+                  '翻转',
                   style: TextStyle(fontSize: 10.0),
                 ),
                 textColor: Colors.white,
@@ -184,7 +189,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               FlatButtonWithIcon(
                 icon: const Icon(Icons.rotate_left),
                 label: const Text(
-                  'Rotate Left',
+                  '左旋',
                   style: TextStyle(fontSize: 8.0),
                 ),
                 textColor: Colors.white,
@@ -195,7 +200,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               FlatButtonWithIcon(
                 icon: const Icon(Icons.rotate_right),
                 label: const Text(
-                  'Rotate Right',
+                  '右旋',
                   style: TextStyle(fontSize: 8.0),
                 ),
                 textColor: Colors.white,
@@ -203,72 +208,72 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   editorKey.currentState.rotate(right: true);
                 },
               ),
-              FlatButtonWithIcon(
-                icon: const Icon(Icons.rounded_corner_sharp),
-                label: PopupMenuButton<ExtendedImageCropLayerCornerPainter>(
-                  key: popupMenuKey,
-                  enabled: false,
-                  offset: const Offset(100, -300),
-                  child: const Text(
-                    'Corner',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
-                  initialValue: _cornerPainter,
-                  itemBuilder: (BuildContext context) {
-                    return <
-                        PopupMenuEntry<ExtendedImageCropLayerCornerPainter>>[
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.rounded_corner_sharp,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('NinetyDegrees'),
-                          ],
-                        ),
-                        value:
-                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
-                        child: Row(
-                          children: const <Widget>[
-                            Icon(
-                              Icons.circle,
-                              color: Colors.blue,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text('Circle'),
-                          ],
-                        ),
-                        value:
-                            const ExtendedImageCropLayerPainterCircleCorner(),
-                      ),
-                    ];
-                  },
-                  onSelected: (ExtendedImageCropLayerCornerPainter value) {
-                    if (_cornerPainter != value) {
-                      setState(() {
-                        _cornerPainter = value;
-                      });
-                    }
-                  },
-                ),
-                textColor: Colors.white,
-                onPressed: () {
-                  popupMenuKey.currentState.showButtonMenu();
-                },
-              ),
+              // FlatButtonWithIcon(
+              //   icon: const Icon(Icons.rounded_corner_sharp),
+              //   label: PopupMenuButton<ExtendedImageCropLayerCornerPainter>(
+              //     key: popupMenuKey,
+              //     enabled: false,
+              //     offset: const Offset(100, -300),
+              //     child: const Text(
+              //       '裁剪框',
+              //       style: TextStyle(fontSize: 8.0),
+              //     ),
+              //     initialValue: _cornerPainter,
+              //     itemBuilder: (BuildContext context) {
+              //       return <
+              //           PopupMenuEntry<ExtendedImageCropLayerCornerPainter>>[
+              //         PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+              //           child: Row(
+              //             children: const <Widget>[
+              //               Icon(
+              //                 Icons.rounded_corner_sharp,
+              //                 color: Colors.blue,
+              //               ),
+              //               SizedBox(
+              //                 width: 5,
+              //               ),
+              //               Text('直角'),
+              //             ],
+              //           ),
+              //           value:
+              //               const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
+              //         ),
+              //         const PopupMenuDivider(),
+              //         PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+              //           child: Row(
+              //             children: const <Widget>[
+              //               Icon(
+              //                 Icons.circle,
+              //                 color: Colors.blue,
+              //               ),
+              //               SizedBox(
+              //                 width: 5,
+              //               ),
+              //               Text('Circle'),
+              //             ],
+              //           ),
+              //           value:
+              //               const ExtendedImageCropLayerPainterCircleCorner(),
+              //         ),
+              //       ];
+              //     },
+              //     onSelected: (ExtendedImageCropLayerCornerPainter value) {
+              //       if (_cornerPainter != value) {
+              //         setState(() {
+              //           _cornerPainter = value;
+              //         });
+              //       }
+              //     },
+              //   ),
+              //   textColor: Colors.white,
+              //   onPressed: () {
+              //     popupMenuKey.currentState.showButtonMenu();
+              //   },
+              // ),
               FlatButtonWithIcon(
                 icon: const Icon(Icons.restore),
                 label: const Text(
-                  'Reset',
+                  '重置',
                   style: TextStyle(fontSize: 10.0),
                 ),
                 textColor: Colors.white,
@@ -399,9 +404,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         });
   }
 
-  Future<void> _cropImage(bool useNative) async {
+  Future<String> _cropImage(bool useNative) async {
     if (_cropping) {
-      return;
+      return null;
     }
     String msg = '';
     try {
@@ -429,18 +434,24 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
-      msg = 'save image : $filePath';
+      msg = '图片已保存在 : $filePath';
+
+      // showToast(msg, context: context);
+      return filePath;
     } catch (e, stack) {
-      msg = 'save failed: $e\n $stack';
+      msg = '图片保存失败: $e\n $stack';
       print(msg);
+
+      // showToast(msg);
     }
 
     //Navigator.of(context).pop();
-    showToast(msg);
-    _cropping = false;
+     finally {
+      //在这里加个toast
+      _cropping = false;
+    }
   }
 
-  Uint8List _memoryImage;
   // Future<void> _getImage() async {
   //   _memoryImage = await pickImage(context); //这里之后换成imagepicker方法=========
   //   //when back to current page, may be editorKey.currentState is not ready.

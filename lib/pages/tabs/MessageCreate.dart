@@ -33,13 +33,16 @@ class _MessageCreateState extends State<MessageCreate> {
   IconData _actionChipIconData = Icons.add;
   List<Widget> _containerList;
 
+  SimpleRichEditController controller;
+  _MessageCreateState() {
+    //富文本的controller
+    controller = SimpleRichEditController();
+  }
   @override
   Widget build(BuildContext context) {
     // ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     ScreenAdapter.init(context);
-    //富文本的controller
-    SimpleRichEditController controller = SimpleRichEditController();
 
     return Scaffold(
       appBar: AppBar(
@@ -54,7 +57,7 @@ class _MessageCreateState extends State<MessageCreate> {
                 style: TextStyle(
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
-                    color: Colors.black),
+                    color: Colors.white),
               )),
         ],
       ),
@@ -96,7 +99,11 @@ class _MessageCreateState extends State<MessageCreate> {
                           ),
                           FlatButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/updateTags');
+                                Map args = {
+                                  "identify": "user",
+                                }; //用于标识是用户维护关键词
+                                Navigator.pushNamed(context, '/updateTags',
+                                    arguments: args);
                               },
                               child: Text("管理关键词")),
                         ]),

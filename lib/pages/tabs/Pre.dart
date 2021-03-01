@@ -12,17 +12,23 @@ import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/PretoRichEdit.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_util.dart';
+import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/widget/toast.dart';
 
 import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+
+import 'chooseUser/contacts_list_page.dart';
 
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
@@ -101,26 +107,30 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
           //   },
           // ),
           Divider(),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Material(
-              borderRadius: BorderRadius.circular(10.0),
-              elevation: 14.0,
-              shadowColor: Colors.grey.withOpacity(0.5),
-              child: Container(
-                padding: EdgeInsets.all(20),
-                child: messageModel.htmlCode ==
-                        """<p><span style="font-size:15px;"></span></p>"""
-                    ? SizedBox(width: double.infinity)
-                    : HtmlWidget(
-                        messageModel.htmlCode,
-                        webView: true,
-                      ),
-              ),
-            ),
-          ),
+          // Container(
+          //   child: messageModel.htmlCode ==
+          //           """<p><span style="font-size:15px;"></span></p>"""
+          //       ? SizedBox(width: double.infinity)
+          //       : HtmlWidget(
+          //           messageModel.htmlCode,
+          //           webView: true,
+          //         ),
+          // ),
 
-          Divider(),
+          Container(
+            child: messageModel.htmlCode ==
+                    """<p><span style="font-size:15px;"></span></p>"""
+                ? SizedBox(width: double.infinity)
+                : Html(
+                    data: messageModel.htmlCode,
+                    style: {
+                      'img': Style(width: 150, height: 150),
+                      'video': Style(width: 150, height: 150),
+                      'text': Style(fontSize: FontSize.large)
+                    },
+                  ),
+          ),
+          // Divider(),
           messageModel.modify
               ? SafeArea(
                   child: SizedBox(
@@ -178,10 +188,9 @@ class _PreAndSendState extends State<PreAndSend> {
   bool editable;
   List<RichEditData> data;
   // List targetIdList;
-  List<String> targetIdList;
+  List<String> targetIdList = [];
   StreamSubscription<PageEvent> sss; //eventbus传值
-  SimpleRichEditController controller = SimpleRichEditController();
-
+  SimpleRichEditController controller;
   _PreAndSendState(
       {MessageModel messageModel,
       bool editable = false,
@@ -191,6 +200,7 @@ class _PreAndSendState extends State<PreAndSend> {
 
     this.editable = editable;
     this.data = data;
+    this.controller = SimpleRichEditController();
   }
   @override
   @override
@@ -200,103 +210,135 @@ class _PreAndSendState extends State<PreAndSend> {
     ScreenAdapter.init(context);
     content = messageModel.toJsonString();
     return Scaffold(
-        appBar: AppBar(
-          title: Text("预览页面"),
-          actions: [
-            Row(
-              children: [
-                IconButton(
-                  tooltip: "发送",
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    if (targetIdList == null) {
-                      sendMessageSuccess("请选择您要发送的联系人！");
-                    } else {
-                      _sendMessage();
-                      // Navigator.pop(context);
-                    }
-                  },
-                ),
-                IconButton(
-                  tooltip: "保存",
-                  icon: Icon(Icons.save),
-                  onPressed: () {
-                    postRequestFunction(notehtmlCode);
-                  },
-                ),
-                editable
-                    ? IconButton(
-                        tooltip: "编辑",
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.of(context).push(new MaterialPageRoute(
-                              builder: (context) => new PretoRichEdit(data,
-                                  messageModel.title, messageModel.keyWord)));
-                        })
-                    : SizedBox(
-                        width: 0,
-                        height: 0,
-                      ),
-              ],
-            )
-          ],
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Align(
-            //   alignment: new FractionalOffset(0.0, 0.0),
-            //   child: Text("已选择联系人：${targetIdList.toString()}"),
-            // ),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              // alignment: WrapAlignment.start,
-              spacing: 8.0,
-              children: [
-                Text("已选择联系人："),
-                Wrap(
-                  spacing: 8.0,
-                  children: _buildTarget(),
-                ),
-                ActionChip(
-                  backgroundColor: Theme.of(context).accentColor,
-                  label: Text(
-                    '选择联系人',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  // backgroundColor: Colors.grey[600],
-                  onPressed: () {
-                    sss = EventBusUtil.getInstance()
-                        .on<PageEvent>()
-                        .listen((data) {
-                      // print('${data.test}');
-                      targetIdList = data.userList;
-                      sss.cancel();
-                      setState(() {});
+      appBar: AppBar(
+        title: Text("预览页面"),
+        actions: [
+          Row(
+            children: [
+              IconButton(
+                tooltip: "发送",
+                icon: Icon(Icons.send),
+                onPressed: () async {
+                  // if (targetIdList == null) {
+                  //   sendMessageSuccess("请选择您要发送的联系人！");
+                  // } else {
+                  //   _sendMessage();
+                  //   // Navigator.pop(context);
+                  // }
+                  //加载联系人列表
+                  final ps = Provider.of<ProviderServices>(context);
+                  Map userInfo = ps.userInfo;
+                  String jsonTree =
+                      await Tree.getTreeFormSer(userInfo["id"], false, context);
+                  var parsedJson = json.decode(jsonTree);
+                  List users = [];
+                  Tree.getAllPeople(parsedJson, users);
+
+                  List targetAllList = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ContactListPage(users)));
+
+                  if (targetAllList != null && !targetAllList.isEmpty) {
+                    targetAllList.forEach((element) {
+                      targetIdList.add(element["id"]);
                     });
+                    _sendMessage();
+                  }
+                },
+              ),
+              IconButton(
+                tooltip: "保存",
+                icon: Icon(Icons.save),
+                onPressed: () {
+                  postRequestFunction(notehtmlCode);
+                },
+              ),
+              editable
+                  ? IconButton(
+                      tooltip: "编辑",
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (context) => new PretoRichEdit(data,
+                                messageModel.title, messageModel.keyWord)));
+                      })
+                  : SizedBox(
+                      width: 0,
+                      height: 0,
+                    ),
+            ],
+          )
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Align(
+          //   alignment: new FractionalOffset(0.0, 0.0),
+          //   child: Text("已选择联系人：${targetIdList.toString()}"),
+          // ),
+          // Wrap(
+          //   crossAxisAlignment: WrapCrossAlignment.center,
+          //   // alignment: WrapAlignment.start,
+          //   spacing: 8.0,
+          //   children: [
+          //     Text("已选择联系人："),
+          //     Wrap(
+          //       spacing: 8.0,
+          //       children: _buildTarget(),
+          //     ),
+          //     ActionChip(
+          //       backgroundColor: Theme.of(context).accentColor,
+          //       label: Text(
+          //         '选择联系人',
+          //         style: TextStyle(color: Colors.white),
+          //       ),
+          //       // backgroundColor: Colors.grey[600],
+          //       onPressed: () {
+          //         sss =
+          //             EventBusUtil.getInstance().on<PageEvent>().listen((data) {
+          //           // print('${data.test}');
+          //           targetIdList = data.userList;
+          //           sss.cancel();
+          //           setState(() {});
+          //         });
 
-                    Navigator.pushNamed(context, '/chooseUser');
-                    // _awaitReturnChooseTargetIdList(context);
+          //         Navigator.pushNamed(context, '/chooseUser');
+          //         // _awaitReturnChooseTargetIdList(context);
 
-                    //  targetIdList= a Navigator.pushNamed(context, '/chooseUser');
-                  },
-                  avatar: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            Divider(),
-            // Align(
-            //   alignment: new FractionalOffset(0.0, 0.0),
-            //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
-            // ),
-            Expanded(
-              child: getPre(messageModel, false, controller, context),
-            ),
-          ],
-        ));
+          //         //  targetIdList= a Navigator.pushNamed(context, '/chooseUser');
+          //       },
+          //       avatar: Icon(
+          //         Icons.add,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // Divider(),
+          // // Align(
+          //   alignment: new FractionalOffset(0.0, 0.0),
+          //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
+          // ),
+          Expanded(
+            child: getPre(messageModel, false, controller, context),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Theme.of(context).accentColor,
+        shape: const CircularNotchedRectangle(),
+        child: ButtonTheme(
+          minWidth: 0.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[],
+          ),
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildTarget() {
@@ -390,6 +432,8 @@ class _PreAndSendState extends State<PreAndSend> {
       "nCategory": "默认类别"
     });
     // print(response.data);
+
+    MyToast.AlertMesaage("已将内容保存至草稿中！");
   }
 }
 
