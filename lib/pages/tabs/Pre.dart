@@ -215,8 +215,8 @@ class _PreAndSendState extends State<PreAndSend> {
         actions: [
           Row(
             children: [
-              IconButton(
-                tooltip: "发送",
+              FlatButtonWithIcon(
+                label: Text("发送"),
                 icon: Icon(Icons.send),
                 onPressed: () async {
                   // if (targetIdList == null) {
@@ -247,16 +247,16 @@ class _PreAndSendState extends State<PreAndSend> {
                   }
                 },
               ),
-              IconButton(
-                tooltip: "保存",
+              FlatButtonWithIcon(
+                label: Text("保存"),
                 icon: Icon(Icons.save),
                 onPressed: () {
                   postRequestFunction(notehtmlCode);
                 },
               ),
               editable
-                  ? IconButton(
-                      tooltip: "编辑",
+                  ? FlatButtonWithIcon(
+                      label: Text("遮蔽"),
                       icon: Icon(Icons.edit),
                       onPressed: () {
                         Navigator.of(context).push(new MaterialPageRoute(
