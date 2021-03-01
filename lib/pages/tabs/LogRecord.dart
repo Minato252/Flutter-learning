@@ -30,7 +30,10 @@ class LogRecordPage extends StatefulWidget {
   _LogRecordPageState createState() => _LogRecordPageState();
 }
 
-class _LogRecordPageState extends State<LogRecordPage> {
+class _LogRecordPageState extends State<LogRecordPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String _searchTag;
   String _searchStaffId;
   DateTime _searchTime;

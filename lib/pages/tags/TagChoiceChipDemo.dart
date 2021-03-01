@@ -53,7 +53,10 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: Text("关键词"),
+          title: Text(
+            "关键词",
+            style: TextStyle(fontSize: 26.0),
+          ),
           // actions: <Widget>[
           //   FlatButton(
           //       onPressed: null,
@@ -74,7 +77,7 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
                 SizedBox(height: 15),
                 Text(
                   "选择您的关键词",
-                  style: TextStyle(fontSize: 32.0),
+                  style: TextStyle(fontSize: 20.0),
                 ),
                 SizedBox(height: 15),
                 Wrap(

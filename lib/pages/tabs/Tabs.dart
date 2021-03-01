@@ -34,6 +34,10 @@ class _TabsState extends State<Tabs> {
 
   AppLifecycleState currentState = AppLifecycleState.resumed;
   // List _pagelist = [Message(), MessageCreate(), LogRecord(), User()];
+
+//第1步，声明PageController
+  PageController _pageController;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +48,9 @@ class _TabsState extends State<Tabs> {
     initTreeAndUserInfo();
 
     initKeyWords();
+
+    //第2步，初始化PageController
+    this._pageController = PageController(initialPage: this._currentIndex);
   }
 
   initPlatformState() async {
@@ -163,15 +170,23 @@ class _TabsState extends State<Tabs> {
       //     cleanToken();
       //   },
       // ),
-      body: IndexedStack(
-        index: this._currentIndex,
-        children: this._pagelist,
-      ),
+      // body: IndexedStack(
+      //   index: this._currentIndex,
+      //   children: this._pagelist,
+      // ),
+      // body: this._pagelist[_currentIndex],
+
+      body:
+          PageView(controller: this._pageController, children: this._pagelist),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: this._currentIndex,
         onTap: (index) {
           setState(() {
+            // this._currentIndex = index;
+
+            //第4步，设置点击底部Tab的时候的页面跳转
             this._currentIndex = index;
+            this._pageController.jumpToPage(this._currentIndex);
           });
         },
         type: BottomNavigationBarType.fixed,

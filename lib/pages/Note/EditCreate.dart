@@ -31,6 +31,7 @@ class _EditCreateState extends State<EditCreate> {
   Widget build(BuildContext context) {
     return new MaterialApp(
         home: new Scaffold(
+            resizeToAvoidBottomPadding: false,
             appBar: AppBar(
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
