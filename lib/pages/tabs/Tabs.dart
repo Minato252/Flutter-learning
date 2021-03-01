@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/user_data.dart';
@@ -37,6 +39,7 @@ class _TabsState extends State<Tabs> {
 
 //第1步，声明PageController
   PageController _pageController;
+  String _appBadgeSupported = 'Unknown';
 
   @override
   void initState() {
@@ -51,6 +54,36 @@ class _TabsState extends State<Tabs> {
 
     //第2步，初始化PageController
     this._pageController = PageController(initialPage: this._currentIndex);
+
+    // initPlatformState2();//app消息提示
+    // _showMessageOnApp();
+  }
+
+  void _showMessageOnApp() {
+    FlutterAppBadger.updateBadgeCount(1);
+  }
+
+  initPlatformState2() async {
+    String appBadgeSupported;
+    try {
+      bool res = await FlutterAppBadger.isAppBadgeSupported();
+      if (res) {
+        appBadgeSupported = 'Supported';
+      } else {
+        appBadgeSupported = 'Not supported';
+      }
+    } on PlatformException {
+      appBadgeSupported = 'Failed to get badge support.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _appBadgeSupported = appBadgeSupported;
+    });
   }
 
   initPlatformState() async {

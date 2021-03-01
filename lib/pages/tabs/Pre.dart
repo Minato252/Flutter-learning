@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:path/path.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,7 @@ import 'chooseUser/contacts_list_page.dart';
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
 
-Scrollbar getPre(MessageModel messageModel, bool modify,
+Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
     SimpleRichEditController controller, BuildContext context) {
   return Scrollbar(
     child: SingleChildScrollView(
@@ -124,9 +125,12 @@ Scrollbar getPre(MessageModel messageModel, bool modify,
                 : Html(
                     data: messageModel.htmlCode,
                     style: {
-                      'img': Style(width: 150, height: 150),
-                      'video': Style(width: 150, height: 150),
-                      'text': Style(fontSize: FontSize.large)
+                      // 'img': Style(width: 150, height: 150),
+                      // 'video': Style(width: 150, height: 150),
+                      // 'text': Style(fontSize: FontSize.large)
+                      //  "p":Style(,FontSize(20.0)),
+                      // "p": Style(FontSize(30.0))
+                      "P": Style(fontSize: FontSize(myFontSize))
                     },
                   ),
           ),
@@ -165,6 +169,7 @@ class PreAndSend extends StatefulWidget {
   String content;
   bool editable;
   List<RichEditData> data;
+  double myFontSize = 15.0;
   PreAndSend(
       {MessageModel messageModel,
       bool editable = false,
@@ -184,6 +189,7 @@ class _PreAndSendState extends State<PreAndSend> {
   String content;
   String targetId = "456";
   String notehtmlCode;
+  double myFontSize = 15.0;
 
   bool editable;
   List<RichEditData> data;
@@ -202,7 +208,20 @@ class _PreAndSendState extends State<PreAndSend> {
     this.data = data;
     this.controller = SimpleRichEditController();
   }
-  @override
+  enlargeFontSize() {
+    if (myFontSize <= 50) {
+      myFontSize += 5.0;
+      setState(() {});
+    }
+  }
+
+  decreaseFontSize() {
+    if (myFontSize > 5) {
+      myFontSize -= 5.0;
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     notehtmlCode = messageModel.htmlCode;
@@ -214,10 +233,16 @@ class _PreAndSendState extends State<PreAndSend> {
         title: Text("预览页面"),
         actions: [
           Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
               FlatButtonWithIcon(
-                label: Text("发送"),
-                icon: Icon(Icons.send),
+                label: Text(
+                  "发送",
+                ),
+                icon: Icon(
+                  Icons.send,
+                ),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
                   // if (targetIdList == null) {
                   //   sendMessageSuccess("请选择您要发送的联系人！");
@@ -249,7 +274,10 @@ class _PreAndSendState extends State<PreAndSend> {
               ),
               FlatButtonWithIcon(
                 label: Text("保存"),
-                icon: Icon(Icons.save),
+                icon: Icon(
+                  Icons.save,
+                ),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () {
                   postRequestFunction(notehtmlCode);
                 },
@@ -258,6 +286,7 @@ class _PreAndSendState extends State<PreAndSend> {
                   ? FlatButtonWithIcon(
                       label: Text("遮蔽"),
                       icon: Icon(Icons.edit),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onPressed: () {
                         Navigator.of(context).push(new MaterialPageRoute(
                             builder: (context) => new PretoRichEdit(data,
@@ -267,6 +296,61 @@ class _PreAndSendState extends State<PreAndSend> {
                       width: 0,
                       height: 0,
                     ),
+              Container(
+                height: 150.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      height: 25,
+                      child: IconButton(
+                        tooltip: "字体放大",
+                        iconSize: 24.0,
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.add,
+
+                          // size: 20,
+                        ),
+                        onPressed: () {
+                          enlargeFontSize();
+                        },
+                      ),
+                    ),
+                    // Container(
+                    //   child: Text(
+                    //     "字体",
+                    //     style: TextStyle(fontSize: 6.0),
+                    //   ),
+                    //   margin: EdgeInsets.all(0),
+                    //   padding: EdgeInsets.all(0),
+                    //   height: 6,
+                    // ),
+                    // Text("字体"),
+                    Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      height: 25,
+                      child: IconButton(
+                        tooltip: "字体放大",
+                        iconSize: 24.0,
+
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.minimize_outlined,
+                          // size: 20,
+                        ),
+                        // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onPressed: () {
+                          decreaseFontSize();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           )
         ],
@@ -322,7 +406,7 @@ class _PreAndSendState extends State<PreAndSend> {
           //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
           // ),
           Expanded(
-            child: getPre(messageModel, false, controller, context),
+            child: getPre(messageModel, false, myFontSize, controller, context),
           ),
         ],
       ),

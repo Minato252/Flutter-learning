@@ -83,6 +83,7 @@ class SimpleRichEditController extends RichEditController {
         autoPlay: false,
         autoInitialize: true,
         aspectRatio: 16 / 9,
+
         //aspectRatio: 3 / 2,
         //looping: false,
 
