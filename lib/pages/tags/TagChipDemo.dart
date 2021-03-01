@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 
 class TagChipDemo extends StatefulWidget {
   final Map arguments;

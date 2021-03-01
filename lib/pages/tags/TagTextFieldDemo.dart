@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 
 class TextFieldDemo extends StatefulWidget {
   @override
@@ -27,6 +28,14 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                   SizedBox(
                     height: 32.0,
                   ),
+                  /* Container(
+                    width: ScreenAdapter.getScreenWidth(),
+                    child: Text(
+                      "输入您要新建的关键词",
+                      style: TextStyle(fontSize: 1.0),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),*/
                   Text(
                     "输入您要新建的关键词",
                     style: TextStyle(fontSize: 32.0),
