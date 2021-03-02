@@ -1,11 +1,16 @@
 //https://material.io/tools/icons/?icon=favorite&style=baseline
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
+import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
+import '../../main.dart';
 import '../../services/ScreenAdapter.dart';
 import '../Login.dart';
 import 'Tabs.dart';
@@ -20,11 +25,13 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   String id;
+  String photoUrl;
 
   void initState() {
     super.initState();
     // 1.初始化 im SDK
     _getUserInfo();
+    _getPortrait();
   }
 
   @override
@@ -48,13 +55,20 @@ class _UserPageState extends State<UserPage> {
                 Container(
                   margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ClipOval(
-                    child: Image.asset(
-                      'images/user.png',
+                      child: InkWell(
+                    child: Image.network(
+                      photoUrl,
                       fit: BoxFit.cover,
                       width: ScreenAdapter.width(100),
                       height: ScreenAdapter.width(100),
                     ),
-                  ),
+                    onTap: () async {
+                      String url = await addImage();
+                      setState(() {
+                        photoUrl = url;
+                      });
+                    },
+                  )),
                 ),
                 Expanded(
                     flex: 1,
@@ -112,6 +126,16 @@ class _UserPageState extends State<UserPage> {
         (route) => route == null);
   }
 
+  void _getPortrait() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.id = prefs.get("id");
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/record/selectrecord?id=" + this.id);
+    setState(() {
+      this.photoUrl = rel.data["portrait"].toString();
+    });
+  }
+
   Future<void> cleanToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", null);
@@ -140,5 +164,169 @@ class _UserPageState extends State<UserPage> {
     setState(() {
       id;
     });
+  }
+
+  Future<String> addImage() async {
+    String oldPath = await showImgDialog();
+    print(oldPath);
+    String url;
+    if (oldPath != null && oldPath != "") {
+      String path =
+          await Navigator.of(navigatorKey.currentState.overlay.context).push(
+              MaterialPageRoute(
+                  builder: (context) => new ImageShowerDemo(oldPath)));
+      // return path;
+      url = await UploadFile.fileUplod(path);
+      var r = await Dio().post("http://47.110.150.159:8080/record/updatarecord",
+          data: {"id": this.id, "portrait": url});
+      return url;
+    }
+    url = await UploadFile.fileUplod(oldPath);
+    var r = await Dio().post("http://47.110.150.159:8080/record/updatarecord",
+        data: {"id": this.id, "portrait": url});
+
+    return url;
+  }
+
+  Future<String> showImgDialog() async {
+    String imgPath = null;
+    await showModalBottomSheet(
+        context: navigatorKey.currentState.overlay.context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return Container(
+            height: 171,
+            margin: EdgeInsets.only(left: 15, right: 15), //控制底部的距离
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 101,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () async {
+                          imgPath = await _getImageFromCamera();
+
+                          Navigator.pop(context);
+                          // Navigator.pop(context, imgPath);
+                          //   switch (type) {
+                          //     case 0:
+                          //       notifyImg = imgPath;
+                          //       break;
+                          //     case 1:
+                          //       emergencyImg = imgPath;
+                          //       break;
+                          //     case 2:
+                          //       promiseImg = imgPath;
+                          //       break;
+                          //   }
+                          //   setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '拍照',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        color: Colors.grey,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          imgPath = await _getImageFromGallery();
+
+                          Navigator.pop(context);
+
+                          // switch (type) {
+                          //   case 0:
+                          //     notifyImg = imgPath;
+                          //     break;
+                          //   case 1:
+                          //     emergencyImg = imgPath;
+                          //     break;
+                          //   case 2:
+                          //     promiseImg = imgPath;
+                          //     break;
+                          // }
+                          // setState(() {});
+                        },
+                        child: Container(
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              '本地相册',
+                              style: TextStyle(
+//                                fontSize: Config.fontSize17,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w200),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    // NavigatorUtils.goBack(context);
+
+                    Navigator.pop(context);
+                    // return null;
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '取消',
+                        style: TextStyle(
+                            color: Colors.red,
+//                          fontSize: Config.fontSize17,
+                            fontWeight: FontWeight.w200),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+    return imgPath;
+  }
+
+  Future _getImageFromCamera() async {
+    PickedFile image =
+        await ImagePicker().getImage(source: ImageSource.camera, maxWidth: 400);
+    if (image != null) {
+      return image.path;
+    }
+  }
+
+  //相册选择
+  Future<String> _getImageFromGallery() async {
+    PickedFile image =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    if (image != null) {
+      return image.path;
+    }
   }
 }

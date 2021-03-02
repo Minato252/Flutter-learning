@@ -825,7 +825,12 @@ class _ConversationPageState extends State<ConversationPage>
     messageModel.modify = true;
     if (!hadlook.contains(prefs.get("id"))) {
       // messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
-      hadlook = hadlook + ' , ' + prefs.get("id");
+      hadlook = hadlook +
+          ' , ' +
+          prefs.get("id") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")";
 
       String updataUrl = "http://47.110.150.159:8080/messages/update?mesId=" +
           messageModel.messageId +

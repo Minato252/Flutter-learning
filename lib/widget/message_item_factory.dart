@@ -65,16 +65,16 @@ class MessageItemFactory extends StatelessWidget {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text("关键词: "),
+            Text("关键词:  "),
             Chip(label: Text(messageModel.keyWord)),
           ],
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text("标题: "),
+            Text("标题:  "),
             Text(messageModel.title),
           ],
         )

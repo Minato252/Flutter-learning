@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart' as prefix;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'dart:developer' as developer;
 
 import 'message_item_factory.dart';
@@ -58,6 +61,9 @@ class _ConversationItemState extends State<ConversationItem> {
   ValueNotifier<int> time = ValueNotifier<int>(0);
   bool needShowMessage = true;
 
+  String photoUrl_target;
+  String photoUrl_user;
+
   _ConversationItemState(
       ConversationItemDelegate delegate,
       prefix.Message msg,
@@ -72,6 +78,7 @@ class _ConversationItemState extends State<ConversationItem> {
     this.multiSelect = multiSelect;
     this.selectedMessageIds = selectedMessageIds;
     this.time = time;
+
     // setInfo(message.senderUserId);
     needShowMessage =
         !(msg.messageDirection == prefix.RCMessageDirection.Receive &&
@@ -100,6 +107,7 @@ class _ConversationItemState extends State<ConversationItem> {
     super.initState();
     bool isSelected = selectedMessageIds.contains(message.messageId);
     icon = SelectIcon(isSelected);
+    _getPortrait(message.targetId, message.senderUserId);
   }
 
   void _refreshUI(prefix.Message msg) {
@@ -110,6 +118,17 @@ class _ConversationItemState extends State<ConversationItem> {
       setState(() {});
     }
     // });
+  }
+
+  void _getPortrait(String targetId, String userId) async {
+    var rel_1 = await Dio()
+        .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);
+    var rel_2 = await Dio()
+        .post("http://47.110.150.159:8080/record/selectrecord?id=" + userId);
+    setState(() {
+      photoUrl_target = rel_1.data["portrait"].toString();
+      photoUrl_user = rel_2.data["portrait"].toString();
+    });
   }
 
   @override
@@ -177,15 +196,27 @@ class _ConversationItemState extends State<ConversationItem> {
                   Container(
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                    child: Text(
-                        // (this.user == null || this.user.id == null
-                        //     ? ""
-                        //     : this.user.id),
-                        // "demo1",
-                        this.message.senderUserId,
-                        style: TextStyle(
-                            fontSize: RCFont.MessageNameFont,
-                            color: Color(RCColor.MessageNameBgColor))),
+                    // child: Text(
+                    //     // (this.user == null || this.user.id == null
+                    //     //     ? ""
+                    //     //     : this.user.id),
+                    //     // "demo1",
+                    //     this.message.senderUserId,
+                    //     style: TextStyle(
+                    //         fontSize: RCFont.MessageNameFont,
+                    //         color: Color(RCColor.MessageNameBgColor))),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: ClipOval(
+                        child: Image.network(
+                          // photoUrl,
+                          photoUrl_user,
+                          fit: BoxFit.cover,
+                          width: ScreenAdapter.width(100),
+                          height: ScreenAdapter.width(100),
+                        ),
+                      ),
+                    ),
                   ),
                   buildMessageWidget(),
                   Container(
@@ -241,14 +272,26 @@ class _ConversationItemState extends State<ConversationItem> {
                   Container(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                    child: Text(
-                      // (this.user == null || this.user.id == null
-                      //     ? ""
-                      //     : this.user.id),
-                      // "demo2", //暂时写成demo
-                      this.message.targetId,
-                      style:
-                          TextStyle(color: Color(RCColor.MessageNameBgColor)),
+                    // child: Text(
+                    //   // (this.user == null || this.user.id == null
+                    //   //     ? ""
+                    //   //     : this.user.id),
+                    //   // "demo2", //暂时写成demo
+                    //   this.message.targetId,
+                    //   style:
+                    //       TextStyle(color: Color(RCColor.MessageNameBgColor)),
+                    // ),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: ClipOval(
+                        child: Image.network(
+                          // photoUrl,
+                          photoUrl_target,
+                          fit: BoxFit.cover,
+                          width: ScreenAdapter.width(100),
+                          height: ScreenAdapter.width(100),
+                        ),
+                      ),
                     ),
                   ),
                   buildMessageWidget(),

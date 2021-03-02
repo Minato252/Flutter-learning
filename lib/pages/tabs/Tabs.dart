@@ -55,8 +55,8 @@ class _TabsState extends State<Tabs> {
     //第2步，初始化PageController
     this._pageController = PageController(initialPage: this._currentIndex);
 
-    // initPlatformState2();//app消息提示
-    // _showMessageOnApp();
+    initPlatformState2(); //app消息提示
+    _showMessageOnApp();
   }
 
   void _showMessageOnApp() {

@@ -235,7 +235,10 @@ class _MessageCreateState extends State<MessageCreate>
           htmlCode: htmlCode,
           title: newTitle,
           keyWord: _curchosedTag,
-          hadLook: prefs.get("id"));
+          hadLook: prefs.get("id") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")");
       List<RichEditData> l = new List<RichEditData>.from(controller.data);
       Navigator.push(context, MaterialPageRoute(builder: (c) {
         return PreAndSend(

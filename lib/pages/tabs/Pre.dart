@@ -125,8 +125,8 @@ Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
                 : Html(
                     data: messageModel.htmlCode,
                     style: {
-                      // 'img': Style(width: 150, height: 150),
-                      // 'video': Style(width: 150, height: 150),
+                      'img': Style(width: 150, height: 150),
+                      'video': Style(width: 150, height: 150),
                       // 'text': Style(fontSize: FontSize.large)
                       //  "p":Style(,FontSize(20.0)),
                       // "p": Style(FontSize(30.0))
@@ -456,7 +456,7 @@ class _PreAndSendState extends State<PreAndSend> {
       var htmlCode = await controller.generateHtmlUrl();
       DateTime now = new DateTime.now();
       String cure =
-          "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString()}<\/span><\/p>";
+          "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
       // content = content + cure + htmlCode;
       messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
       content = messageModel.toJsonString();
@@ -480,7 +480,10 @@ class _PreAndSendState extends State<PreAndSend> {
         "touserid": item,
         "fromuserid": prefs.get("id"),
         "title": messageModel.title,
-        "hadLook": prefs.get("id"),
+        "hadLook": prefs.get("id") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")",
         "MesId": messageModel.messageId
       });
     }
