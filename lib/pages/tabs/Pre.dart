@@ -258,7 +258,14 @@ class _PreAndSendState extends State<PreAndSend> {
                   var parsedJson = json.decode(jsonTree);
                   List users = [];
                   Tree.getAllPeople(parsedJson, users);
-
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  String id = prefs.getString("id");
+                  for (int i = 0; i < users.length; i++) {
+                    if (users[i]["id"] == id) {
+                      users.removeAt(i);
+                    }
+                  }
                   List targetAllList = await Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
