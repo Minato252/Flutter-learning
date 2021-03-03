@@ -1,6 +1,7 @@
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:weitong/Model/time.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_bus.dart';
 import 'package:weitong/widget/widget_util.dart';
 
@@ -104,6 +105,7 @@ class _MessageContentListState extends State<MessageContentList>
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     this._scrollController = ScrollController(initialScrollOffset: mPosition);
     _addScroolListener();
     return StreamBuilder<MessageInfoWrapState>(
