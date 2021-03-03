@@ -82,14 +82,18 @@ String staff = "人员";
 
 class RightButton extends StatelessWidget {
   String rightName;
-  RightButton(this.rightName, this.onPressed, {this.pressable});
+  RightButton(this.rightName, this.onPressed, {this.pressable, this.c});
   Function onPressed;
   bool pressable;
+  Color c;
 
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      child: Text(rightName),
+      child: Text(
+        rightName,
+        style: TextStyle(color: c),
+      ),
       onPressed: () {
         if (pressable) {
           onPressed(this.rightName);
@@ -175,7 +179,7 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
 
       var parsedJson = json.decode(jsonTree);
       return TreeView(
-        nodes: toTreeNodes(parsedJson, null),
+        nodes: toTreeNodes(parsedJson, null, myColor.length - 1),
         // treeController: _treeController,
       );
     } on FormatException catch (e) {
@@ -183,12 +187,30 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
     }
   }
 
-  List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
+  List<Color> myColor = [
+    Colors.purple[700],
+    Colors.blue[700],
+    Colors.green[700],
+    Colors.yellow[700],
+    Colors.orange[700],
+    Colors.red[700],
+  ];
+
+  List<TreeNode> toTreeNodes(
+      dynamic parsedJson, var fatherName, int colorIndex) {
     if (parsedJson is Map<String, dynamic>) {
       return parsedJson.keys
           .map((k) => TreeNode(
-              content: RightButton(k, onPressed, pressable: k != staff),
-              children: toTreeNodes(parsedJson[k], k)))
+              content: RightButton(
+                k,
+                onPressed,
+                pressable: k != staff,
+                c: myColor[k == staff
+                    ? (colorIndex + 1 < myColor.length ? colorIndex + 1 : 0)
+                    : colorIndex],
+              ),
+              children: toTreeNodes(parsedJson[k], k,
+                  (colorIndex - 1) > -1 ? colorIndex - 1 : myColor.length - 1)))
           .toList();
     }
     if (parsedJson is List<dynamic>) {
@@ -200,7 +222,8 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
                   content: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Theme.of(context).accentColor,
+                    backgroundColor: myColor[
+                        colorIndex + 2 < myColor.length ? colorIndex + 2 : 1],
                     child: Text(
                       element["name"][0],
                       style: TextStyle(color: Colors.white),
@@ -229,6 +252,53 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
     }
     return [TreeNode(content: RightButton(parsedJson.toString(), onPressed))];
   }
+
+  // List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
+  //   if (parsedJson is Map<String, dynamic>) {
+  //     return parsedJson.keys
+  //         .map((k) => TreeNode(
+  //             content: RightButton(k, onPressed, pressable: k != staff),
+  //             children: toTreeNodes(parsedJson[k], k)))
+  //         .toList();
+  //   }
+  //   if (parsedJson is List<dynamic>) {
+  //     return parsedJson
+  //         .asMap()
+  //         .map((i, element) => MapEntry(
+  //             i,
+  //             TreeNode(
+  //                 content: Row(
+  //               children: [
+  //                 CircleAvatar(
+  //                   backgroundColor: Theme.of(context).accentColor,
+  //                   child: Text(
+  //                     element["name"][0],
+  //                     style: TextStyle(color: Colors.white),
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   width: 10,
+  //                 ),
+  //                 Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       '${element["name"]}',
+  //                       style: TextStyle(color: Colors.black, fontSize: 15),
+  //                     ),
+  //                     Text(
+  //                       '${element["id"]}',
+  //                       style: TextStyle(color: Colors.grey, fontSize: 12),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ],
+  //             ))))
+  //         .values
+  //         .toList();
+  //   }
+  //   return [TreeNode(content: RightButton(parsedJson.toString(), onPressed))];
+  // }
 
   void onPressed(String rightName) {
     if (rightName != null) {
