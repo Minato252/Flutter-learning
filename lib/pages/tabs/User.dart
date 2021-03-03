@@ -10,6 +10,7 @@ import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
 import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/widget/loading.dart';
 import '../../main.dart';
 import '../../services/ScreenAdapter.dart';
 import '../Login.dart';
@@ -27,6 +28,8 @@ class _UserPageState extends State<UserPage> {
   String id;
   String photoUrl;
 
+  bool isLoadFinshed = false;
+
   void initState() {
     super.initState();
     // 1.初始化 im SDK
@@ -38,82 +41,92 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     ScreenAdapter.init(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text("我的"),
-      ),
-      body: ListView(
-        children: [
-          Container(
-            height: ScreenAdapter.height(220),
-            width: double.infinity,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('images/user_bg.jpg'),
-                    fit: BoxFit.cover)),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: ClipOval(
-                      child: InkWell(
-                    child: Image.network(
-                      photoUrl,
-                      fit: BoxFit.cover,
-                      width: ScreenAdapter.width(100),
-                      height: ScreenAdapter.width(100),
-                    ),
-                    onTap: () async {
-                      String url = await addImage();
-                      setState(() {
-                        photoUrl = url;
-                      });
-                    },
-                  )),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: AppBar(
+          title: Text("我的"),
+        ),
+        body: isLoadFinshed
+            ? ListView(
+                children: [
+                  Container(
+                    height: ScreenAdapter.height(220),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('images/user_bg.jpg'),
+                            fit: BoxFit.cover)),
+                    child: Row(
                       children: [
-                        Text("用户名：${id}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: ScreenAdapter.size(32))),
-                        Text("普通员工",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: ScreenAdapter.size(24))),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: ClipOval(
+                              child: InkWell(
+                            child: Image.network(
+                              photoUrl,
+                              fit: BoxFit.cover,
+                              width: ScreenAdapter.width(100),
+                              height: ScreenAdapter.width(100),
+                            ),
+                            onTap: () async {
+                              String url = await addImage();
+                              setState(() {
+                                photoUrl = url;
+                              });
+                            },
+                          )),
+                        ),
+                        Expanded(
+                            flex: 1,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("用户名：${id}",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: ScreenAdapter.size(32))),
+                                Text("普通员工",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: ScreenAdapter.size(24))),
+                              ],
+                            ))
                       ],
-                    ))
-              ],
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.history),
-            title: Text("记录"),
-          ),
-          ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("我的资料"),
-              onTap: () {
-                Navigator.of(context).pushNamed('/category');
-              }),
-          ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("设置"),
-              onTap: () {
-                Navigator.of(context).pushNamed('/setting');
-              }),
-          JdButton(
-            text: "退出登录",
-            cb: () {
-              _logout();
-            },
-          )
-        ],
-      ),
-    );
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.history),
+                    title: Text("记录"),
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.settings),
+                      title: Text("我的资料"),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/category');
+                      }),
+                  ListTile(
+                      leading: Icon(Icons.settings),
+                      title: Text("设置"),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/setting');
+                      }),
+                  JdButton(
+                    text: "退出登录",
+                    cb: () {
+                      _logout();
+                    },
+                  )
+                ],
+              )
+            : MyLoading(
+                loading: true,
+                msg: '正在加载...',
+                child: Center(
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text('显示加载动画'),
+                  ),
+                ),
+              ));
   }
 
   void _logout() async {
@@ -133,6 +146,7 @@ class _UserPageState extends State<UserPage> {
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + this.id);
     setState(() {
       this.photoUrl = rel.data["portrait"].toString();
+      isLoadFinshed = true;
     });
   }
 

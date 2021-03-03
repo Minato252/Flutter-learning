@@ -61,8 +61,8 @@ class _ConversationItemState extends State<ConversationItem> {
   ValueNotifier<int> time = ValueNotifier<int>(0);
   bool needShowMessage = true;
 
-  String photoUrl_target;
-  String photoUrl_user;
+  String photoUrl_target = "";
+  String photoUrl_user = "";
 
   _ConversationItemState(
       ConversationItemDelegate delegate,
