@@ -95,7 +95,7 @@ class RightWidget extends StatefulWidget {
       {bool deleteable = true,
       bool editable = true,
       bool addable = true,
-      Color c}) {
+      Color c = Colors.black}) {
     this.rightName = rightName;
     this.parentName = parentName;
     this.deleteable = deleteable;
@@ -131,19 +131,22 @@ class _RightWidgetState extends State<RightWidget> {
   Widget build(BuildContext context) {
     var addButton = addable
         ? IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              color: c,
+            ),
             onPressed: onTapAdd,
           )
         : Container(height: 0.0, width: 0.0);
     var editButton = addable
         ? IconButton(
-            icon: Icon(Icons.edit),
+            icon: Icon(Icons.edit, color: c),
             onPressed: onTapEdit,
           )
         : Container(height: 0.0, width: 0.0);
     var deleteButton = addable
         ? IconButton(
-            icon: Icon(Icons.delete),
+            icon: Icon(Icons.delete, color: c),
             onPressed: onTapDelete,
           )
         : Container(height: 0.0, width: 0.0);
@@ -151,12 +154,16 @@ class _RightWidgetState extends State<RightWidget> {
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "$rightName",
-            style: TextStyle(color: c),
-          ),
           Row(
-            children: [addButton, editButton, deleteButton],
+            children: [
+              Text(
+                "$rightName",
+                style: TextStyle(color: c),
+              ),
+              addButton,
+              editButton,
+              deleteButton
+            ],
           )
         ],
       ),
@@ -384,7 +391,8 @@ class _StaffManagePageState extends State<StaffManagePage> {
 
       Color cc = Theme.of(context).accentColor;
       return TreeView(
-        nodes: toTreeNodes(parsedJson, null),
+        // nodes: toTreeNodes(parsedJson, null),
+        nodes: toTreeNodes(parsedJson, null, myColor.length - 1),
         // treeController: _treeController,
       );
     } on FormatException catch (e) {
@@ -393,11 +401,15 @@ class _StaffManagePageState extends State<StaffManagePage> {
   }
 
   List<Color> myColor = [
-    Colors.blue[100],
-    Colors.blue[200],
-    Colors.blue[300],
+    Colors.purple[700],
+    Colors.blue[700],
+    Colors.green[700],
+    Colors.yellow[700],
+    Colors.orange[700],
+    Colors.red[700],
   ];
-  List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
+  List<TreeNode> toTreeNodes(
+      dynamic parsedJson, var fatherName, int colorIndex) {
     if (parsedJson is Map<String, dynamic>) {
       return parsedJson.keys
           .map((k) => TreeNode(
@@ -407,11 +419,16 @@ class _StaffManagePageState extends State<StaffManagePage> {
                 deleteable: "$k" != "$staff",
                 editable: "$k" != "$staff",
                 addable: "$k" != "$staff",
+                c: myColor[k == staff
+                    ? (colorIndex + 1 < myColor.length ? colorIndex + 1 : 0)
+                    : colorIndex],
               ),
-              children: toTreeNodes(parsedJson[k], k)))
+              children: toTreeNodes(parsedJson[k], k,
+                  (colorIndex - 1) > -1 ? colorIndex - 1 : myColor.length - 1)))
           .toList();
     }
     if (parsedJson is List<dynamic>) {
+      // colorIndex = colorIndex + 1 < myColor.length ? colorIndex + 1 : 0;
       return parsedJson
           .asMap()
           .map((i, element) => MapEntry(
@@ -420,7 +437,8 @@ class _StaffManagePageState extends State<StaffManagePage> {
                   content: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: Theme.of(context).accentColor,
+                    backgroundColor: myColor[
+                        colorIndex + 2 < myColor.length ? colorIndex + 2 : 1],
                     child: Text(
                       element["name"][0],
                       style: TextStyle(color: Colors.white),
@@ -447,8 +465,69 @@ class _StaffManagePageState extends State<StaffManagePage> {
           .values
           .toList();
     }
-    return [TreeNode(content: RightWidget(parsedJson.toString(), fatherName))];
+    return [
+      TreeNode(
+          content: RightWidget(
+        parsedJson.toString(),
+        fatherName,
+        // c: myColor[colorIndex + 1 < myColor.length ? colorIndex + 1 : 0],
+      ))
+    ];
   }
+
+  //  List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
+  //   if (parsedJson is Map<String, dynamic>) {
+  //     return parsedJson.keys
+  //         .map((k) => TreeNode(
+  //             content: RightWidget(
+  //               '$k',
+  //               fatherName,
+  //               deleteable: "$k" != "$staff",
+  //               editable: "$k" != "$staff",
+  //               addable: "$k" != "$staff",
+  //             ),
+  //             children: toTreeNodes(parsedJson[k], k)))
+  //         .toList();
+  //   }
+  //   if (parsedJson is List<dynamic>) {
+  //     return parsedJson
+  //         .asMap()
+  //         .map((i, element) => MapEntry(
+  //             i,
+  //             TreeNode(
+  //                 content: Row(
+  //               children: [
+  //                 CircleAvatar(
+  //                   backgroundColor: Theme.of(context).accentColor,
+  //                   child: Text(
+  //                     element["name"][0],
+  //                     style: TextStyle(color: Colors.white),
+  //                   ),
+  //                 ),
+  //                 SizedBox(
+  //                   width: 10,
+  //                 ),
+  //                 Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       '${element["name"]}',
+  //                       style: TextStyle(color: Colors.black, fontSize: 15),
+  //                     ),
+  //                     Text(
+  //                       '${element["id"]}',
+  //                       style: TextStyle(color: Colors.grey, fontSize: 12),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ],
+  //             ))))
+  //         .values
+  //         .toList();
+  //   }
+  //   return [TreeNode(content: RightWidget(parsedJson.toString(), fatherName))];
+  // }
+
 }
 
 class Task {

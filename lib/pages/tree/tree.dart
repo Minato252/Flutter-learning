@@ -242,6 +242,9 @@ class Tree {
             Map<String, dynamic> m = Map.from(value);
             m[newName] = m[oldName];
             m.remove(oldName);
+            m[newName]["$staff"].forEach((e) {
+              e["right"] = newName;
+            });
             parsedJson[key] = m;
           } else {
             parsedJson[key] =
