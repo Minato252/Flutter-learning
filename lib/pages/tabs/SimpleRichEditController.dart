@@ -83,7 +83,6 @@ class SimpleRichEditController extends RichEditController {
         autoPlay: false,
         autoInitialize: true,
         aspectRatio: 16 / 9,
-
         //aspectRatio: 3 / 2,
         //looping: false,
 
@@ -91,7 +90,6 @@ class SimpleRichEditController extends RichEditController {
 
         // 占位图
         placeholder: new Container(
-
             //color: Colors.grey,
             // color: Colors.black,
             ),
@@ -108,9 +106,9 @@ class SimpleRichEditController extends RichEditController {
   Widget generateImageView(RichEditData data) {
     var image;
     if (data.data.startsWith('http')) {
-      image = Image.network(data.data);
+      image = Image.network(data.data, width: 200, height: 200);
     } else {
-      image = Image.file(File(data.data));
+      image = Image.file(File(data.data), width: 200, height: 200);
     }
     return image;
   }
@@ -171,7 +169,7 @@ class SimpleRichEditController extends RichEditController {
       url = await UploadFile.fileUplod(element.data);
     }
     sb.write("<div style=\"text-align: center;\">");
-    sb.write("<image style=\"width:${element.imgWith}px\" src=\"");
+    sb.write("<image style=\"width:200px\" src=\"");
 
     sb.write(url);
     sb.write("\"/>");
@@ -214,6 +212,9 @@ class SimpleRichEditController extends RichEditController {
     }
     sb.write("<p>");
     sb.write('''<audio controls="true" src="$path"></audio>''');
+    //sb.write('''<audio autoplay="autoplay" src="$path"></audio>''');
+    // sb.write(
+    //    '''<audio controls="true" style="margin:0px 60px;"><source :src="$path" type="audio"></audio>''');
     //上传服务器
 
     sb.write("<\/p>");

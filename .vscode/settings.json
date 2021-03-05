@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "hfpage.C": "cpp"
-    }
+    },
+    "editor.fontSize": 15
 }
