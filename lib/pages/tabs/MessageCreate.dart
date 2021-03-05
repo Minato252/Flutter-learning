@@ -82,23 +82,28 @@ class _MessageCreateState extends State<MessageCreate>
                                   children: [
                                     Text("关键词:"),
                                     SizedBox(
-                                      width: 15,
+                                      width: ScreenAdapter.width(20),
                                     ),
-                                    ActionChip(
-                                      label: Text(
-                                        _actionChipString,
-                                        style: TextStyle(color: Colors.white),
+                                    Container(
+                                      width: ScreenAdapter.width(290),
+                                      child: ActionChip(
+                                        label: Text(
+                                          _actionChipString,
+                                          style: TextStyle(color: Colors.white),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        backgroundColor: Colors.blue,
+                                        onPressed: () {
+                                          //_awaitReturnNewTag(context);
+                                          _awaitReturnChooseTag(context);
+                                        },
+                                        avatar: Icon(
+                                          _actionChipIconData,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                      backgroundColor: Colors.blue,
-                                      onPressed: () {
-                                        //_awaitReturnNewTag(context);
-                                        _awaitReturnChooseTag(context);
-                                      },
-                                      avatar: Icon(
-                                        _actionChipIconData,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                    )
                                   ],
                                 ),
                                 FlatButton(

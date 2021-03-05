@@ -209,8 +209,16 @@ class _TabsState extends State<Tabs> {
       // ),
       // body: this._pagelist[_currentIndex],
 
-      body:
-          PageView(controller: this._pageController, children: this._pagelist),
+      body: PageView(
+        controller: this._pageController,
+        children: this._pagelist,
+        // pageSnapping: false,
+        onPageChanged: (int index) {
+          setState(() {
+            this._currentIndex = index;
+          });
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: this._currentIndex,
         onTap: (index) {

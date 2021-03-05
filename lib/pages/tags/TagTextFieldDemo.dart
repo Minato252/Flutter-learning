@@ -38,7 +38,7 @@ class _TextFieldDemoState extends State<TextFieldDemo> {
                   ),*/
                   Text(
                     "输入您要新建的关键词",
-                    style: TextStyle(fontSize: 32.0),
+                    style: TextStyle(fontSize: 22.0),
                   ),
                   SizedBox(
                     height: 32.0,

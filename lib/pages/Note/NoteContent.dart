@@ -33,8 +33,12 @@ Scrollbar getPre(htmlCode, ntitle) {
                 //open image in webview, or launch image in browser, or any other logic here
               }*/
             style: {
-              'img': Style(width: 250, height: 250),
-              'video': Style(width: 50, height: 50),
+              'img': Style(width: 300, height: 300),
+              'video': Style(width: 150, height: 150),
+              // 'text': Style(fontSize: FontSize.large)
+              //  "p":Style(,FontSize(20.0)),
+              // "p": Style(FontSize(30.0))
+              "P": Style(fontSize: FontSize(20)),
               'audio': Style(
                 width: 300,
                 // whiteSpace: WhiteSpace.PRE,

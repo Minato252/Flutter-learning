@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:video_player/video_player.dart';
+import 'package:weitong/widget/CustomPlayerWithControls.dart';
 import '../../main.dart';
 import 'uploadFile.dart';
 import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
@@ -83,6 +85,7 @@ class SimpleRichEditController extends RichEditController {
         autoPlay: false,
         autoInitialize: true,
         aspectRatio: 16 / 9,
+        fullScreenByDefault: false,
 
         //aspectRatio: 3 / 2,
         //looping: false,
@@ -91,15 +94,16 @@ class SimpleRichEditController extends RichEditController {
 
         // 占位图
         placeholder: new Container(
-
             //color: Colors.grey,
             // color: Colors.black,
+
             ),
       );
       controllers[data.data] = controller;
     }
     var video = Chewie(
       controller: controllers[data.data],
+      // child: CustomPlayerWithControls(),
     );
     return video;
   }
@@ -110,7 +114,11 @@ class SimpleRichEditController extends RichEditController {
     if (data.data.startsWith('http')) {
       image = Image.network(data.data);
     } else {
-      image = Image.file(File(data.data));
+      image = Image.file(
+        File(data.data),
+        width: 200,
+        height: 200,
+      );
     }
     return image;
   }
@@ -193,8 +201,12 @@ class SimpleRichEditController extends RichEditController {
     }
     sb.write("<p>");
     sb.write('''
-           <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100%;height: 300px;"></video>
+           <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100px;height: 100%;"></video>
            ''');
+
+    // sb.write('''
+    //        <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="false" x5-video-orientation="portrait" controls="controls"  style="width: 100px;height: 100px;"></video>
+    //        ''');
     sb.write("<\/p>");
 
     // sb.write('''

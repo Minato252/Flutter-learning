@@ -57,7 +57,7 @@ class _InputState extends State<Input> {
                   ),
                   Text(
                     "$subtitle",
-                    style: TextStyle(fontSize: 32.0),
+                    style: TextStyle(fontSize: 18.0),
                   ),
                   SizedBox(
                     height: 32.0,

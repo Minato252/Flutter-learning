@@ -68,14 +68,27 @@ class MessageItemFactory extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text("关键词:  "),
-            Chip(label: Text(messageModel.keyWord)),
+            Container(
+              width: 120,
+              child: Chip(
+                  label: Text(
+                messageModel.keyWord,
+                overflow: TextOverflow.ellipsis,
+              )),
+            )
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text("标题:  "),
-            Text(messageModel.title),
+            Container(
+              width: 120,
+              child: Text(
+                messageModel.title,
+                overflow: TextOverflow.ellipsis,
+              ),
+            )
           ],
         )
       ],

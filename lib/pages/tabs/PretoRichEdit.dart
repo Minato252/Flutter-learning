@@ -118,7 +118,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
                   Divider(),
                   SafeArea(
                     child: SizedBox(
-                      height: ScreenAdapter.height(500),
+                      height: ScreenAdapter.height(900),
                       child: MultiProvider(
                         providers: [
                           ChangeNotifierProvider(

@@ -134,7 +134,7 @@ class _ConversationItemState extends State<ConversationItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Column(
         children: <Widget>[
           this.showTime
@@ -385,7 +385,7 @@ class _ConversationItemState extends State<ConversationItem> {
       children: <Widget>[
         Expanded(
           child: Container(
-            padding: EdgeInsets.fromLTRB(15, 6, 15, 10),
+            padding: EdgeInsets.fromLTRB(0, 6, 0, 10),
             alignment:
                 message.messageDirection == prefix.RCMessageDirection.Send
                     ? Alignment.centerRight

@@ -125,7 +125,7 @@ Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
                 : Html(
                     data: messageModel.htmlCode,
                     style: {
-                      'img': Style(width: 150, height: 150),
+                      'img': Style(width: 300, height: 300),
                       'video': Style(width: 150, height: 150),
                       // 'text': Style(fontSize: FontSize.large)
                       //  "p":Style(,FontSize(20.0)),
