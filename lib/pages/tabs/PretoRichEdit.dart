@@ -59,9 +59,24 @@ class _PretoRichEditState extends State<PretoRichEdit> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text("编辑页面"),
         actions: [
+          FlatButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              child: Text(
+                "返回首页",
+                style: TextStyle(
+                    fontSize: 15.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
           FlatButton(
               onPressed: () {
                 _sendMessage(controller);
@@ -69,7 +84,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
               child: Text(
                 "预览",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 15.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),
