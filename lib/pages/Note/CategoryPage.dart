@@ -564,6 +564,11 @@ class _CategoryPageState extends State<CategoryPage>
     return Scaffold(
         //backgroundColor: Colors.white,
         appBar: AppBar(
+            /*leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/user');
+                }),*/
             title: Text(
               '目录',
               /* style: TextStyle(
@@ -605,6 +610,14 @@ class _CategoryPageState extends State<CategoryPage>
                   );*/
                 },
               ),
+              IconButton(
+                  icon: Icon(Icons.account_balance),
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => route == null,
+                    );
+                  })
             ]),
         body: Column(
           children: [
