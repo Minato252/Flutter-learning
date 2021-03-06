@@ -41,7 +41,7 @@ Scrollbar getPre(htmlCode, ntitle, myFontSize) {
               // 'text': Style(fontSize: FontSize.large)
               //  "p":Style(,FontSize(20.0)),
               // "p": Style(FontSize(30.0))
-              "P": Style(fontSize: FontSize(20)),
+              "P": Style(fontSize: FontSize(myFontSize)),
               'audio': Style(
                 width: 300,
                 // whiteSpace: WhiteSpace.PRE,
