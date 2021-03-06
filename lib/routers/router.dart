@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tabs/ChooseUser.dart';
 import 'package:weitong/pages/tabs/Message.dart';
@@ -15,6 +16,7 @@ import 'package:weitong/pages/Note/EditCreate.dart';
 import 'package:weitong/pages/Note/CategoryPage.dart';
 import 'package:weitong/pages/Note/NewCategory.dart';
 import 'package:weitong/pages/Note/PreEdit.dart';
+import 'package:weitong/pages/tabs/User.dart';
 
 //配置路由
 final routes = {
@@ -40,6 +42,7 @@ final routes = {
   '/newcategory': (context) => NewCategory(),
   '/preedit': (context) => PreEdit(),
   '/setting': (context) => SettingPage(),
+  '/user': (context) => UserPage(),
 };
 
 //固定写法

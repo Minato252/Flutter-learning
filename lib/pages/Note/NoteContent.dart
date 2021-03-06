@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 //import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:flutter_html/style.dart';
 import 'package:weitong/pages/Note/PreEdit.dart';
+import 'package:weitong/pages/Note/CategoryPage.dart';
 //import 'package:weitong/pages/Note/PreEdit.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
@@ -246,7 +247,7 @@ class _NoteState extends State<Note> {
               Navigator.pop(context);
             }),
         title: Text("内容"),
-        centerTitle: true,
+        //centerTitle: true,
         //backgroundColor: Colors.yellow,
         actions: <Widget>[
           IconButton(
@@ -270,13 +271,34 @@ class _NoteState extends State<Note> {
               );
             },
           ),
+          /* FlatButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (c) {
+                      return PreEdit(
+                          //htmlCode: '$htmlCode',
+                          htmlCode: '$pctohtml',
+                          nCategory: '${widget.nCategory}',
+                          ntitle: '${widget.ntitle}');
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                "编辑",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),*/
           IconButton(
             tooltip: "字体放大",
             iconSize: 24.0,
             padding: EdgeInsets.all(0),
             icon: Icon(
               Icons.add,
-
               // size: 20,
             ),
             onPressed: () {
@@ -297,6 +319,14 @@ class _NoteState extends State<Note> {
               decreaseFontSize();
             },
           ),
+          /* IconButton(
+              icon: Icon(Icons.account_balance),
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              })*/
         ],
       ),
       body: getPre(pctohtml, widget.ntitle, myFontSize),
