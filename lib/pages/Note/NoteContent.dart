@@ -8,7 +8,7 @@ import 'package:weitong/pages/Note/PreEdit.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
 
-Scrollbar getPre(htmlCode, ntitle) {
+Scrollbar getPre(htmlCode, ntitle, myFontSize) {
   return Scrollbar(
     child: SingleChildScrollView(
       child: Column(
@@ -35,16 +35,14 @@ Scrollbar getPre(htmlCode, ntitle) {
                 //open image in webview, or launch image in browser, or any other logic here
               }*/
             style: {
-              'img': Style(width: 250, height: 250),
-              'video': Style(width: 50, height: 50),
-              'audio': Style(
-                width: 300,
-                // whiteSpace: WhiteSpace.PRE,
-                //display: Display.BLOCK,
-                //backgroundColor: Colors.red,
-              )
-              // '#12': Style(width: 400, height: 400),
+              'img': Style(width: 300, height: 300),
+              'video': Style(width: 150, height: 150),
+              // 'text': Style(fontSize: FontSize.large)
+              //  "p":Style(,FontSize(20.0)),
+              // "p": Style(FontSize(30.0))
+              "P": Style(fontSize: FontSize(myFontSize))
             },
+            // '#12': Style(width: 400, height: 400),
           ),
         ],
       ),
@@ -74,6 +72,7 @@ class _NoteState extends State<Note> {
   //String nCategory;
   String pctohtml = '';
   String retext;
+  double myFontSize = 15.0;
   //List resultList = [];
   void getContext(String htmlCode) {
     var str = htmlCode;
@@ -212,6 +211,20 @@ class _NoteState extends State<Note> {
     }
   }
 
+  enlargeFontSize() {
+    if (myFontSize <= 50) {
+      myFontSize += 5.0;
+      setState(() {});
+    }
+  }
+
+  decreaseFontSize() {
+    if (myFontSize > 5) {
+      myFontSize -= 5.0;
+      setState(() {});
+    }
+  }
+
   //Note({Key key, this.htmlCode, this.nCategory, this.ntitle}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -249,10 +262,37 @@ class _NoteState extends State<Note> {
                 ),
               );
             },
-          )
+          ),
+          IconButton(
+            tooltip: "字体放大",
+            iconSize: 24.0,
+            padding: EdgeInsets.all(0),
+            icon: Icon(
+              Icons.add,
+
+              // size: 20,
+            ),
+            onPressed: () {
+              enlargeFontSize();
+            },
+          ),
+          IconButton(
+            tooltip: "字体缩小",
+            iconSize: 24.0,
+
+            padding: EdgeInsets.all(0),
+            icon: Icon(
+              Icons.minimize_outlined,
+              // size: 20,
+            ),
+            // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onPressed: () {
+              decreaseFontSize();
+            },
+          ),
         ],
       ),
-      body: getPre(pctohtml, widget.ntitle),
+      body: getPre(pctohtml, widget.ntitle, myFontSize),
       /*Column(
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
               // crossAxisAlignment: CrossAxisAlignment.start,
