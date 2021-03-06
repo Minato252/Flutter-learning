@@ -151,9 +151,9 @@ class _CategoryPageState extends State<CategoryPage>
                       child: Text(
                         '${this._leftCateList[index]["category"]}',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        /* style: TextStyle(
                           fontSize: 20.0,
-                        ),
+                        ),*/
                       ),
                       /*color: _selectIndex == index
                           ? Colors.deepOrange[100]
@@ -234,7 +234,7 @@ class _CategoryPageState extends State<CategoryPage>
                     child: Text(
                       '${this._rightCateList[index]["nNotetitle"]}',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18),
+                      // style: TextStyle(fontSize: 18),
                     ),
                     //color: Colors.white
                     //_selectIndex == index
@@ -619,7 +619,10 @@ class _CategoryPageState extends State<CategoryPage>
                   child: Text(
                     '类别',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, color: Colors.black),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.blue),
                   ),
                 ),
                 //垂直分割线
@@ -646,7 +649,10 @@ class _CategoryPageState extends State<CategoryPage>
                   child: Text(
                     '标题',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, color: Colors.black),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.blue),
                   ),
                 ),
               ],

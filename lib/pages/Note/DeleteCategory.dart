@@ -36,7 +36,7 @@ class _CategorySliverListState extends State<CategorySliverList> {
                   title: Text(
                     _titleList[index]["nNotetitle"],
                     style: TextStyle(
-                      fontSize: 23,
+                      fontSize: 19,
                       color: Colors.black,
                     ),
                   ),

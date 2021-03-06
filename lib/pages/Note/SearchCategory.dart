@@ -201,7 +201,8 @@ class SearchCategory extends SearchDelegate<String> {
     if (resultList.length != 0) {
       return resultList[0];
     } else {
-      return null;
+      //return null;
+      return "";
     }
   }
 
