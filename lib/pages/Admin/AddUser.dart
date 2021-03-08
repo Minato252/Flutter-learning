@@ -185,8 +185,8 @@ class _AddUserState extends State<AddUser> {
                     ),
                     JdButton(
                       text: '确定',
-                      cb: () {
-                        _sendDataBack(context);
+                      cb: () async {
+                        await _sendDataBack(context);
                       },
                     ),
                   ],

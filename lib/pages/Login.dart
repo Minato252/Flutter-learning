@@ -206,8 +206,8 @@ class _LoginPageState extends State<LoginPage> {
                   JdButton(
                     text: "登录",
                     color: Color.fromRGBO(111, 111, 111, 0.9),
-                    cb: () {
-                      _loginAction();
+                    cb: () async {
+                      await _loginAction();
                       // Navigator.pushNamed(context, '/initTags');
                     },
                   )
