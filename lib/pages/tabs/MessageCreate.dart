@@ -250,6 +250,7 @@ class _MessageCreateState extends State<MessageCreate>
           messageModel: messageModel,
           editable: true,
           data: l,
+          isSearchResult: false,
         );
       }));
       print("发送成功");

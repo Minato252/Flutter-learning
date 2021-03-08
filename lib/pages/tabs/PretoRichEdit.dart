@@ -175,6 +175,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return PreAndSend(
         messageModel: messageModel,
+        isSearchResult: false,
       );
     }));
     print("发送成功");

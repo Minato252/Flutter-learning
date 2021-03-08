@@ -34,8 +34,13 @@ import 'chooseUser/contacts_list_page.dart';
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
 
-Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
-    SimpleRichEditController controller, BuildContext context) {
+Scrollbar getPre(
+    MessageModel messageModel,
+    bool modify,
+    double myFontSize,
+    bool isSearchResult,
+    SimpleRichEditController controller,
+    BuildContext context) {
   return Scrollbar(
     child: SingleChildScrollView(
         child: Container(
@@ -92,13 +97,15 @@ Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
           //   ),
           // ),
 
-          // Align(
-          //   alignment: new FractionalOffset(0.0, 0.0),
-          //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}",
-          //       style: TextStyle(
-          //         color: Theme.of(context).accentColor,
-          //       )),
-          // ),
+          isSearchResult
+              ? Align(
+                  alignment: new FractionalOffset(0.0, 0.0),
+                  child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}",
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                      )),
+                )
+              : Text(""),
           // Html(
           //   data: messageModel.htmlCode,
           //   style: {
@@ -170,18 +177,24 @@ class PreAndSend extends StatefulWidget {
   bool editable;
   List<RichEditData> data;
   double myFontSize = 15.0;
+  bool isSearchResult = false;
   PreAndSend(
       {MessageModel messageModel,
       bool editable = false,
+      bool isSearchResult,
       List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
     this.editable = editable;
     this.data = data;
+    this.isSearchResult = isSearchResult;
   }
   @override
   _PreAndSendState createState() => _PreAndSendState(
-      messageModel: messageModel, editable: editable, data: data);
+      messageModel: messageModel,
+      editable: editable,
+      data: data,
+      isSearchResult: isSearchResult);
 }
 
 class _PreAndSendState extends State<PreAndSend> {
@@ -197,12 +210,17 @@ class _PreAndSendState extends State<PreAndSend> {
   List<String> targetIdList = [];
   StreamSubscription<PageEvent> sss; //eventbus传值
   SimpleRichEditController controller;
+
+  bool isSearchResult = false;
   _PreAndSendState(
       {MessageModel messageModel,
       bool editable = false,
+      bool isSearchResult,
       List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
+
+    this.isSearchResult = isSearchResult;
 
     this.editable = editable;
     this.data = data;
@@ -413,7 +431,8 @@ class _PreAndSendState extends State<PreAndSend> {
           //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}"),
           // ),
           Expanded(
-            child: getPre(messageModel, false, myFontSize, controller, context),
+            child: getPre(messageModel, false, myFontSize, isSearchResult,
+                controller, context),
           ),
         ],
       ),

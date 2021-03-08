@@ -849,6 +849,7 @@ class _ConversationPageState extends State<ConversationPage>
 
       return PreAndSend(
         messageModel: messageModel,
+        isSearchResult: false,
       );
     }));
 

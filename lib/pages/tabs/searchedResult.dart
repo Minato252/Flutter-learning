@@ -97,6 +97,7 @@ class _MessageSliverListState extends State<MessageSliverList> {
                         Navigator.push(context, MaterialPageRoute(builder: (c) {
                           return PreAndSend(
                             messageModel: messageList[index],
+                            isSearchResult: true,
                           );
                         }));
                       })
