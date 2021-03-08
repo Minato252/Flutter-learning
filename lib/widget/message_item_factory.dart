@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'dart:convert';
@@ -67,6 +68,23 @@ class MessageItemFactory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Text(
+              "标题:  ",
+              style: TextStyle(fontSize: 20.0),
+            ),
+            Container(
+              width: 120,
+              child: Text(
+                messageModel.title,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20.0),
+              ),
+            )
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
             Text("关键词:  "),
             Container(
               width: 120,
@@ -78,19 +96,6 @@ class MessageItemFactory extends StatelessWidget {
             )
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text("标题:  "),
-            Container(
-              width: 120,
-              child: Text(
-                messageModel.title,
-                overflow: TextOverflow.ellipsis,
-              ),
-            )
-          ],
-        )
       ],
     );
   }

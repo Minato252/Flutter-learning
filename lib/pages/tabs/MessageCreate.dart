@@ -240,7 +240,7 @@ class _MessageCreateState extends State<MessageCreate>
           htmlCode: htmlCode,
           title: newTitle,
           keyWord: _curchosedTag,
-          hadLook: prefs.get("id") +
+          hadLook: prefs.get("name") +
               "(" +
               new DateTime.now().toString().split('.')[0] +
               ")");

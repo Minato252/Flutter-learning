@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -34,11 +36,11 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  myText() {
-    final tree = Provider.of<ProviderServices>(context);
-    String jsonTree = tree.tree;
-
-    var parsedJson = json.decode(jsonTree);
+  myText() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("***************************" +
+        prefs.getString("name") +
+        "*************************");
   }
 }
 

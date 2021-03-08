@@ -221,6 +221,12 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString("id", id);
 
     prefs.setString("token", token);
+
+    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    prefs.setString("name", userInfo["name"]);
     // prefs.setString("phone", _assount.text);
     // prefs.setString("password", _password.text);
   }
@@ -286,6 +292,7 @@ class _LoginPageState extends State<LoginPage> {
       // getUserInfo(parsedJson, id);
       // Map userInfo = ps.userInfo;
       _saveToken(id, rel2["token"]);
+
       // await initTreeAndUserInfo();
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),

@@ -823,11 +823,11 @@ class _ConversationPageState extends State<ConversationPage>
     // hadlook = messageModel.hadLook;
 
     messageModel.modify = true;
-    if (!hadlook.contains(prefs.get("id"))) {
+    if (!hadlook.contains(prefs.get("name"))) {
       // messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
       hadlook = hadlook +
           ' , ' +
-          prefs.get("id") +
+          prefs.get("name") +
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")";

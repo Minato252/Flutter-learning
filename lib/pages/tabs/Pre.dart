@@ -506,7 +506,7 @@ class _PreAndSendState extends State<PreAndSend> {
         "touserid": item,
         "fromuserid": prefs.get("id"),
         "title": messageModel.title,
-        "hadLook": prefs.get("id") +
+        "hadLook": prefs.get("name") +
             "(" +
             new DateTime.now().toString().split('.')[0] +
             ")",
@@ -536,11 +536,14 @@ class _PreAndSendState extends State<PreAndSend> {
     // var htmlCode = await controller.generateHtmlUrl();
     String url = "http://47.110.150.159:8080/insertNote";
     String id = prefs.get("id");
+    DateTime now = new DateTime.now();
+    String html = htmlCode +
+        "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保持，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
     Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
-      "nNote": "$htmlCode",
+      "nNote": "$html",
       "uId": "$id",
       "nCategory": "默认类别"
     });
