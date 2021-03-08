@@ -48,8 +48,6 @@ class _TabsState extends State<Tabs> {
     print("init");
     initPlatformState();
 
-    // initTreeAndUserInfo();
-
     initKeyWords();
 
     //第2步，初始化PageController
@@ -57,6 +55,17 @@ class _TabsState extends State<Tabs> {
 
     initPlatformState2(); //app消息提示
     _showMessageOnApp();
+  }
+
+  initTreeAndUserInfo() async {
+    // var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    print(userInfo.toString());
   }
 
   void _showMessageOnApp() {
@@ -104,6 +113,8 @@ class _TabsState extends State<Tabs> {
               (route) => route == null);
         } else if (code == 0 || code == 34001) {
           print("登陆成功");
+
+          initTreeAndUserInfo();
           //登陆成功
           // developer.log("connect userId" + userId, name: pageName);
           // 连接成功后打开数据库
