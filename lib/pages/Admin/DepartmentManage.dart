@@ -126,8 +126,10 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     //先删了服务器里的这个人员
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
+    var type =
+        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");
     await Dio().post(
-        "http://47.110.150.159:8080/deleteMember?type=$adminId&id=${staff["id"]}");
+        "http://47.110.150.159:8080/deleteMember?type=${type.data}&id=${staff["id"]}");
 
 // 从远程拉取最新的树放进provider里
     String jsonTree = await Tree.getTreeFormSer(adminId, true, context);

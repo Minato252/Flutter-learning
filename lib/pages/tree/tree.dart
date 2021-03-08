@@ -233,7 +233,11 @@ class Tree {
       if (parentName == null) {
         //在第一级一定会有
         parsedJson[newName] = Map.from(parsedJson[oldName]);
+
         parsedJson.remove(oldName);
+        parsedJson[newName]["$staff"].forEach((e) {
+          e["right"] = newName;
+        });
         return parsedJson;
       } else {
         parsedJson.forEach((key, value) {
@@ -580,7 +584,8 @@ class Tree {
       File f = await File("$tempPath/tree.json").writeAsString(jsonStr);
 
       //把本地文件上传到服务器，并获取url
-      String url = await UploadFile.fileUplod("$tempPath/tree.json");
+      String url =
+          await UploadFile.fileUplod("$tempPath/tree.json", isAdmin: true);
 
       //把url传到数据库
       await Dio()

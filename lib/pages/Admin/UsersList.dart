@@ -83,13 +83,14 @@ class _UserSliverListState extends State<UserSliverList> {
                 child: Text("确定"),
                 color: Colors.blue,
                 textColor: Colors.white,
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    if (deleteStaff(users[index])) {
+                onPressed: () async {
+                  bool suc = await deleteStaff(users[index]);
+                  if (suc) {
+                    Navigator.pop(context);
+                    setState(() {
                       users.removeAt(index);
-                    }
-                  });
+                    });
+                  }
                 },
               ),
             ],

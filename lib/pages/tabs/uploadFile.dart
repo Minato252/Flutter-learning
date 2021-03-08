@@ -2,13 +2,15 @@ import 'dart:io';
 
 import 'dart:convert' as convert;
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadFile {
   ///上传的服务器地址
   static String netUploadUrl = "http://47.110.150.159:8080/upload";
 
   ///dio 实现文件上传
-  static Future<String> fileUplod(String localPath, {String fileName}) async {
+  static Future<String> fileUplod(String localPath,
+      {String fileName, bool isAdmin = false}) async {
     ///创建Dio
     ///
     List l = localPath.split("/");
@@ -26,10 +28,20 @@ class UploadFile {
         responseType: ResponseType.plain);
     // Dio dio = new Dio(option);
     Dio dio = new Dio(option);
-    Map<String, dynamic> map = Map();
+    Map<String, dynamic> map = {};
     print("fileName3: " + fileName);
     map["fileName"] =
         await MultipartFile.fromFile(localPath, filename: fileName);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id;
+    if (isAdmin) {
+      id = prefs.get("adminId");
+    } else {
+      id = prefs.get("id");
+    }
+
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$id");
+    map["type"] = type.data;
 
     ///通过FormData
     FormData formData = FormData.fromMap(map);
