@@ -11,7 +11,7 @@ import 'package:weitong/widget/bloc/message_bloc.dart';
 import 'Pre.dart';
 
 class SearchedResult extends StatefulWidget {
-  List<MessageModel> messageList;
+  List<MessageModel> messageList = [];
   SearchedResult(this.messageList);
 
   @override
@@ -20,7 +20,7 @@ class SearchedResult extends StatefulWidget {
 
 class _SearchedResultState extends State<SearchedResult> {
   @override
-  List<MessageModel> messageList;
+  List<MessageModel> messageList = [];
   _SearchedResultState(this.messageList);
   @override
   void initState() {

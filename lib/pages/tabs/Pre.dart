@@ -92,13 +92,13 @@ Scrollbar getPre(MessageModel messageModel, bool modify, double myFontSize,
           //   ),
           // ),
 
-          Align(
-            alignment: new FractionalOffset(0.0, 0.0),
-            child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}",
-                style: TextStyle(
-                  color: Theme.of(context).accentColor,
-                )),
-          ),
+          // Align(
+          //   alignment: new FractionalOffset(0.0, 0.0),
+          //   child: Text("已经浏览过该信息的人：${messageModel.hadLook.toString()}",
+          //       style: TextStyle(
+          //         color: Theme.of(context).accentColor,
+          //       )),
+          // ),
           // Html(
           //   data: messageModel.htmlCode,
           //   style: {
