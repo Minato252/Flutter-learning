@@ -264,16 +264,20 @@ class _AddUserState extends State<AddUser> {
 //获取自己的id
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
-    var rel = await Dio().post("http://47.110.150.159:8080/register", data: {
+    var type =
+        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");
+    Map m = {
       "id": id,
       "uPower": right,
       "name": name,
       "password": password,
-      "type": adminId,
+      "type": type.data,
       "creator": adminId,
       "authority": job,
       "who": "member"
-    });
+    };
+    Response rel =
+        await Dio().post("http://47.110.150.159:8080/register", data: m);
 
 // 1 {fail:超出可创建最大人数}：表示超出购买的账号数，导致创建失败
 // 2 {"Msg":"账号已存在","code":"202","id":"id"} 202：表示此ID已经被注册

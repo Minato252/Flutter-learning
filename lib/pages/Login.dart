@@ -254,6 +254,16 @@ class _LoginPageState extends State<LoginPage> {
   //   }
   //   return keyWords;
   // }
+  initTreeAndUserInfo() async {
+    // var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    print(userInfo.toString());
+  }
 
   void _loginAction() async {
     var rel = await Dio().post("http://47.110.150.159:8080/login",
@@ -286,7 +296,7 @@ class _LoginPageState extends State<LoginPage> {
       // getUserInfo(parsedJson, id);
       // Map userInfo = ps.userInfo;
       _saveToken(id, rel2["token"]);
-
+      await initTreeAndUserInfo();
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new Tabs()),
           (route) => route == null);

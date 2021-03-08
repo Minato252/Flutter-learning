@@ -48,7 +48,7 @@ class _TabsState extends State<Tabs> {
     print("init");
     initPlatformState();
 
-    initTreeAndUserInfo();
+    // initTreeAndUserInfo();
 
     initKeyWords();
 
@@ -160,17 +160,6 @@ class _TabsState extends State<Tabs> {
           {"message": msg, "left": left, "hasPackage": hasPackage});
       // }
     };
-  }
-
-  initTreeAndUserInfo() async {
-    // var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString("id");
-    String jsonTree = await Tree.getTreeFormSer(id, false, context);
-
-    var parsedJson = json.decode(jsonTree);
-    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
-    print(userInfo.toString());
   }
 
   initKeyWords() async {
