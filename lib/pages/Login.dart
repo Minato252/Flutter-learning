@@ -222,11 +222,19 @@ class _LoginPageState extends State<LoginPage> {
 
     prefs.setString("token", token);
 
-    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+    Response rel =
+        await Dio().post("http://47.110.150.159:8080/getinformation?id=" + id);
+    // var userInfo = json.decode(rel.data);
+    print("***************" + rel.data["uName"] + "*************");
 
-    var parsedJson = json.decode(jsonTree);
-    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
-    prefs.setString("name", userInfo["name"]);
+    // String jsonTree = await Tree.getTreeFormSer(id, false, context);
+
+    // var parsedJson = json.decode(jsonTree);
+    // Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    // prefs.setString("name", userInfo["name"]);
+    prefs.setString("name", rel.data["uName"]);
+    print(prefs.getString("name"));
+
     // prefs.setString("phone", _assount.text);
     // prefs.setString("password", _password.text);
   }

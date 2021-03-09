@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
+import 'package:weitong/widget/toast.dart';
 
 String demoTree = """
 
@@ -482,13 +484,27 @@ class Tree {
 
     //1、权限检查
     bool status = await Permission.storage.isGranted;
-    //判断如果还没拥有读写权限就申请获取权限
-    if (!status) {
-      return await Permission.storage.request().isGranted;
+    //判断如果还没拥有读写权限就申请获取权限q
+    // if (!status) {
+    //   return await Permission.storage.request().isGranted;
+    // }
+    int i = 0;
+    while (!status) {
+      // i++;
+      // if (i > 10) {
+      //   break;
+      // }
+      await Permission.storage.request().isGranted;
     }
-    // 调用下载方法 --------做该做的事
+
+    // MyToast.AlertMesaage("您未通过微通获取您的存储权限，app即将退出.....");
+    // if (!status) {
+    //   await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    // }
+    // // 调用下载方法 --------做该做的事
 
     //从网络获取树的url
+
     var rel;
     if (isAdmin) {
       rel =
