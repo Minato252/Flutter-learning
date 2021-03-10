@@ -119,12 +119,12 @@ class _TabsState extends State<Tabs> {
           // 连接成功后打开数据库
           // _initUserInfoCache();
 
+          initTreeAndUserInfo();
         }
       });
     } else {
       print("jump into login");
 
-      initTreeAndUserInfo();
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new LoginPage()),
           (route) => route == null);
