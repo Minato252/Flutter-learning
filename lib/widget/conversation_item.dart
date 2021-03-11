@@ -195,7 +195,7 @@ class _ConversationItemState extends State<ConversationItem> {
                 children: <Widget>[
                   Container(
                     alignment: Alignment.centerRight,
-                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     // child: Text(
                     //     // (this.user == null || this.user.id == null
                     //     //     ? ""
@@ -219,34 +219,34 @@ class _ConversationItemState extends State<ConversationItem> {
                     ),
                   ),
                   buildMessageWidget(),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTapDown: (TapDownDetails details) {
-                        this.tapPos = details.globalPosition;
-                      },
-                      onTap: () {
-                        __onTapedReadRequest();
-                      },
-                      child: message.content != null &&
-                              message.content.destructDuration != null &&
-                              message.content.destructDuration > 0
-                          ? Text("")
-                          : buildReadInfo(),
-                    ),
-                  ),
+                  // Container(
+                  //   alignment: Alignment.centerRight,
+                  //   padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                  //   child: GestureDetector(
+                  //     behavior: HitTestBehavior.opaque,
+                  //     onTapDown: (TapDownDetails details) {
+                  //       this.tapPos = details.globalPosition;
+                  //     },
+                  //     onTap: () {
+                  //       __onTapedReadRequest();
+                  //     },
+                  //     child: message.content != null &&
+                  //             message.content.destructDuration != null &&
+                  //             message.content.destructDuration > 0
+                  //         ? Text("")
+                  //         : buildReadInfo(),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                __onTapedUserPortrait();
-              },
-              child: WidgetUtil.buildUserPortrait(
-                  "http://b-ssl.duitang.com/uploads/item/201804/13/20180413141949_aFcZ3.png"),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     __onTapedUserPortrait();
+            //   },
+            //   child: WidgetUtil.buildUserPortrait(
+            //       "http://b-ssl.duitang.com/uploads/item/201804/13/20180413141949_aFcZ3.png"),
+            // ),
           ],
         ),
       );
@@ -256,22 +256,22 @@ class _ConversationItemState extends State<ConversationItem> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                __onTapedUserPortrait();
-              },
-              onLongPress: () {
-                __onLongPressUserPortrait(this.tapPos);
-              },
-              child: WidgetUtil.buildUserPortrait(
-                  "http://b-ssl.duitang.com/uploads/item/201804/13/20180413141949_aFcZ3.png"),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     __onTapedUserPortrait();
+            //   },
+            //   onLongPress: () {
+            //     __onLongPressUserPortrait(this.tapPos);
+            //   },
+            //   child: WidgetUtil.buildUserPortrait(
+            //       "http://b-ssl.duitang.com/uploads/item/201804/13/20180413141949_aFcZ3.png"),
+            // ),
             Expanded(
               child: Column(
                 children: <Widget>[
                   Container(
                     alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     // child: Text(
                     //   // (this.user == null || this.user.id == null
                     //   //     ? ""
@@ -385,7 +385,7 @@ class _ConversationItemState extends State<ConversationItem> {
       children: <Widget>[
         Expanded(
           child: Container(
-            padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
+            padding: EdgeInsets.fromLTRB(50, 0, 50, 10),
             alignment:
                 message.messageDirection == prefix.RCMessageDirection.Send
                     ? Alignment.centerRight

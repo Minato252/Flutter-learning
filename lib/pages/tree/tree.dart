@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/main.dart';
 import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
+import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
 
 String demoTree = """
@@ -489,12 +491,53 @@ class Tree {
     //   return await Permission.storage.request().isGranted;
     // }
     int i = 0;
-    while (!status) {
+    if (!status) {
       // i++;
       // if (i > 10) {
       //   break;
       // }
+//第一次没有权限，首先弹出获取权限对话框
       await Permission.storage.request().isGranted;
+      status = await Permission.storage.isGranted;
+      if (!status) {
+        //如果第二次没有权限。弹出提示框
+        await DialogUtil.showAlertDiaLog(
+          navigatorKey.currentState.overlay.context,
+          "需要获取到存储权限，否则无法运行此应用。请允许应用获取存储权限。",
+          title: "获取权限失败",
+          confirmButton: FlatButton(
+            child: Text("确定"),
+            onPressed: () async {
+              await Permission.storage.request();
+
+              /// 跳转到登录界面   全局context
+              Future.delayed(const Duration(microseconds: 0), () {
+                Navigator.pop(navigatorKey.currentState.overlay.context);
+              });
+            },
+          ),
+        );
+
+        status = await Permission.storage.isGranted;
+        if (!status) {
+          //
+          await DialogUtil.showAlertDiaLog(
+            navigatorKey.currentState.overlay.context,
+            "需要获取到存储权限，否则无法运行此应用。请在设置中允许应用获取存储权限。",
+            title: "获取权限失败",
+            confirmButton: FlatButton(
+              child: Text("退出应用"),
+              onPressed: () async {
+                Future.delayed(const Duration(microseconds: 0), () {
+                  Navigator.pop(navigatorKey.currentState.overlay.context);
+                });
+                await SystemChannels.platform
+                    .invokeMethod('SystemNavigator.pop');
+              },
+            ),
+          );
+        }
+      }
     }
 
     // MyToast.AlertMesaage("您未通过微通获取您的存储权限，app即将退出.....");

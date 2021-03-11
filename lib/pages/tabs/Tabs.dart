@@ -114,16 +114,17 @@ class _TabsState extends State<Tabs> {
         } else if (code == 0 || code == 34001) {
           print("登陆成功");
 
-          initTreeAndUserInfo();
           //登陆成功
           // developer.log("connect userId" + userId, name: pageName);
           // 连接成功后打开数据库
           // _initUserInfoCache();
 
+          initTreeAndUserInfo();
         }
       });
     } else {
       print("jump into login");
+
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new LoginPage()),
           (route) => route == null);
