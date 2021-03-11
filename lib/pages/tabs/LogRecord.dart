@@ -6,6 +6,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/tabs/chooseUser/ChoseList.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
 import 'package:weitong/pages/tabs/searchedResult.dart';
 import 'package:weitong/pages/tree/tree.dart';
@@ -296,7 +297,7 @@ class _LogRecordPageState extends State<LogRecordPage>
     List result = await Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (BuildContext context) => new ContactListPage(
+            builder: (BuildContext context) => new ChoseListPage(
                   users,
                   isSingle: true,
                   title: "选择创建人",

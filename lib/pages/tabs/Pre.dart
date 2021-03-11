@@ -483,6 +483,50 @@ class _PreAndSendState extends State<PreAndSend> {
   }
 
   _sendMessage() async {
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // // var db = DatabaseHelper();
+    // // db.initDb();
+
+    // //在这里写选择联系人，并将targetId改为联系人id
+    // print("****************这里打印targetIdList****");
+    // print(targetIdList);
+    // if (messageModel.modify) {
+    //   var htmlCode = await controller.generateHtmlUrl();
+    //   DateTime now = new DateTime.now();
+    //   String cure =
+    //       "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+    //   // content = content + cure + htmlCode;
+    //   messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
+    //   content = messageModel.toJsonString();
+    // }
+    // var uuid = Uuid();
+    // var messageId = uuid.v1();
+    // messageModel.messageId = messageId;
+    // content = messageModel.toJsonString();
+    // for (String item in targetIdList) {
+    //   Message message = await IM.sendMessage(content, item);
+    //   // IM.sendMessage(content, item).whenComplete(() => null)
+
+    //   print("*************该消息的id是" +
+    //       messageModel.messageId +
+    //       "**********************");
+
+    //   var rel = await Dio()
+    //       .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+    //     "keywords": messageModel.keyWord,
+    //     "messages": messageModel.htmlCode,
+    //     "touserid": item,
+    //     "fromuserid": prefs.get("id"),
+    //     "title": messageModel.title,
+    //     "hadLook": prefs.get("name") +
+    //         "(" +
+    //         new DateTime.now().toString().split('.')[0] +
+    //         ")",
+    //     "MesId": messageModel.messageId
+    //   });
+    // }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // var db = DatabaseHelper();
@@ -491,13 +535,15 @@ class _PreAndSendState extends State<PreAndSend> {
     //在这里写选择联系人，并将targetId改为联系人id
     print("****************这里打印targetIdList****");
     print(targetIdList);
+    String htmlCode2;
     if (messageModel.modify) {
       var htmlCode = await controller.generateHtmlUrl();
       DateTime now = new DateTime.now();
       String cure =
           "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
       // content = content + cure + htmlCode;
-      messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
+      htmlCode2 = messageModel.htmlCode + cure + htmlCode;
+      messageModel.htmlCode = messageModel.htmlCode + htmlCode;
       content = messageModel.toJsonString();
     }
     var uuid = Uuid();
@@ -515,7 +561,7 @@ class _PreAndSendState extends State<PreAndSend> {
       var rel = await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {
         "keywords": messageModel.keyWord,
-        "messages": messageModel.htmlCode,
+        "messages": htmlCode2,
         "touserid": item,
         "fromuserid": prefs.get("id"),
         "title": messageModel.title,
@@ -577,22 +623,61 @@ class _PreAndSendState extends State<PreAndSend> {
 
 //将信息内容保存到我的部分类别为“默认类别”
   void postRequestFunction(String htmlCode) async {
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   // var htmlCode = await controller.generateHtmlUrl();
+    //   String url = "http://47.110.150.159:8080/insertNote";
+    //   String id = prefs.get("id");
+    //   DateTime now = new DateTime.now();
+    //   String html = htmlCode +
+    //       "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保持，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+
+    //   ///发起post请求
+    //   Response response = await Dio().post(url, data: {
+    //     "nNotetitle": "${messageModel.title}",
+    //     "nNote": "$html",
+    //     "uId": "$id",
+    //     "nCategory": "默认类别"
+    //   });
+    //   // print(response.data);
+
+    //   MyToast.AlertMesaage("已将内容保存至草稿中！");
+    // }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var htmlCode = await controller.generateHtmlUrl();
     String url = "http://47.110.150.159:8080/insertNote";
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
-        "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保持，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+        "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
     Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
-      "nNote": "$html",
+      "nNote": "$htmlCode",
       "uId": "$id",
       "nCategory": "默认类别"
     });
     // print(response.data);
+    String fromid;
+    if (messageModel.fromuserid == null) {
+      fromid = id;
+    } else {
+      fromid = messageModel.fromuserid;
+    }
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": messageModel.keyWord,
+      "messages": html,
+      "touserid": prefs.get("id"),
+      "fromuserid": fromid,
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId
+    });
 
     MyToast.AlertMesaage("已将内容保存至草稿中！");
   }
