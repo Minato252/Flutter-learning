@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,8 @@ import 'SimpleRichEditController.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 import 'chooseUser/contacts_list_page.dart';
+
+import 'package:crypto/crypto.dart';
 
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
@@ -208,6 +211,8 @@ class _PreAndSendState extends State<PreAndSend> {
   List<RichEditData> data;
   // List targetIdList;
   List<String> targetIdList = [];
+  List<String> noteIdList = []; //要发短信的名单id
+  List<String> noteNameList = []; //要发短信的名单name
   StreamSubscription<PageEvent> sss; //eventbus传值
   SimpleRichEditController controller;
 
@@ -289,11 +294,19 @@ class _PreAndSendState extends State<PreAndSend> {
                           builder: (BuildContext context) =>
                               ContactListPage(users)));
 
-                  if (targetAllList != null && !targetAllList.isEmpty) {
-                    targetAllList.forEach((element) {
+                  if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+                    targetAllList[0].forEach((element) {
                       targetIdList.add(element["id"]);
                     });
                     _sendMessage();
+                  }
+
+                  if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+                    targetAllList[1].forEach((element) {
+                      noteIdList.add(element["id"]);
+                      noteNameList.add(element["name"]);
+                    });
+                    _sendNoteMessage();
                   }
                 },
               ),
@@ -511,6 +524,38 @@ class _PreAndSendState extends State<PreAndSend> {
             new DateTime.now().toString().split('.')[0] +
             ")",
         "MesId": messageModel.messageId
+      });
+    }
+
+    // IM.sendMessage(content, targetId);
+
+    sendMessageSuccess("发送成功");
+  }
+
+  _sendNoteMessage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    for (int i = 0; i < noteIdList.length; i++) {
+      String random = Random().nextInt(1000000).toString();
+
+      String time = DateTime.now().microsecondsSinceEpoch.toString();
+      String signature = "zj8jV9ls6U" + random + time;
+      var bytes = utf8.encode(signature);
+
+      var dio = Dio();
+      dio.options.contentType = "application/x-www-form-urlencoded";
+      // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
+      dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+      dio.options.headers["RC-Nonce"] = random;
+      // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
+      dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
+      dio.options.headers["RC-Timestamp"] = time;
+      var rel =
+          await dio.post("http://api.sms.ronghub.com/sendNotify.json", data: {
+        "region": "86",
+        "templateId": "7LTilw6ik8Fb3UgkWKmYgi",
+        "p1": noteNameList[i], //接收人
+        "p2": prefs.get("name"), //发送人
+        "mobile": noteIdList[i]
       });
     }
 

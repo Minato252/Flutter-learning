@@ -29,6 +29,8 @@ class _ContactListPageState extends State<ContactListPage> {
   _ContactListPageState(this.users, this.isSingle, this.title);
   double susItemHeight = 40;
   List<String> targIdList = [];
+  List<String> noteList = [];
+
   bool isSingle;
   String title;
   @override
@@ -185,6 +187,50 @@ class _ContactListPageState extends State<ContactListPage> {
                 value: targIdList.contains(model.id),
               ),
             ),
+            Positioned(
+              right: 30,
+              child: Checkbox(
+                onChanged: (bool value) {
+                  if (!isSingle) {
+                    if (noteList.contains(model.id)) {
+                      noteList.remove(model.id);
+                      if (mounted) {
+                        setState(() {});
+                      }
+                      // value = false;
+                    } else {
+                      // noteList.add(friends);
+                      noteList.add(model.id);
+
+                      // value = true;
+                      if (mounted) {
+                        setState(() {});
+                      }
+                    }
+                  } else {
+                    //如果是单选模式
+                    if (noteList.contains(model.id)) {
+                      noteList.remove(model.id);
+                      if (mounted) {
+                        setState(() {});
+                      }
+                      // value = false;
+                    } else {
+                      // noteList.add(friends);
+                      noteList.clear();
+                      noteList.add(model.id);
+
+                      // value = true;
+                      if (mounted) {
+                        setState(() {});
+                      }
+                    }
+                  }
+                  print(noteList);
+                },
+                value: noteList.contains(model.id),
+              ),
+            ),
           ],
         ),
       ],
@@ -212,7 +258,19 @@ class _ContactListPageState extends State<ContactListPage> {
                   targetAllList.add(e);
                 }
               });
-              Navigator.of(context).pop(targetAllList);
+
+              List noteAllList = [];
+              users.forEach((e) {
+                if (noteList.contains(e["id"])) {
+                  noteAllList.add(e);
+                }
+              });
+              print("*******************" + noteAllList.toString());
+              // List targetIdAndNotList = [][2];
+              // targetIdAndNotList[0].addAll(targetAllList);
+              // targetIdAndNotList[1].addAll(noteAllList);
+              // Navigator.of(context).pop(targetAllList);
+              Navigator.of(context).pop([targetAllList, noteAllList]);
             },
             icon: Icon(Icons.done),
             color: Colors.white,
