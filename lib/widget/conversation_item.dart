@@ -206,7 +206,7 @@ class _ConversationItemState extends State<ConversationItem> {
                     //         fontSize: RCFont.MessageNameFont,
                     //         color: Color(RCColor.MessageNameBgColor))),
                     child: Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: ClipOval(
                         child: Image.network(
                           // photoUrl,
@@ -282,7 +282,7 @@ class _ConversationItemState extends State<ConversationItem> {
                     //       TextStyle(color: Color(RCColor.MessageNameBgColor)),
                     // ),
                     child: Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: ClipOval(
                         child: Image.network(
                           // photoUrl,
