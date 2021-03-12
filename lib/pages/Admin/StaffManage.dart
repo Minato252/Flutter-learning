@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/Admin/UserDetails.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -434,34 +435,43 @@ class _StaffManagePageState extends State<StaffManagePage> {
           .map((i, element) => MapEntry(
               i,
               TreeNode(
-                  content: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: myColor[
-                        colorIndex + 2 < myColor.length ? colorIndex + 2 : 1],
-                    child: Text(
-                      element["name"][0],
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${element["name"]}',
-                        style: TextStyle(color: Colors.black, fontSize: 15),
-                      ),
-                      Text(
-                        '${element["id"]}',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      )
-                    ],
-                  ),
-                ],
-              ))))
+                  content: FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => UserDetails(element)));
+                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: myColor[
+                                colorIndex + 2 < myColor.length
+                                    ? colorIndex + 2
+                                    : 1],
+                            child: Text(
+                              element["name"][0],
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${element["name"]}',
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 15),
+                              ),
+                              Text(
+                                '${element["id"]}',
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 12),
+                              )
+                            ],
+                          ),
+                        ],
+                      )))))
           .values
           .toList();
     }
