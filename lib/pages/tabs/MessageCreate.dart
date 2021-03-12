@@ -53,6 +53,17 @@ class _MessageCreateState extends State<MessageCreate>
           actions: <Widget>[
             FlatButton(
                 onPressed: () {
+                  _clearMessage(controller);
+                },
+                child: Text(
+                  "清空富文本",
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+            FlatButton(
+                onPressed: () {
                   _sendMessage(controller);
                 },
                 child: Text(
@@ -221,6 +232,16 @@ class _MessageCreateState extends State<MessageCreate>
         _actionChipIconData = Icons.add;
       });
     }
+  }
+
+  _clearMessage(SimpleRichEditController controller) {
+    controller.setData("");
+
+    setState(() {
+      // newTitle = "";
+      // _curchosedTag = "";
+      // _updateChooseTagButton();
+    });
   }
 
   _sendMessage(SimpleRichEditController controller) async {
