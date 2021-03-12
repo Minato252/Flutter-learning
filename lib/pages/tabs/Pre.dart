@@ -545,6 +545,8 @@ class _PreAndSendState extends State<PreAndSend> {
       htmlCode2 = messageModel.htmlCode + cure + htmlCode;
       messageModel.htmlCode = messageModel.htmlCode + htmlCode;
       content = messageModel.toJsonString();
+    } else {
+      htmlCode2 = messageModel.htmlCode;
     }
     var uuid = Uuid();
     var messageId = uuid.v1();
@@ -557,7 +559,6 @@ class _PreAndSendState extends State<PreAndSend> {
       print("*************该消息的id是" +
           messageModel.messageId +
           "**********************");
-
       var rel = await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {
         "keywords": messageModel.keyWord,

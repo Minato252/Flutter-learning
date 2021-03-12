@@ -88,7 +88,8 @@ class _MessageSliverListState extends State<MessageSliverList> {
                     children: [
                       Text("标题：${messageList[index].title}"),
                       Text("创建人：${messageList[index].fromuserid}"),
-                      Text("时间：${messageList[index].time.toString()}"),
+                      Text(
+                          "时间：${messageList[index].time.toString().split('.')[0]}"),
                     ],
                   ),
                   IconButton(

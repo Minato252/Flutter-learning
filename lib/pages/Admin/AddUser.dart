@@ -295,12 +295,12 @@ class _AddUserState extends State<AddUser> {
     } else if (j.containsKey("code")) {
       if (j["code"] == "202") {
         print("id已注册");
-        // MyToast.AlertMesaage(j["Msg"]);
+        MyToast.AlertMesaage(j["Msg"]);
       }
     } else if (j.containsKey("uToken")) {
       print("注册成功");
 
-      // MyToast.AlertMesaage(j["注册成功"]);
+      MyToast.AlertMesaage(j["注册成功"]);
       return true;
     }
     return false;
