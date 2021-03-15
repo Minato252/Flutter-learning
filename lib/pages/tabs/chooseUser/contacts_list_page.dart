@@ -244,12 +244,37 @@ class _ContactListPageState extends State<ContactListPage> {
         border: Border.all(color: Colors.grey[300], width: .5));
   }
 
+  void _addAllorRemoveAll() {
+    if (targIdList.isEmpty) {
+      users.forEach((e) {
+        if (!targIdList.contains(e["id"])) {
+          targIdList.add(e["id"]);
+        }
+      });
+    } else {
+      targIdList.clear();
+      noteList.clear();
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: [
+          FlatButton(
+              onPressed: () {
+                _addAllorRemoveAll();
+              },
+              child: Text(
+                "全选/反选",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
           IconButton(
             onPressed: () {
               List targetAllList = [];
