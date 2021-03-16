@@ -101,6 +101,14 @@ class _LogRecordPageState extends State<LogRecordPage>
                           ),
                         ],
                       ),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () {
+                          _searchTag = "";
+                          _curchosedTag = "";
+                          _updateChooseTagButton();
+                        },
+                      )
                       // FlatButton(
                       //     onPressed: () {
                       //       Map args = {
