@@ -359,6 +359,58 @@ class Tree {
     }
   }
 
+  static void insertPeopleIntoTree(var parsedJson, Map newUser) {
+//这里的map中的right需要是list，如果是string需要是1,2,3的string
+    List rightList = [];
+    if (newUser["right"] is String) {
+      rightList = newUser["right"].toString().split(",");
+    } else {
+      rightList = List.of(newUser["right"]);
+    }
+    rightList.forEach((element) {
+      Map newUserJustOneRight = {
+        "name": newUser["name"],
+        "id": newUser["id"],
+        "password": newUser["password"],
+        "job": newUser["job"],
+        "right": element,
+      };
+      insertStaff(parsedJson, newUserJustOneRight, element);
+    });
+  }
+
+  static void insertStaff(var parsedJson, Map staffMap, String right) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        if (key == right) {
+          value["$staff"].add(staffMap);
+        } else {
+          insertStaff(parsedJson[key], staffMap, right);
+        }
+      });
+    }
+  }
+
+  static void deletePeopleIntoTree(var parsedJson, Map staffMap) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        if (value is List) {
+          List staffList = value;
+          for (int i = 0; i < staffList.length; i++) {
+            Map element = staffList[i];
+            if (element["id"] == staffMap["id"]) {
+              print("delete" + staffMap["name"]);
+              value.removeAt(i);
+              break;
+            }
+          }
+        } else {
+          deletePeopleIntoTree(value, staffMap);
+        }
+      });
+    }
+  }
+
   static List setPeoplelistUnique(
     List allpeople,
   ) {

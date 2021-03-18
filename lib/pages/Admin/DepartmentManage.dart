@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tree/tree.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/routers/router.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -41,17 +42,17 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
         appBar: AppBar(
           title: Text("人员信息"),
           actions: [
-            IconButton(
-              icon: Icon(Icons.ac_unit),
-              onPressed: () {
-                Tree.setTreeInSer(
-                    "cookie",
-                    """
-{"公司":{"人员":[{"name":"mango","id":"222222","password":"123","job":"12","right":"公司"},{"name":"12314","id":"1234567","password":"123","job":"12","right":"公司"}],"咖啡":{"人员":[{"name":"哈哈","id":"18270015296","password":"18270015296","job":"2","right":"咖啡"}],"开发":{"人员":[]}},"测试":{"人员":[]}}}
-""",
-                    context);
-              },
-            ),
+//             IconButton(
+//               icon: Icon(Icons.ac_unit),
+//               onPressed: () {
+//                 Tree.setTreeInSer(
+//                     "cookie",
+//                     """
+// {"公司":{"人员":[{"name":"mango","id":"222222","password":"123","job":"12","right":"公司"},{"name":"12314","id":"1234567","password":"123","job":"12","right":"公司"}],"咖啡":{"人员":[{"name":"哈哈","id":"18270015296","password":"18270015296","job":"2","right":"咖啡"}],"开发":{"人员":[]}},"测试":{"人员":[]}}}
+// """,
+//                     context);
+//               },
+//             ),
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
@@ -109,20 +110,24 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     var parsedJson = json.decode(jsonTree);
     List<String> idList = [];
     Tree.getAllPeopleId(parsedJson, idList);
+    //这里newUser的right是数组
     final newUser = await Navigator.push(context,
         new MaterialPageRoute(builder: (context) => new AddUser(idList)));
+
     if (newUser != null) {
-      List<String> rightList = List.of(newUser["right"]);
-      rightList.forEach((element) {
-        Map newUserJustOneRight = {
-          "name": newUser["name"],
-          "id": newUser["id"],
-          "password": newUser["password"],
-          "job": newUser["job"],
-          "right": element,
-        };
-        insertStaff(parsedJson, newUserJustOneRight, element);
-      });
+      // List<String> rightList = List.of(newUser["right"]);
+      // rightList.forEach((element) {
+      //   Map newUserJustOneRight = {
+      //     "name": newUser["name"],
+      //     "id": newUser["id"],
+      //     "password": newUser["password"],
+      //     "job": newUser["job"],
+      //     "right": element,
+      //   };
+      //   insertStaff(parsedJson, newUserJustOneRight, element);
+      // });
+
+      Tree.insertPeopleIntoTree(parsedJson, newUser);
 
       // insertStaff(parsedJson, newUser, newUser["right"]);
       jsonTree = json.encode(parsedJson);
@@ -161,7 +166,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 //修改jsonTree字符串
     var parsedJson = json.decode(jsonTree);
 
-    deleteStaff(parsedJson, staff);
+    Tree.deletePeopleIntoTree(parsedJson, staff);
     jsonTree = json.encode(parsedJson);
 
     //这里需要更新jsonTree===================

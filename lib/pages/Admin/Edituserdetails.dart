@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
@@ -25,10 +28,15 @@ class Edituserdetails extends StatefulWidget {
 class _EdituserdetailsState extends State<Edituserdetails> {
   final newUserFormKey = GlobalKey<FormState>();
   Map details;
-  String id, password, name, job, right;
+  Map oldDetails;
+  String id, password, name, job;
+  List<String> rightList = [];
   int rightValue;
 
-  _EdituserdetailsState(this.details);
+  _EdituserdetailsState(Map details) {
+    this.details = details;
+    this.oldDetails = details;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +55,6 @@ class _EdituserdetailsState extends State<Edituserdetails> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "输入新增人员详情",
-                      style: TextStyle(fontSize: 32.0),
-                    ),
                     TextFormField(
                       initialValue: details["name"],
                       // controller: textFieldController,
@@ -202,8 +206,8 @@ class _EdituserdetailsState extends State<Edituserdetails> {
                         var _state = newUserFormKey.currentState;
                         if (_state.validate()) {
                           _state.save();
+                          await _alterUser(id, name, password, job, details);
                         }
-                        await _alterUser(id, name, password, job, details);
                       },
                     ),
                   ],
@@ -219,7 +223,9 @@ class _EdituserdetailsState extends State<Edituserdetails> {
     );
     if (choosedRight != null) {
       setState(() {
-        details["right"] = choosedRight;
+        rightList = choosedRight;
+        details["right"] =
+            Tree.rightListTextToPCRightText(rightList.toString());
       });
     }
   }
@@ -291,7 +297,29 @@ class _EdituserdetailsState extends State<Edituserdetails> {
     var data = response.data;
     if (data == 1) {
       MyToast.AlertMesaage("修改成功");
-      Navigator.pop(context);
+
+      //从这里开始更新树
+
+      Map newDetails = {
+        "name": name,
+        "id": details["id"],
+        "password": password,
+        "job": job,
+        "right": details["right"],
+      };
+      //从服务器获得最新的树
+      String jsonTree = await Tree.getTreeFormSer(adminId, true, context);
+
+      var parsedJson = json.decode(jsonTree);
+
+      Tree.deletePeopleIntoTree(parsedJson, oldDetails);
+      Tree.insertPeopleIntoTree(parsedJson, newDetails);
+
+      Tree.setTreeInSer(adminId, json.encode(parsedJson), context);
+
+//===更新树结束
+
+      Navigator.pop(context, true); //这里返回个true代表成功
     }
 
     // print(data);

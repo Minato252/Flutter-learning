@@ -142,7 +142,7 @@ class _AddUserState extends State<AddUser> {
                           ],
                         ),
                         Text(
-                            "${rightList.toString().substring(1, rightList.toString().length - 1)}"),
+                            "${Tree.rightListTextToPCRightText(rightList.toString())}"),
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: chooseRight,

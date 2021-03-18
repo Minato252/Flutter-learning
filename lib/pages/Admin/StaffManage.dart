@@ -441,6 +441,11 @@ class _StaffManagePageState extends State<StaffManagePage> {
                             element["id"], element["password"]);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => UserDetails(details)));
+
+                        if (mounted) {
+                          EventBusUtil.getInstance()
+                              .fire(UpdataNode("updataNode"));
+                        }
                       },
                       child: Row(
                         children: [
