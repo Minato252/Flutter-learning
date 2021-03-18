@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:weitong/pages/Admin/Edituserdetails.dart';
 
 Map name = {
   "name": "姓名",
@@ -19,7 +20,17 @@ class UserDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("${details["name"]}详细信息"),
-        actions: [],
+        actions: [
+          FlatButton(
+            child: Text("修改"),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new Edituserdetails(details)));
+            },
+          )
+        ],
       ),
       body: CustomScrollView(
         slivers: <Widget>[
