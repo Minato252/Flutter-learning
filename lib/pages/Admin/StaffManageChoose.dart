@@ -7,6 +7,7 @@ import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
 
 String staff = "人员";
+
 // String jsonTree = '''
 // {
 //     "总经理": {
@@ -79,26 +80,63 @@ String staff = "人员";
 //     }
 // }
 // '''; //一直以来更改的jsonTree
-
-class RightButton extends StatelessWidget {
-  String rightName;
-  RightButton(this.rightName, this.onPressed, {this.pressable, this.c});
-  Function onPressed;
+class RightButton extends StatefulWidget {
   bool pressable;
   Color c;
+  String rightName;
 
+  RightButton(this.rightName, {this.pressable, this.c});
+  @override
+  _RightButtonState createState() => _RightButtonState(rightName, pressable, c);
+}
+
+List<String> targRightList = [];
+
+class _RightButtonState extends State<RightButton> {
+  @override
+  String rightName;
+  _RightButtonState(this.rightName, this.pressable, this.c);
+
+  bool pressable;
+  Color c;
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      child: Text(
-        rightName,
-        style: TextStyle(color: c),
-      ),
-      onPressed: () {
-        if (pressable) {
-          onPressed(this.rightName);
-        }
-      },
+    return rightButtonNode(rightName);
+  }
+
+  rightButtonNode(dynamic rightName) {
+    return Row(
+      children: [
+        Text(
+          rightName,
+          style: TextStyle(color: c),
+        ),
+        rightName == staff
+            ? SizedBox()
+            : Checkbox(
+                value: targRightList.contains(rightName),
+                activeColor: Colors.red,
+                onChanged: (value) {
+                  if (targRightList.contains(rightName)) {
+                    targRightList.remove(rightName);
+
+                    // EventBusUtil.getInstance().fire(UpdataNode("checkChange"));
+                    if (mounted) {
+                      setState(() {});
+                    }
+                    // value = false;
+                  } else {
+                    // targIdList.add(friends);
+                    targRightList.add(rightName);
+
+                    // value = true;
+                    // EventBusUtil.getInstance().fire(UpdataNode("checkChange"));
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  }
+                }),
+      ],
     );
   }
 }
@@ -121,6 +159,7 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    targRightList = [];
   }
   // Widget addNode() {
   //   Map<String, TreeNode> _remarkControllers = new Map();
@@ -131,6 +170,14 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
     return Scaffold(
       appBar: AppBar(
         title: Text("安全生产经营管理体系"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: () {
+              finishChoose();
+            },
+          )
+        ],
       ),
       body: Scrollbar(
         child: SingleChildScrollView(
@@ -203,7 +250,6 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
           .map((k) => TreeNode(
               content: RightButton(
                 k,
-                onPressed,
                 pressable: k != staff,
                 c: myColor[k == staff
                     ? (colorIndex + 1 < myColor.length ? colorIndex + 1 : 0)
@@ -250,7 +296,12 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
           .values
           .toList();
     }
-    return [TreeNode(content: RightButton(parsedJson.toString(), onPressed))];
+    return [
+      TreeNode(
+          content: RightButton(
+        parsedJson.toString(),
+      ))
+    ];
   }
 
   // List<TreeNode> toTreeNodes(dynamic parsedJson, var fatherName) {
@@ -300,9 +351,9 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
   //   return [TreeNode(content: RightButton(parsedJson.toString(), onPressed))];
   // }
 
-  void onPressed(String rightName) {
-    if (rightName != null) {
-      Navigator.pop(context, rightName);
+  void finishChoose() {
+    if (targRightList.isNotEmpty) {
+      Navigator.pop(context, targRightList);
     }
   }
 }

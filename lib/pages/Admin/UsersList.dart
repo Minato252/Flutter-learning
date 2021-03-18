@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:weitong/pages/Admin/UserDetails.dart';
+import 'package:weitong/pages/tree/tree.dart';
 
 class UserSliverList extends StatefulWidget {
   List<Map> users;
@@ -14,7 +18,7 @@ class UserSliverList extends StatefulWidget {
 
 class _UserSliverListState extends State<UserSliverList> {
   @override
-  List<Map> users;
+  List<Map> users; //现在只有id和name了
   Function deleteStaff;
   _UserSliverListState(this.users, this.deleteStaff);
 
@@ -38,10 +42,24 @@ class _UserSliverListState extends State<UserSliverList> {
                       children: [
                         IconButton(
                             icon: Icon(Icons.more_horiz),
-                            onPressed: () {
+                            onPressed: () async {
+                              //现在的user[index]只有id和name
+                              //需要先调用网络请求获取信息
+//                               {
+//     "uLoginid": "1112321",
+//     "id": 454,
+//     "uPassword": "MTIyMTE=\n",
+//     "uToken": "FqEbBT357Jb6A+lMMKi+M0C+6NDCVh56LmeOMPU5jrk=@9s7f.cn.rongnav.com;9s7f.cn.rongcfg.com",
+//     "uCreator": "cookie",
+//     "uAuthority": "1123",
+//     "uPower": "[咖啡, 测试]",
+//     "uName": "111"
+// }
+
+                              Map details = await Tree.getUserInfo(
+                                  users[index]["id"], users[index]["password"]);
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      UserDetails(widget.users[index])));
+                                  builder: (context) => UserDetails(details)));
                             }),
                         IconButton(
                             icon: Icon(Icons.delete),

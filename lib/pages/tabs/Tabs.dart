@@ -61,10 +61,12 @@ class _TabsState extends State<Tabs> {
     // var rel = await Dio().post("http://47.110.150.159:8080/tree/selectMem");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String id = prefs.getString("id");
+    String password = prefs.getString("password");
     String jsonTree = await Tree.getTreeFormSer(id, false, context);
 
     var parsedJson = json.decode(jsonTree);
-    Map userInfo = Tree.getUserInfoAndSave(parsedJson, id, context);
+    Map userInfo =
+        await Tree.getUserInfoAndSave(parsedJson, password, id, context);
     print(userInfo.toString());
   }
 

@@ -402,16 +402,26 @@ class _LogRecordPageState extends State<LogRecordPage>
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
 
     var parsedJson = json.decode(jsonTree);
+    Map userInfoAll =
+        await Tree.getUserInfo(userInfo["id"], userInfo["password"]);
+
+    List rightList = userInfoAll["right"].split(",");
+
     List users = [];
-    Map subRight = Tree.getSubRight(parsedJson, userInfo["right"]);
-    print("subRight" + subRight.toString());
-    subRight.forEach((key, value) {
-      if (key != staff) {
-        Tree.getAllPeople(value, users);
-      }
+    rightList.forEach((element) {
+      Map subRight = Tree.getSubRight(parsedJson, element);
+      print("subRight" + subRight.toString());
+      subRight.forEach((key, value) {
+        if (key != staff) {
+          Tree.getAllPeople(value, users);
+        }
+      });
+      users.add(userInfo);
     });
-    users.add(userInfo);
+
     users = List<Map>.from(users);
-    return users;
+
+    List<Map> result = List<Map>.from(Tree.setPeoplelistUnique(users));
+    return result;
   }
 }

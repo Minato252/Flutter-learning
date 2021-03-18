@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
@@ -19,8 +20,8 @@ class AddUser extends StatefulWidget {
 class _AddUserState extends State<AddUser> {
   @override
   final newUserFormKey = GlobalKey<FormState>();
-  String id, password, name, job, right;
-  int rightValue;
+  String id, password, name, job;
+  List<String> rightList = [];
   List<String> illegalText; //非法字符列表
   _AddUserState(this.illegalText);
   @override
@@ -131,39 +132,7 @@ class _AddUserState extends State<AddUser> {
                       },
                       validator: _validateNewJob,
                     ),
-                    // DropdownButton(
-                    //     value: rightValue,
-                    //     isExpanded: true,
-                    //     hint: Text("请选择权限等级"),
-                    //     items: [
-                    //       DropdownMenuItem(
-                    //         child: Text('权限1'),
-                    //         value: 1,
-                    //       ),
-                    //       DropdownMenuItem(
-                    //         child: Text('权限2'),
-                    //         value: 2,
-                    //       ),
-                    //       DropdownMenuItem(
-                    //         child: Text('权限3'),
-                    //         value: 3,
-                    //       ),
-                    //       DropdownMenuItem(
-                    //         child: Text('权限4'),
-                    //         value: 4,
-                    //       ),
-                    //       DropdownMenuItem(
-                    //         child: Text('权限5'),
-                    //         value: 5,
-                    //       ),
-                    //       DropdownMenuItem(
-                    //         child: Text('权限6'),
-                    //         value: 6,
-                    //       ),
-                    //     ],
-                    //     onChanged: (value) => setState(() {
-                    //           rightValue = value;
-                    //         })),
+
                     Row(
                       children: [
                         Row(
@@ -172,7 +141,8 @@ class _AddUserState extends State<AddUser> {
                             Text("权限等级："),
                           ],
                         ),
-                        Text("$right"),
+                        Text(
+                            "${rightList.toString().substring(1, rightList.toString().length - 1)}"),
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: chooseRight,
@@ -202,7 +172,7 @@ class _AddUserState extends State<AddUser> {
     );
     if (choosedRight != null) {
       setState(() {
-        right = choosedRight;
+        rightList = choosedRight;
       });
     }
   }
@@ -308,19 +278,21 @@ class _AddUserState extends State<AddUser> {
 
   Future<void> _sendDataBack(BuildContext context) async {
     newUserFormKey.currentState.save();
-    if (right == null) {
+    if (rightList.isEmpty) {
       alertDialog();
       return;
     }
     if (newUserFormKey.currentState.validate()) {
-      bool regSuc = await registerUser(id, name, password, job, right);
+      bool regSuc = await registerUser(id, name, password, job,
+          Tree.rightListTextToPCRightText(rightList.toString()));
       if (regSuc) {
+        //这里返回的right改成了list
         Map mapToSendBack = {
           "name": name,
           "id": id,
           "password": password,
           "job": job,
-          "right": right,
+          "right": rightList,
         };
         Navigator.pop(context, mapToSendBack);
       }

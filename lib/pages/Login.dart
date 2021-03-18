@@ -216,11 +216,13 @@ class _LoginPageState extends State<LoginPage> {
             )));
   }
 
-  void _saveToken(String id, String token) async {
+  void _saveToken(String id, String token, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("id", id);
 
     prefs.setString("token", token);
+
+    prefs.setString("password", password);
 
     Response rel =
         await Dio().post("http://47.110.150.159:8080/getinformation?id=" + id);
@@ -299,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
       // var parsedJson = json.decode(jsonTreeNet);
       // getUserInfo(parsedJson, id);
       // Map userInfo = ps.userInfo;
-      _saveToken(id, rel2["token"]);
+      _saveToken(id, rel2["token"], password);
 
       // await initTreeAndUserInfo();
       Navigator.of(context).pushAndRemoveUntil(

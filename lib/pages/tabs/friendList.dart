@@ -94,10 +94,12 @@ class _FriendSliverListState extends State<FriendSliverList> {
                     children: [
                       IconButton(
                           icon: Icon(Icons.more_horiz),
-                          onPressed: () {
+                          onPressed: () async {
+                            Map details = await Tree.getUserInfo(
+                                widget.users[index]["id"],
+                                widget.users[index]["password"]);
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    UserDetails(widget.users[index])));
+                                builder: (context) => UserDetails(details)));
                           }),
                       IconButton(
                           icon: Icon(Icons.check),
