@@ -574,9 +574,20 @@ class _PreAndSendState extends State<PreAndSend> {
       });
     }
 
-    // IM.sendMessage(content, targetId);
-
+    _sendGroupMessage(content, "123");
+    // IM.sendMessage(content, targetId)
     sendMessageSuccess("发送成功");
+  }
+
+  _sendGroupMessage(String content, String groupId) async {
+    TextMessage txtMessage = new TextMessage();
+
+    txtMessage.content = content;
+    Message msg = await RongIMClient.sendMessage(
+        RCConversationType.Group, groupId, txtMessage);
+    // print("send message start senderUserId = " + msg.senderUserId);
+    print("msg" + msg.toString());
+    return msg;
   }
 
   _sendNoteMessage() async {

@@ -12,4 +12,17 @@ class IM {
     print("msg" + msg.toString());
     return msg;
   }
+
+  static Future<Message> sendGroupMessage(
+      String content, String targetId) async {
+    //发送单聊消息
+    TextMessage txtMessage = new TextMessage();
+
+    txtMessage.content = content;
+    Message msg = await RongIMClient.sendMessage(
+        RCConversationType.Group, targetId, txtMessage);
+    // print("send message start senderUserId = " + msg.senderUserId);
+    print("msg" + msg.toString());
+    return msg;
+  }
 }

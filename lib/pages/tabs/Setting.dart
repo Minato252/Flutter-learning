@@ -4,9 +4,12 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tree/tree.dart';
+import 'package:weitong/services/IM.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -30,13 +33,30 @@ class _SettingPageState extends State<SettingPage> {
         children: [
           Text("设置界面"),
           JdButton(
-            text: "测试",
+            text: "创建群",
             cb: () async {
-              await myText();
+              // await _selectGruopMember();
+              await _creatGruop();
             },
           ),
           FlatButtonWithIcon(
-              onPressed: () {}, icon: Icon(Icons.send), label: Text("发送"))
+              onPressed: () async {
+                await _selectGruopMember();
+              },
+              icon: Icon(Icons.send),
+              label: Text("查询群成员")),
+          FlatButtonWithIcon(
+              onPressed: () async {
+                await _reciveGroupMessage();
+              },
+              icon: Icon(Icons.send),
+              label: Text("查询群消息")),
+          FlatButtonWithIcon(
+              onPressed: () async {
+                await _sendGroupMessage();
+              },
+              icon: Icon(Icons.send),
+              label: Text("发送群消息"))
         ],
       ),
     );
@@ -52,19 +72,6 @@ class _SettingPageState extends State<SettingPage> {
     String time = DateTime.now().microsecondsSinceEpoch.toString();
     String signature = "zj8jV9ls6U" + random + time;
     var bytes = utf8.encode(signature);
-    // var rel =
-    //     await Dio().post("http://api.sms.ronghub.com/sendNotify.json", data: {
-    //   "RC-App-Key": "pwe86ga5ps8o6",
-    //   "RC-Nonce": random,
-    //   "RC-Timestamp": time,
-    //   "RC-Signature": signature.hashCode.toString(),
-    //   "Content-Type": "application/x-www-form-urlencoded",
-    //   "region": "86",
-    //   "templateId": "3LcaaXRMAIsbHzMoUvRBp_",
-    //   "p1": "123",
-    //   "p2": "456",
-    //   "mobile": "18270015296"
-    // });
 
     var dio = Dio();
     dio.options.contentType = "application/x-www-form-urlencoded";
@@ -82,30 +89,75 @@ class _SettingPageState extends State<SettingPage> {
       "p2": "456", //发送人
       "mobile": "18270015296"
     });
+  }
 
-    // var rel =
-    //     await Dio().post("http://api.sms.ronghub.com/sendNotify.json", data: {
-    //   "headers": {
-    //     "RC-App-Key": "pwe86ga5ps8o6",
-    //     "RC-Nonce": random,
-    //     "RC-Timestamp": time,
-    //     "RC-Signature": signature.hashCode.toString(),
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //   },
-    //   "data": {
-    //     "region": "86",
-    //     "templateId": "3LcaaXRMAIsbHzMoUvRBp_",
-    //     "p1": "123",
-    //     "p2": "456",
-    //     "mobile": "18270015296"
-    //   }
-    // });
+  _creatGruop() async {
+    String random = Random().nextInt(1000000).toString();
+
+    String time = DateTime.now().microsecondsSinceEpoch.toString();
+    String signature = "zj8jV9ls6U" + random + time;
+    var bytes = utf8.encode(signature);
+    var uuid = Uuid();
+    var groupId = uuid.v1();
+    print("********************" + groupId);
+    String menber = "11,222222";
+
+    var dio = Dio();
+    dio.options.contentType = "application/x-www-form-urlencoded";
+    // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    // dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-Nonce"] = random;
+    // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
+    dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
+    dio.options.headers["RC-Timestamp"] = time;
+    var rel = await dio.post("https://api-cn.ronghub.com/group/create.json",
+        data: {"userId": menber, "groupId": "123", "groupName": "哈哈"});
     print(rel.data);
   }
-}
 
-/**
- * 内容遮蔽
- * 遮蔽效果：对所有人展示、只对上级展示（目前不想具体到特定上级，只要是上级即可）、只对下级展示
- * 
- */
+  _selectGruopMember() async {
+    //2a2f7fd0-87d2-11eb-b427-c5e5521c8d73
+    String random = Random().nextInt(1000000).toString();
+
+    String time = DateTime.now().microsecondsSinceEpoch.toString();
+    String signature = "zj8jV9ls6U" + random + time;
+    var bytes = utf8.encode(signature);
+    // var uuid = Uuid();
+    // var groupId = uuid.v1();
+
+    var dio = Dio();
+    dio.options.contentType = "application/x-www-form-urlencoded";
+    // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-Nonce"] = random;
+    // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
+    dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
+    dio.options.headers["RC-Timestamp"] = time;
+    var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
+        data: {"groupId": "123"});
+    print(rel.data);
+  }
+
+  _sendGroupMessage() {
+    String content = "群测试，来自18270015296";
+
+    var conversationType = RCConversationType.Group;
+    String targetId = "123";
+
+    TextMessage messageContent = TextMessage.obtain(content);
+// Message message = TextMessage.obtain(targetId, conversationType, messageContent);
+    TextMessage.obtain(content);
+    var rel = RongIMClient.sendMessage(conversationType, "123", messageContent);
+    print("发送成功：" + rel.toString());
+// RongIM.getInstance().sendMessage(message, null, null, new IRongCallback.ISendMessageCallback()
+  }
+
+  _reciveGroupMessage() {
+    String groupId = "123";
+// RongUserInfoManager.getInstance().getGroupInfo(groupId);
+    var rel = RongIMClient.getConversation(1, "123");
+    // RongUserInfoManager.getInstance().getGroupInfo(groupId);
+    print(rel);
+  }
+}
