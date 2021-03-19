@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/tree/tree.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/routers/router.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -41,6 +42,17 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
         appBar: AppBar(
           title: Text("人员信息"),
           actions: [
+//             IconButton(
+//               icon: Icon(Icons.ac_unit),
+//               onPressed: () {
+//                 Tree.setTreeInSer(
+//                     "cookie",
+//                     """
+// {"公司":{"人员":[{"name":"mango","id":"222222","password":"123","job":"12","right":"公司"},{"name":"12314","id":"1234567","password":"123","job":"12","right":"公司"}],"咖啡":{"人员":[{"name":"哈哈","id":"18270015296","password":"18270015296","job":"2","right":"咖啡"}],"开发":{"人员":[]}},"测试":{"人员":[]}}}
+// """,
+//                     context);
+//               },
+//             ),
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
@@ -98,10 +110,26 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     var parsedJson = json.decode(jsonTree);
     List<String> idList = [];
     Tree.getAllPeopleId(parsedJson, idList);
+    //这里newUser的right是数组
     final newUser = await Navigator.push(context,
         new MaterialPageRoute(builder: (context) => new AddUser(idList)));
+
     if (newUser != null) {
-      insertStaff(parsedJson, newUser, newUser["right"]);
+      // List<String> rightList = List.of(newUser["right"]);
+      // rightList.forEach((element) {
+      //   Map newUserJustOneRight = {
+      //     "name": newUser["name"],
+      //     "id": newUser["id"],
+      //     "password": newUser["password"],
+      //     "job": newUser["job"],
+      //     "right": element,
+      //   };
+      //   insertStaff(parsedJson, newUserJustOneRight, element);
+      // });
+
+      Tree.insertPeopleIntoTree(parsedJson, newUser);
+
+      // insertStaff(parsedJson, newUser, newUser["right"]);
       jsonTree = json.encode(parsedJson);
 
       //上传到服务器去
@@ -124,6 +152,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
   Future<bool> _deleteUser(Map staff) async {
     //先删了服务器里的这个人员
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
     var type =
@@ -136,7 +165,8 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
 //修改jsonTree字符串
     var parsedJson = json.decode(jsonTree);
-    deleteStaff(parsedJson, staff);
+
+    Tree.deletePeopleIntoTree(parsedJson, staff);
     jsonTree = json.encode(parsedJson);
 
     //这里需要更新jsonTree===================
@@ -146,21 +176,41 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     return true; //成功返回true
   }
 
+  // void deleteStaff(var parsedJson, Map staffMap) {
+  //   if (parsedJson is Map<String, dynamic>) {
+  //     parsedJson.forEach((key, value) {
+  //       if (key == staffMap["right"] && value["$staff"] is List) {
+  //         List staffList = value["$staff"];
+  //         for (int i = 0; i < staffList.length; i++) {
+  //           Map element = staffList[i];
+  //           if (element["id"] == staffMap["id"]) {
+  //             print("delete" + staffMap["name"]);
+  //             value["$staff"].removeAt(i);
+  //             break;
+  //           }
+  //         }
+  //       } else {
+  //         deleteStaff(parsedJson[key], staffMap);
+  //       }
+  //     });
+  //   }
+  // }
+
   void deleteStaff(var parsedJson, Map staffMap) {
     if (parsedJson is Map<String, dynamic>) {
       parsedJson.forEach((key, value) {
-        if (key == staffMap["right"] && value["$staff"] is List) {
-          List staffList = value["$staff"];
+        if (value is List) {
+          List staffList = value;
           for (int i = 0; i < staffList.length; i++) {
             Map element = staffList[i];
             if (element["id"] == staffMap["id"]) {
               print("delete" + staffMap["name"]);
-              value["$staff"].removeAt(i);
+              value.removeAt(i);
               break;
             }
           }
         } else {
-          deleteStaff(parsedJson[key], staffMap);
+          deleteStaff(value, staffMap);
         }
       });
     }

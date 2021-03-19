@@ -309,9 +309,16 @@ class Tree {
   }
 
   static void getAllPeopleId(parsedJson, List result) {
+    //===由甲方要求一个人可以进无数个部门 做出更改==
+    getAllPeopleIdList(parsedJson, result);
+    Set s = Set.from(result);
+    result = s.toList();
+  }
+
+  static void getAllPeopleIdList(parsedJson, List result) {
     if (parsedJson is Map<String, dynamic>) {
       parsedJson.forEach((key, value) {
-        getAllPeopleId(parsedJson[key], result);
+        getAllPeopleIdList(parsedJson[key], result);
       });
     } else if (parsedJson is List) {
       for (int i = 0; i < parsedJson.length; i++) {
@@ -321,9 +328,30 @@ class Tree {
   }
 
   static void getAllPeople(parsedJson, List result) {
+    //之前是返回所有用户的列表 包含了用户的姓名 id 密码 职务 权限等等
+    //更改后的此函数只包含姓名 id 密码并且不会有重复的用户
+
+    //===此部分变为getAllPeopleRecursion==
+    // if (parsedJson is Map) {
+    //   parsedJson.forEach((key, value) {
+    //     getAllPeople(parsedJson[key], result);
+    //   });
+    // } else if (parsedJson is List) {
+    //   print("11");
+    //   result.addAll(parsedJson);
+    // }
+
+    //===由甲方要求一个人可以进无数个部门 做出更改==
+    List allPeople = [];
+    getAllPeopleRecursion(parsedJson, allPeople);
+    result.addAll(setPeoplelistUnique(allPeople));
+    return;
+  }
+
+  static void getAllPeopleRecursion(parsedJson, List result) {
     if (parsedJson is Map) {
       parsedJson.forEach((key, value) {
-        getAllPeople(parsedJson[key], result);
+        getAllPeopleRecursion(parsedJson[key], result);
       });
     } else if (parsedJson is List) {
       print("11");
@@ -331,28 +359,137 @@ class Tree {
     }
   }
 
-  static Map getUserInfoAndSave(parsedJson, String id, BuildContext context) {
-    if (parsedJson is Map<String, dynamic>) {
-      Map result;
-      parsedJson.forEach((key, value) {
-        var temp = getUserInfoAndSave(parsedJson[key], id, context);
+  static void insertPeopleIntoTree(var parsedJson, Map newUser) {
+//这里的map中的right需要是list，如果是string需要是1,2,3的string
+    List rightList = [];
+    if (newUser["right"] is String) {
+      rightList = newUser["right"].toString().split(",");
+    } else {
+      rightList = List.of(newUser["right"]);
+    }
+    rightList.forEach((element) {
+      Map newUserJustOneRight = {
+        "name": newUser["name"],
+        "id": newUser["id"],
+        "password": newUser["password"],
+        "job": newUser["job"],
+        "right": element,
+      };
+      insertStaff(parsedJson, newUserJustOneRight, element);
+    });
+  }
 
-        if (temp != null) {
-          result = Map.from(temp);
+  static void insertStaff(var parsedJson, Map staffMap, String right) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        if (key == right) {
+          value["$staff"].add(staffMap);
+        } else {
+          insertStaff(parsedJson[key], staffMap, right);
         }
       });
-      return result;
-    } else if (parsedJson is List) {
-      for (int i = 0; i < parsedJson.length; i++) {
-        if (parsedJson[i]["id"] == id) {
-          Map user = parsedJson[i];
-          final ps = Provider.of<ProviderServices>(context);
-          ps.upDatauserInfo(user);
-          return user;
-        }
-      }
     }
-    return null;
+  }
+
+  static void deletePeopleIntoTree(var parsedJson, Map staffMap) {
+    if (parsedJson is Map<String, dynamic>) {
+      parsedJson.forEach((key, value) {
+        if (value is List) {
+          List staffList = value;
+          for (int i = 0; i < staffList.length; i++) {
+            Map element = staffList[i];
+            if (element["id"] == staffMap["id"]) {
+              print("delete" + staffMap["name"]);
+              value.removeAt(i);
+              break;
+            }
+          }
+        } else {
+          deletePeopleIntoTree(value, staffMap);
+        }
+      });
+    }
+  }
+
+  static List setPeoplelistUnique(
+    List allpeople,
+  ) {
+    List uniqueresult = [];
+    //这个函数是将可能重复的用户列表转换成新的独一无二的用户列表，其中返回的列表只有用户id和姓名
+    Set idSet = {};
+    allpeople.forEach((element) {
+      if (!idSet.contains(element["id"])) {
+        //如果目前未添加过
+        uniqueresult.add({
+          "id": element["id"],
+          "name": element["name"],
+          "password": element["password"],
+        });
+        idSet.add(element["id"]);
+      }
+    });
+
+    return uniqueresult;
+  }
+
+  static String rightListTextToPCRightText(String s) {
+    //把[111, 222, 333, 555]转换成111,222,333,555
+    return s.replaceAll("[", "").replaceAll("]", "").replaceAll(" ", "");
+  }
+
+  static Future<Map> getUserInfo(String id, String password) async {
+    Response re =
+        await Dio().post("http://47.110.150.159:8080/getinformation?id=${id}");
+    Map reMap = re.data;
+
+    Map details = {
+      "name": reMap["uName"],
+      "id": id,
+      "password": password,
+      "job": reMap["uAuthority"],
+      "right": reMap["uPower"],
+    };
+    return details;
+  }
+
+  static Future<Map> getUserInfoAndSave(
+      parsedJson, String password, String id, BuildContext context) async {
+    //   if (parsedJson is Map<String, dynamic>) {
+    //     Map result;
+    //     parsedJson.forEach((key, value) {
+    //       var temp = getUserInfoAndSave(parsedJson[key], id, context);
+
+    //       if (temp != null) {
+    //         result = Map.from(temp);
+    //       }
+    //     });
+    //     return result;
+    //   } else if (parsedJson is List) {
+    //     for (int i = 0; i < parsedJson.length; i++) {
+    //       if (parsedJson[i]["id"] == id) {
+    //         Map user = parsedJson[i];
+    //         final ps = Provider.of<ProviderServices>(context);
+    //         ps.upDatauserInfo(user);
+    //         return user;
+    //       }
+    //     }
+    //   }
+    //   return null;
+    // }
+    Response re =
+        await Dio().post("http://47.110.150.159:8080/getinformation?id=${id}");
+    Map reMap = re.data;
+
+    Map details = {
+      "name": reMap["uName"],
+      "id": id,
+      "password": password,
+      "job": reMap["uAuthority"],
+      "right": reMap["uPower"],
+    };
+    final ps = Provider.of<ProviderServices>(context);
+    ps.upDatauserInfo(details);
+    return details;
   }
 
   static Map getSubRight(parsedJson, String right) {

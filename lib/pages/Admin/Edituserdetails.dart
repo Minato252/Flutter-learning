@@ -1,35 +1,49 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
+import 'package:dio/dio.dart';
 
-class AddUser extends StatefulWidget {
-  List<String> illegalText; //非法字符列表
-  AddUser(this.illegalText);
+Map name = {
+  "name": "姓名",
+  "id": "手机号",
+  "password": "密码",
+  "job": "职务",
+  "right": "权限",
+};
+
+class Edituserdetails extends StatefulWidget {
+  Map details;
+  Edituserdetails(this.details);
   @override
-  _AddUserState createState() => _AddUserState(illegalText);
+  //Edituserdetails({Key key}) : super(key: key);
+  _EdituserdetailsState createState() => _EdituserdetailsState(details);
 }
 
-class _AddUserState extends State<AddUser> {
-  @override
+class _EdituserdetailsState extends State<Edituserdetails> {
   final newUserFormKey = GlobalKey<FormState>();
+  Map details;
+  Map oldDetails;
   String id, password, name, job;
   List<String> rightList = [];
-  List<String> illegalText; //非法字符列表
-  _AddUserState(this.illegalText);
+  int rightValue;
+
+  _EdituserdetailsState(Map details) {
+    this.details = details;
+    this.oldDetails = details;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           actions: [],
-          title: Text("新增人员"),
+          title: Text("修改人员信息"),
         ),
         body: SafeArea(
             child: SingleChildScrollView(
@@ -41,11 +55,8 @@ class _AddUserState extends State<AddUser> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "输入新增人员详情",
-                      style: TextStyle(fontSize: 32.0),
-                    ),
                     TextFormField(
+                      initialValue: details["name"],
                       // controller: textFieldController,
 
                       // style: TextStyle(
@@ -66,11 +77,12 @@ class _AddUserState extends State<AddUser> {
                     TextFormField(
                       // controller: textFieldController,
                       //只允许输入数字
-                      keyboardType: TextInputType.phone,
+                      //keyboardType: TextInputType.phone,
                       // style: TextStyle(
                       //   fontSize: 17,
                       //   color: Colors.black,
                       // ),
+                      initialValue: details["id"],
                       decoration: InputDecoration(
                           icon: Icon(Icons.subject),
                           labelText: "手机号",
@@ -105,6 +117,7 @@ class _AddUserState extends State<AddUser> {
                       //   fontSize: 17,
                       //   color: Colors.black,
                       // ),
+                      initialValue: details["password"],
                       decoration: InputDecoration(
                           icon: Icon(Icons.subject),
                           labelText: "密码",
@@ -118,11 +131,13 @@ class _AddUserState extends State<AddUser> {
                     TextFormField(
                       // controller: textFieldController,
                       //只允许输入数字
-                      keyboardType: TextInputType.phone,
+
                       // style: TextStyle(
                       //   fontSize: 17,
                       //   color: Colors.black,
                       // ),
+                      //keyboardType: TextInputType.phone,
+                      initialValue: details["job"],
                       decoration: InputDecoration(
                           icon: Icon(Icons.subject),
                           labelText: "职务",
@@ -132,7 +147,39 @@ class _AddUserState extends State<AddUser> {
                       },
                       validator: _validateNewJob,
                     ),
-
+                    // DropdownButton(
+                    //     value: rightValue,
+                    //     isExpanded: true,
+                    //     hint: Text("请选择权限等级"),
+                    //     items: [
+                    //       DropdownMenuItem(
+                    //         child: Text('权限1'),
+                    //         value: 1,
+                    //       ),
+                    //       DropdownMenuItem(
+                    //         child: Text('权限2'),
+                    //         value: 2,
+                    //       ),
+                    //       DropdownMenuItem(
+                    //         child: Text('权限3'),
+                    //         value: 3,
+                    //       ),
+                    //       DropdownMenuItem(
+                    //         child: Text('权限4'),
+                    //         value: 4,
+                    //       ),
+                    //       DropdownMenuItem(
+                    //         child: Text('权限5'),
+                    //         value: 5,
+                    //       ),
+                    //       DropdownMenuItem(
+                    //         child: Text('权限6'),
+                    //         value: 6,
+                    //       ),
+                    //     ],
+                    //     onChanged: (value) => setState(() {
+                    //           rightValue = value;
+                    //         })),
                     Row(
                       children: [
                         Row(
@@ -141,8 +188,8 @@ class _AddUserState extends State<AddUser> {
                             Text("权限等级："),
                           ],
                         ),
-                        Text(
-                            "${Tree.rightListTextToPCRightText(rightList.toString())}"),
+                        //right = details["right"].toString(),
+                        Text("${details["right"]}"),
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: chooseRight,
@@ -154,9 +201,13 @@ class _AddUserState extends State<AddUser> {
                       height: 30.0,
                     ),
                     JdButton(
-                      text: '确定',
+                      text: '保存',
                       cb: () async {
-                        await _sendDataBack(context);
+                        var _state = newUserFormKey.currentState;
+                        if (_state.validate()) {
+                          _state.save();
+                          await _alterUser(id, name, password, job, details);
+                        }
                       },
                     ),
                   ],
@@ -173,6 +224,8 @@ class _AddUserState extends State<AddUser> {
     if (choosedRight != null) {
       setState(() {
         rightList = choosedRight;
+        details["right"] =
+            Tree.rightListTextToPCRightText(rightList.toString());
       });
     }
   }
@@ -180,11 +233,11 @@ class _AddUserState extends State<AddUser> {
   String _validateNewId(value) {
     if (value.isEmpty) {
       return "手机号不能为空";
-    } else if (illegalText.contains(value)) {
-      return "此手机号已被注册";
+    } else if (value != details["id"]) {
+      return "手机号不可更改";
+    } else {
+      return null;
     }
-
-    return null;
   }
 
   String _validateNewName(value) {
@@ -217,85 +270,58 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  Future<bool> registerUser(
-      String id, String name, String password, String job, String right) async {
-//  {
-//      "id": "0988", 注册账号
-//      "uPower":权限
-//      "name": "xxx", 放入融云服务器的用户姓名
-//      "password":"okkk",密码
-//      "type":"1" 这里必须和creator一样（程序在查询其他成员的时候需要这个值，不然会失效）
-//      "creator":"1"  区分成员属于哪个管理员创建
-//      "authority":"部长"  权限
-//     "who":"member"  此处区分注册人员；如果是注册管理员此处填写：adm
-//                                       如果是注册用户成员此处填写：member
-//  }
-
-//获取自己的id
+  Future<bool> _alterUser(
+      String id, String name, String password, String job, Map details) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     String adminId = prefs.get("adminId");
-    var type =
+    /*var type =
         await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");
-    Map m = {
-      "id": id,
-      "uPower": right,
-      "name": name,
-      "password": password,
-      "type": type.data,
-      "creator": adminId,
-      "authority": job,
-      "who": "member"
-    };
-    Response rel =
-        await Dio().post("http://47.110.150.159:8080/register", data: m);
+*/
+    /* "uLoginid":"44444444",
+       "id":"1234",
+       "uPassword":"1234",
+       "uToken":"",
+       "uAuthority":"",
+       "uName":"",
+       "uPower":"888"*/
+    Response response =
+        await Dio().post("http://47.110.150.159:8080/updataUser", data: {
+      "uLoginid": details["id"],
+      "id": details["id"],
+      "uPassword": password,
+      "uAuthority": job,
+      "uName": name,
+      "uPower": details["right"],
+    });
+    var data = response.data;
+    if (data == 1) {
+      MyToast.AlertMesaage("修改成功");
 
-// 1 {fail:超出可创建最大人数}：表示超出购买的账号数，导致创建失败
-// 2 {"Msg":"账号已存在","code":"202","id":"id"} 202：表示此ID已经被注册
-// 3 注册成功，返回message：
-// {"authority":"1",
-// "id":"177",
-// "password":"okkk",
-// "token":"+N6PSEp6cPDMad7e68GxGrTxq47Jn+UhuuSKJ1cFdRA=@9s7f.cn.rongnav.com;9s7f.cn.rongcfg.com"}
+      //从这里开始更新树
 
-    Map j = json.decode(rel.data);
-    if (j.containsKey("fail")) {
-      print("超出购买限额");
+      Map newDetails = {
+        "name": name,
+        "id": details["id"],
+        "password": password,
+        "job": job,
+        "right": details["right"],
+      };
+      //从服务器获得最新的树
+      String jsonTree = await Tree.getTreeFormSer(adminId, true, context);
 
-      // MyToast.AlertMesaage("超出可创建最大人数");
-    } else if (j.containsKey("code")) {
-      if (j["code"] == "202") {
-        print("id已注册");
-        MyToast.AlertMesaage(j["Msg"]);
-      }
-    } else if (j.containsKey("uToken")) {
-      print("注册成功");
+      var parsedJson = json.decode(jsonTree);
 
-      MyToast.AlertMesaage(j["注册成功"]);
-      return true;
+      Tree.deletePeopleIntoTree(parsedJson, oldDetails);
+      Tree.insertPeopleIntoTree(parsedJson, newDetails);
+
+      Tree.setTreeInSer(adminId, json.encode(parsedJson), context);
+
+//===更新树结束
+
+      Navigator.pop(context, true); //这里返回个true代表成功
     }
-    return false;
-  }
 
-  Future<void> _sendDataBack(BuildContext context) async {
-    newUserFormKey.currentState.save();
-    if (rightList.isEmpty) {
-      alertDialog();
-      return;
-    }
-    if (newUserFormKey.currentState.validate()) {
-      bool regSuc = await registerUser(id, name, password, job,
-          Tree.rightListTextToPCRightText(rightList.toString()));
-      if (regSuc) {
-        //这里返回的right改成了list
-        Map mapToSendBack = {
-          "name": name,
-          "id": id,
-          "password": password,
-          "job": job,
-          "right": rightList,
-        };
-        Navigator.pop(context, mapToSendBack);
-      }
-    }
+    // print(data);
   }
 }
