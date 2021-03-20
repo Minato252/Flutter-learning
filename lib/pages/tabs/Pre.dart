@@ -297,7 +297,7 @@ class _PreAndSendState extends State<PreAndSend> {
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
                               ContactListPage(users)));
-
+                  targetIdList = [];
                   if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
                     targetAllList[0].forEach((element) {
                       targetIdList.add(element["id"]);
@@ -538,8 +538,9 @@ class _PreAndSendState extends State<PreAndSend> {
       // await GroupMessageService.creatGruop(messageId, messageModel.title,
       //     targetIdList.join(',').toString(), content);
       print(targetIdList.join(',').toString());
-      await GroupMessageService.creatGruop2(
-          "18", messageModel.title, targetIdList.join(',').toString(), content);
+      print("title:" + messageModel.title);
+      await GroupMessageService.creatGruop(messageId, messageModel.title,
+          targetIdList.join(',').toString(), content);
       // print("*********");
       // Future.delayed(Duration(seconds: 3), () {
       // GroupMessageService.sendGroupMessage("11", content);

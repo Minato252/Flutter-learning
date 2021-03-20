@@ -55,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
               label: Text("查询群消息")),
           FlatButtonWithIcon(
               onPressed: () async {
-                // await _sendGroupMessage();
+                await _sendGroupMessage("18");
               },
               icon: Icon(Icons.send),
               label: Text("发送群消息"))
@@ -141,7 +141,7 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
-        data: {"groupId": "11"});
+        data: {"groupId": "18"});
     print(rel.data);
   }
 
