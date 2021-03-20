@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
@@ -14,6 +16,7 @@ import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/PretoRichEdit.dart';
 import 'package:weitong/pages/tree/tree.dart';
@@ -33,6 +36,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'chooseUser/contacts_list_page.dart';
 
 import 'package:crypto/crypto.dart';
+import 'package:synchronized/synchronized.dart' as prefix;
 
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
@@ -298,7 +302,7 @@ class _PreAndSendState extends State<PreAndSend> {
                     targetAllList[0].forEach((element) {
                       targetIdList.add(element["id"]);
                     });
-                    _sendMessage();
+                    await _sendMessage();
                   }
 
                   if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
@@ -483,111 +487,106 @@ class _PreAndSendState extends State<PreAndSend> {
   }
 
   _sendMessage() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // // var db = DatabaseHelper();
-    // // db.initDb();
-
-    // //在这里写选择联系人，并将targetId改为联系人id
-    // print("****************这里打印targetIdList****");
-    // print(targetIdList);
-    // if (messageModel.modify) {
-    //   var htmlCode = await controller.generateHtmlUrl();
-    //   DateTime now = new DateTime.now();
-    //   String cure =
-    //       "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-    //   // content = content + cure + htmlCode;
-    //   messageModel.htmlCode = messageModel.htmlCode + cure + htmlCode;
-    //   content = messageModel.toJsonString();
-    // }
-    // var uuid = Uuid();
-    // var messageId = uuid.v1();
-    // messageModel.messageId = messageId;
-    // content = messageModel.toJsonString();
-    // for (String item in targetIdList) {
-    //   Message message = await IM.sendMessage(content, item);
-    //   // IM.sendMessage(content, item).whenComplete(() => null)
-
-    //   print("*************该消息的id是" +
-    //       messageModel.messageId +
-    //       "**********************");
-
-    //   var rel = await Dio()
-    //       .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-    //     "keywords": messageModel.keyWord,
-    //     "messages": messageModel.htmlCode,
-    //     "touserid": item,
-    //     "fromuserid": prefs.get("id"),
-    //     "title": messageModel.title,
-    //     "hadLook": prefs.get("name") +
-    //         "(" +
-    //         new DateTime.now().toString().split('.')[0] +
-    //         ")",
-    //     "MesId": messageModel.messageId
-    //   });
-    // }
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     // var db = DatabaseHelper();
     // db.initDb();
-
     //在这里写选择联系人，并将targetId改为联系人id
     print("****************这里打印targetIdList****");
-    print(targetIdList);
-    String htmlCode2;
-    if (messageModel.modify) {
-      var htmlCode = await controller.generateHtmlUrl();
-      DateTime now = new DateTime.now();
-      String cure =
-          "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-      // content = content + cure + htmlCode;
-      htmlCode2 = messageModel.htmlCode + cure + htmlCode;
-      messageModel.htmlCode = messageModel.htmlCode + htmlCode;
-      content = messageModel.toJsonString();
-    } else {
-      htmlCode2 = messageModel.htmlCode;
-    }
+    print(targetIdList.join(',').toString());
     var uuid = Uuid();
     var messageId = uuid.v1();
     messageModel.messageId = messageId;
     content = messageModel.toJsonString();
-    for (String item in targetIdList) {
-      Message message = await IM.sendMessage(content, item);
-      // IM.sendMessage(content, item).whenComplete(() => null)
+    if (targetIdList.length == 1) {
+      String htmlCode2;
+      if (messageModel.modify) {
+        var htmlCode = await controller.generateHtmlUrl();
+        DateTime now = new DateTime.now();
+        String cure =
+            "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+        // content = content + cure + htmlCode;
+        htmlCode2 = messageModel.htmlCode + cure + htmlCode;
+        messageModel.htmlCode = messageModel.htmlCode + htmlCode;
+        content = messageModel.toJsonString();
+      } else {
+        htmlCode2 = messageModel.htmlCode;
+      }
 
-      print("*************该消息的id是" +
-          messageModel.messageId +
-          "**********************");
-      var rel = await Dio()
-          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-        "keywords": messageModel.keyWord,
-        "messages": htmlCode2,
-        "touserid": item,
-        "fromuserid": prefs.get("id"),
-        "title": messageModel.title,
-        "hadLook": prefs.get("name") +
-            "(" +
-            new DateTime.now().toString().split('.')[0] +
-            ")",
-        "MesId": messageModel.messageId
-      });
+      content = messageModel.toJsonString();
+      for (String item in targetIdList) {
+        Message message = await IM.sendMessage(content, item);
+        // IM.sendMessage(content, item).whenComplete(() => null)
+
+        print("*************该消息的id是" +
+            messageModel.messageId +
+            "**********************");
+        var rel = await Dio()
+            .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+          "keywords": messageModel.keyWord,
+          "messages": htmlCode2,
+          "touserid": item,
+          "fromuserid": prefs.get("id"),
+          "title": messageModel.title,
+          "hadLook": prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")",
+          "MesId": messageModel.messageId
+        });
+      }
+    } else if (targetIdList.length > 1) {
+      // await GroupMessageService.creatGruop(messageId, messageModel.title,
+      //     targetIdList.join(',').toString(), content);
+      print(targetIdList.join(',').toString());
+      await GroupMessageService.creatGruop2(
+          "18", messageModel.title, targetIdList.join(',').toString(), content);
+      // print("*********");
+      // Future.delayed(Duration(seconds: 3), () {
+      // GroupMessageService.sendGroupMessage("11", content);
+      // });
+      // var rel = await GroupMessageService.creatGruop(
+      //     messageId, messageModel.title, targetIdList.join(',').toString());
+      // print("****建群*****");
+      // print(rel["code"]);
+
+      // while (rel["code"] != 200) {
+      //   print("*********");
+      // }
+      // print("****发信息*****");
+      // GroupMessageService.sendGroupMessage(messageId, content);
+      // print("最后了");
+
+      // var lock = prefix.Lock();
+      // bool _bCounting = false;
+      // lock.synchronized(() async {
+      //   // _bCounting = !_bCounting;
+
+      //   GroupMessageService.creatGruop(
+      //       messageId, messageModel.title, targetIdList.join(',').toString());
+      //   print("****建群*****");
+      // });
+      // lock.synchronized(() async {
+      //   // _bCounting = !_bCounting;
+      //   GroupMessageService.sendGroupMessage(messageId, content);
+      //   print("****发信息*****");
+      // });
     }
 
-    _sendGroupMessage(content, "123");
-    // IM.sendMessage(content, targetId)
     sendMessageSuccess("发送成功");
   }
 
-  _sendGroupMessage(String content, String groupId) async {
-    TextMessage txtMessage = new TextMessage();
+  _nonthing() {}
 
-    txtMessage.content = content;
-    Message msg = await RongIMClient.sendMessage(
-        RCConversationType.Group, groupId, txtMessage);
-    // print("send message start senderUserId = " + msg.senderUserId);
-    print("msg" + msg.toString());
-    return msg;
+  _sendGroupMessage(String content, String groupId) async {
+    // TextMessage txtMessage = new TextMessage();
+
+    // txtMessage.content = content;
+    // Message msg = await RongIMClient.sendMessage(
+    //     RCConversationType.Group, groupId, txtMessage);
+    // // print("send message start senderUserId = " + msg.senderUserId);
+    // print("msg" + msg.toString());
+    // return msg;
+    var lock = Lock();
   }
 
   _sendNoteMessage() async {

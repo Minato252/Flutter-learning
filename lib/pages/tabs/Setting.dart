@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:weitong/Model/user_data.dart';
+import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/IM.dart';
@@ -41,7 +43,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           FlatButtonWithIcon(
               onPressed: () async {
-                await _selectGruopMember();
+                await _searchGruopMember();
               },
               icon: Icon(Icons.send),
               label: Text("查询群成员")),
@@ -53,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
               label: Text("查询群消息")),
           FlatButtonWithIcon(
               onPressed: () async {
-                await _sendGroupMessage();
+                // await _sendGroupMessage();
               },
               icon: Icon(Icons.send),
               label: Text("发送群消息"))
@@ -95,33 +97,36 @@ class _SettingPageState extends State<SettingPage> {
     String random = Random().nextInt(1000000).toString();
 
     String time = DateTime.now().microsecondsSinceEpoch.toString();
-    String signature = "zj8jV9ls6U" + random + time;
+    // String signature = "zj8jV9ls6U" + random + time;
+    String signature = RongAppSecret + random + time;
     var bytes = utf8.encode(signature);
     var uuid = Uuid();
     var groupId = uuid.v1();
     print("********************" + groupId);
-    String menber = "11,222222";
+    String menber = "18270015296,222222";
 
     var dio = Dio();
     dio.options.contentType = "application/x-www-form-urlencoded";
     // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
     // dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
-    dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-App-Key"] = RongAppKey;
     dio.options.headers["RC-Nonce"] = random;
     // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/create.json",
-        data: {"userId": menber, "groupId": "123", "groupName": "哈哈"});
+        data: {"userId": menber, "groupId": groupId, "groupName": "哈哈"});
     print(rel.data);
+    await _sendGroupMessage(groupId);
   }
 
-  _selectGruopMember() async {
+  _searchGruopMember() async {
     //2a2f7fd0-87d2-11eb-b427-c5e5521c8d73
     String random = Random().nextInt(1000000).toString();
 
     String time = DateTime.now().microsecondsSinceEpoch.toString();
-    String signature = "zj8jV9ls6U" + random + time;
+    // String signature = "zj8jV9ls6U" + random + time;
+    String signature = RongAppSecret + random + time;
     var bytes = utf8.encode(signature);
     // var uuid = Uuid();
     // var groupId = uuid.v1();
@@ -129,34 +134,33 @@ class _SettingPageState extends State<SettingPage> {
     var dio = Dio();
     dio.options.contentType = "application/x-www-form-urlencoded";
     // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
-    dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    // dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-App-Key"] = RongAppKey;
     dio.options.headers["RC-Nonce"] = random;
     // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
-        data: {"groupId": "123"});
+        data: {"groupId": "11"});
     print(rel.data);
   }
 
-  _sendGroupMessage() {
-    String content = "群测试，来自18270015296";
+  _sendGroupMessage(String groupId) async {
+    TextMessage txtMessage = new TextMessage();
+    txtMessage.content = "这条消息来自 Flutter";
+    Message msg = await RongIMClient.sendMessage(
+        RCConversationType.Group, groupId, txtMessage);
+    print(msg);
 
-    var conversationType = RCConversationType.Group;
-    String targetId = "123";
-
-    TextMessage messageContent = TextMessage.obtain(content);
-// Message message = TextMessage.obtain(targetId, conversationType, messageContent);
-    TextMessage.obtain(content);
-    var rel = RongIMClient.sendMessage(conversationType, "123", messageContent);
-    print("发送成功：" + rel.toString());
-// RongIM.getInstance().sendMessage(message, null, null, new IRongCallback.ISendMessageCallback()
+    // Message msg = await RongIMClient.sendMessage(
+    //     RCConversationType.Private, "222222", txtMessage);
+    // print("send message start senderUserId = " + msg.senderUserId);
   }
 
-  _reciveGroupMessage() {
-    String groupId = "123";
+  _reciveGroupMessage() async {
+    String groupId = "11";
 // RongUserInfoManager.getInstance().getGroupInfo(groupId);
-    var rel = RongIMClient.getConversation(1, "123");
+    var rel = await RongIMClient.getConversation(1, "11");
     // RongUserInfoManager.getInstance().getGroupInfo(groupId);
     print(rel);
   }
