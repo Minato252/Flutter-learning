@@ -90,7 +90,7 @@ class GroupMessageService {
     var dio = Dio();
     String id;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("id", id);
+    id = prefs.getString("id");
     dio.options.contentType = "application/x-www-form-urlencoded";
     // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
     // dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
@@ -107,12 +107,12 @@ class GroupMessageService {
         });
     print(rel);
     print(rel.data);
-    await sendGroupMessage("$groupId");
+    await sendGroupMessage("$groupId", messageContent);
   }
 
-  static sendGroupMessage(String groupId) async {
+  static sendGroupMessage(String groupId, String messageContent) async {
     TextMessage txtMessage = new TextMessage();
-    txtMessage.content = "这条消息来自 Flutter";
+    txtMessage.content = messageContent;
     Message msg = await RongIMClient.sendMessage(
         RCConversationType.Group, groupId, txtMessage);
     print(msg);

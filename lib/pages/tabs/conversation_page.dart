@@ -6,6 +6,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+// import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
@@ -49,6 +50,9 @@ class _ConversationPageState extends State<ConversationPage>
   ListView phrasesListView;
   List emojiList = new List(); // emoji 数组
 
+  // BottomInputBar bottomInputBar;
+  // BottomToolBar bottomToolBar;
+
   MessageContentList messageContentList;
 
   bool multiSelect = false; //是否是多选模式
@@ -78,7 +82,7 @@ class _ConversationPageState extends State<ConversationPage>
     // } else {
     //   this.info = example.UserInfoDataSource.getGroupInfo(targetId);
     // }
-
+//conversationType==RCConversationType.Group?
     titleContent = '与 $targetId 的会话';
 
     //增加 IM 监听
@@ -664,6 +668,14 @@ class _ConversationPageState extends State<ConversationPage>
         }
       }
     } else if (conversationType == RCConversationType.Group) {
+      TextMessage mymessage = messageDataSource[0].content;
+      MessageModel messageModel =
+          MessageModel.fromJsonString(mymessage.content);
+      setState(() {
+        //修改群消息title
+        titleContent = messageModel.title;
+      });
+
       _sendReadReceiptResponse(null);
     }
     // _syncReadStatus();
@@ -700,14 +712,15 @@ class _ConversationPageState extends State<ConversationPage>
     _refreshUI();
   }
 
-  // // 底部输入栏
-  // Widget _buildBottomInputBar() {
-  //   if (multiSelect == true) {
-  //     return bottomToolBar;
-  //   } else {
-  //     return bottomInputBar;
-  //   }
-  // }
+  // 底部输入栏
+  Widget _buildBottomInputBar() {
+    if (multiSelect == true) {
+      // return bottomToolBar;
+      return null;
+    } else {
+      // return bottomInputBar;
+    }
+  }
 
   // void _pushToDebug() {
   //   Map arg = {"coversationType": conversationType, "targetId": targetId};
@@ -784,10 +797,10 @@ class _ConversationPageState extends State<ConversationPage>
                         children: <Widget>[Flexible(child: messageContentList)],
                       ),
                     ),
-                    // Container(
-                    //   // height: multiSelect ? 55 : 82,
-                    //   child: _buildBottomInputBar(),
-                    // ),
+                    Container(
+                      // height: multiSelect ? 55 : 82,
+                      child: _buildBottomInputBar(),
+                    ),
                     // _getExtentionWidget(),
                   ],
                 ),
@@ -814,33 +827,35 @@ class _ConversationPageState extends State<ConversationPage>
     //     arguments: {'conversation': msg.content});
 
     MessageModel messageModel = MessageModel.fromJsonString(msg.content);
-    String uri = "http://47.110.150.159:8080/messages/select?mesId=" +
-        messageModel.messageId;
+    if (conversationType == RCConversationType.Private) {
+      String uri = "http://47.110.150.159:8080/messages/select?mesId=" +
+          messageModel.messageId;
 
-    var rel = await Dio().get(uri);
-    String hadlook = rel.data[0]['mHadLook']; //从服务器获取最新hadlook
+      var rel = await Dio().get(uri);
+      String hadlook = rel.data[0]['mHadLook']; //从服务器获取最新hadlook
 
-    // hadlook = messageModel.hadLook;
+      // hadlook = messageModel.hadLook;
 
-    messageModel.modify = true;
-    if (!hadlook.contains(prefs.get("name"))) {
-      // messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
-      hadlook = hadlook +
-          ' , ' +
-          prefs.get("name") +
-          "(" +
-          new DateTime.now().toString().split('.')[0] +
-          ")";
+      messageModel.modify = true;
+      if (!hadlook.contains(prefs.get("name"))) {
+        // messageModel.hadLook = messageModel.hadLook + ' , ' + prefs.get("id");
+        hadlook = hadlook +
+            ' , ' +
+            prefs.get("name") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")";
 
-      String updataUrl = "http://47.110.150.159:8080/messages/update?mesId=" +
-          messageModel.messageId +
-          "&mHadLook=" +
-          hadlook;
-      await Dio().get(updataUrl);
-      //更新服务器中的hadlook
+        String updataUrl = "http://47.110.150.159:8080/messages/update?mesId=" +
+            messageModel.messageId +
+            "&mHadLook=" +
+            hadlook;
+        await Dio().get(updataUrl);
+        //更新服务器中的hadlook
+      }
+
+      messageModel.hadLook = hadlook;
     }
-
-    messageModel.hadLook = hadlook;
 
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       // return Pre(
