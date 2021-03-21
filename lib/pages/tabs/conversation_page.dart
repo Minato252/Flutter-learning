@@ -674,7 +674,7 @@ class _ConversationPageState extends State<ConversationPage>
           MessageModel.fromJsonString(mymessage.content);
       setState(() {
         //修改群消息title
-        titleContent = messageModel.title;
+        titleContent = messageModel.title == null ? "没有标题" : messageModel.title;
       });
 
       _sendReadReceiptResponse(null);

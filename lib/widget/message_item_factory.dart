@@ -68,14 +68,14 @@ class MessageItemFactory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              "标题:  ",
-              style: TextStyle(fontSize: 20.0),
-            ),
+            // Text(
+            //   "标题:  ",
+            //   style: TextStyle(fontSize: 20.0),
+            // ),
             Container(
               width: 120,
               child: Text(
-                messageModel.title,
+                messageModel.title == null ? "没有标题" : messageModel.title,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -85,12 +85,12 @@ class MessageItemFactory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text("关键词:  "),
+            // Text("关键词:  "),
             Container(
               width: 120,
               child: Chip(
                   label: Text(
-                messageModel.keyWord,
+                messageModel.keyWord == null ? "空关键词 " : messageModel.keyWord,
                 overflow: TextOverflow.ellipsis,
               )),
             )

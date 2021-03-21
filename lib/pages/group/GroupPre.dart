@@ -258,8 +258,8 @@ class _GroupPreState extends State<GroupPre> {
     }
   }
 
-  _sendGroupMessage() async {
-    List rel = await GroupMessageService.searchGruopMember("11");
+  _sendGroupMessage(String groupId) async {
+    List rel = await GroupMessageService.searchGruopMember(groupId);
     List<String> groupMember = [];
     for (int i = 0; i < rel.length; i++) {
       groupMember.add(rel[i]["id"]);
@@ -292,7 +292,26 @@ class _GroupPreState extends State<GroupPre> {
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);
       });
-      await _sendMessage();
+      // await _sendMessage();
+      bool isDirctionMessage = false;
+      for (int i = 0; i < groupMember.length; i++) {
+        if (!targetIdList.contains(groupMember[i])) {
+          isDirctionMessage = true;
+        }
+      }
+      var uuid = Uuid();
+      var messageId = uuid.v1();
+      messageModel.messageId = messageId;
+      messageModel.fromuserid = await prefs.getString("id");
+      content = messageModel.toJsonString();
+      if (isDirctionMessage) {
+        //未全选群成员，即对部分人隐藏内容
+        await GroupMessageService.sendDirectionMessage(targetIdList, content);
+      } else {
+        //全选群成员，发送功课消息
+        await GroupMessageService.creatGruop(groupId, messageModel.title,
+            targetIdList.join(',').toString(), content);
+      }
     }
 
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
@@ -328,6 +347,7 @@ class _GroupPreState extends State<GroupPre> {
                 onPressed: () async {
                   //把群id传到了这里，然后根据id获取群成员。
                   print(targetGroupId);
+                  _sendGroupMessage(targetGroupId);
                   // if (targetIdList == null) {
                   //   sendMessageSuccess("请选择您要发送的联系人！");
                   // } else {

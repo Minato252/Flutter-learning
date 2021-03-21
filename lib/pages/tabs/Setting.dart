@@ -146,6 +146,9 @@ class _SettingPageState extends State<SettingPage> {
     // var uuid = Uuid();
     // var groupId = uuid.v1();
 
+    //BOAF-OP9U-49KE-UAPH   messageUId
+    //targetId 1ee17ce0-8a21-11eb-a0b1-115a42e92667
+
     var dio = Dio();
     dio.options.contentType = "application/x-www-form-urlencoded";
     // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
@@ -156,7 +159,7 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
-        data: {"groupId": "19"});
+        data: {"groupId": "BOAF-OP9U-49KE-UAPH"});
     print(rel.data);
   }
 
