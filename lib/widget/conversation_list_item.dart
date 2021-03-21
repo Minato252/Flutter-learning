@@ -123,7 +123,10 @@ class _ConversationListItemState extends State<ConversationListItem> {
     //         ? "单聊："
     //         : "群聊：")
     //=====改成id
-    String title = conversation.targetId;
+    // String title = conversation.targetId;
+    TextMessage mymessage = conversation.latestMessageContent;
+    MessageModel messageModel = MessageModel.fromJsonString(mymessage.content);
+    String title = messageModel.title;
     //     +
     // (this.info == null || this.info.id == null ? "" : this.info.id)
 

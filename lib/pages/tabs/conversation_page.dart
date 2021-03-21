@@ -6,6 +6,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/group/CreateGroupMessage.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
@@ -714,12 +715,12 @@ class _ConversationPageState extends State<ConversationPage>
 
   // 底部输入栏
   Widget _buildBottomInputBar() {
-    if (multiSelect == true) {
-      // return bottomToolBar;
-      return null;
-    } else {
-      // return bottomInputBar;
-    }
+    // if (multiSelect == true) {
+    //   return bottomToolBar;
+    //   return null;
+    // } else {
+    //   return bottomInputBar;
+    // }
   }
 
   // void _pushToDebug() {
@@ -781,10 +782,36 @@ class _ConversationPageState extends State<ConversationPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(titleContent),
-          actions: _buildRightButtons(),
-        ),
+        appBar: AppBar(title: Text(titleContent), actions: <Widget>[
+          // _buildRightButtons(),
+          FlatButton(
+              onPressed: () async {
+                TextMessage mymessage = messageDataSource[0].content;
+                MessageModel messageModel =
+                    MessageModel.fromJsonString(mymessage.content);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                // _clearMessage(controller);
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  // return Pre(
+                  //   messageModel: messageModel,
+                  // );
+
+                  return GroupMessageCreate(
+                    targetGroupId: messageModel.messageId,
+                    title: messageModel.title,
+                    // fromUserId: prefs.getString("id"),
+                  );
+                }));
+              },
+              child: Text(
+                "回复",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
+        ]),
         body: Container(
           child: Stack(
             children: <Widget>[
