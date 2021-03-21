@@ -67,7 +67,7 @@ class GroupMessageService {
     return rel.data["users"];
   }
 
-  _sendDirectionMessage(List userList, String messageContent) async {
+  static sendDirectionMessage(List userList, String messageContent) async {
     // List userList = ["18270015296"];
     TextMessage m = new TextMessage();
     m.content = messageContent;

@@ -326,7 +326,7 @@ class _PreAndSendState extends State<PreAndSend> {
                   // }
                   //加载联系人列表
 
-                  await _sendGroupMessage();
+                  // await _sendGroupMessage();
                   final ps = Provider.of<ProviderServices>(context);
                   Map userInfo = ps.userInfo;
                   String jsonTree =
@@ -546,82 +546,83 @@ class _PreAndSendState extends State<PreAndSend> {
     var uuid = Uuid();
     var messageId = uuid.v1();
     messageModel.messageId = messageId;
+    messageModel.fromuserid = prefs.getString("id");
     content = messageModel.toJsonString();
-    if (targetIdList.length == 1) {
-      String htmlCode2;
-      if (messageModel.modify) {
-        var htmlCode = await controller.generateHtmlUrl();
-        DateTime now = new DateTime.now();
-        String cure =
-            "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-        // content = content + cure + htmlCode;
-        htmlCode2 = messageModel.htmlCode + cure + htmlCode;
-        messageModel.htmlCode = messageModel.htmlCode + htmlCode;
-        content = messageModel.toJsonString();
-      } else {
-        htmlCode2 = messageModel.htmlCode;
-      }
+    // if (targetIdList.length == 1) {
+    //   String htmlCode2;
+    //   if (messageModel.modify) {
+    //     var htmlCode = await controller.generateHtmlUrl();
+    //     DateTime now = new DateTime.now();
+    //     String cure =
+    //         "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+    //     // content = content + cure + htmlCode;
+    //     htmlCode2 = messageModel.htmlCode + cure + htmlCode;
+    //     messageModel.htmlCode = messageModel.htmlCode + htmlCode;
+    //     content = messageModel.toJsonString();
+    //   } else {
+    //     htmlCode2 = messageModel.htmlCode;
+    //   }
 
-      content = messageModel.toJsonString();
-      for (String item in targetIdList) {
-        Message message = await IM.sendMessage(content, item);
-        // IM.sendMessage(content, item).whenComplete(() => null)
+    //   content = messageModel.toJsonString();
+    //   for (String item in targetIdList) {
+    //     Message message = await IM.sendMessage(content, item);
+    //     // IM.sendMessage(content, item).whenComplete(() => null)
 
-        print("*************该消息的id是" +
-            messageModel.messageId +
-            "**********************");
-        var rel = await Dio()
-            .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-          "keywords": messageModel.keyWord,
-          "messages": htmlCode2,
-          "touserid": item,
-          "fromuserid": prefs.get("id"),
-          "title": messageModel.title,
-          "hadLook": prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")",
-          "MesId": messageModel.messageId
-        });
-      }
-    } else if (targetIdList.length > 1) {
-      // await GroupMessageService.creatGruop(messageId, messageModel.title,
-      //     targetIdList.join(',').toString(), content);
-      print(targetIdList.join(',').toString());
-      print("title:" + messageModel.title);
-      await GroupMessageService.creatGruop(messageId, messageModel.title,
-          targetIdList.join(',').toString(), content);
-      // print("*********");
-      // Future.delayed(Duration(seconds: 3), () {
-      // GroupMessageService.sendGroupMessage("11", content);
-      // });
-      // var rel = await GroupMessageService.creatGruop(
-      //     messageId, messageModel.title, targetIdList.join(',').toString());
-      // print("****建群*****");
-      // print(rel["code"]);
+    //     print("*************该消息的id是" +
+    //         messageModel.messageId +
+    //         "**********************");
+    //     var rel = await Dio()
+    //         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+    //       "keywords": messageModel.keyWord,
+    //       "messages": htmlCode2,
+    //       "touserid": item,
+    //       "fromuserid": prefs.get("id"),
+    //       "title": messageModel.title,
+    //       "hadLook": prefs.get("name") +
+    //           "(" +
+    //           new DateTime.now().toString().split('.')[0] +
+    //           ")",
+    //       "MesId": messageModel.messageId
+    //     });
+    //   }
+    // } else if (targetIdList.length > 1) {
+    // await GroupMessageService.creatGruop(messageId, messageModel.title,
+    //     targetIdList.join(',').toString(), content);
+    print(targetIdList.join(',').toString());
+    print("title:" + messageModel.title);
+    await GroupMessageService.creatGruop(messageId, messageModel.title,
+        targetIdList.join(',').toString(), content);
+    // print("*********");
+    // Future.delayed(Duration(seconds: 3), () {
+    // GroupMessageService.sendGroupMessage("11", content);
+    // });
+    // var rel = await GroupMessageService.creatGruop(
+    //     messageId, messageModel.title, targetIdList.join(',').toString());
+    // print("****建群*****");
+    // print(rel["code"]);
 
-      // while (rel["code"] != 200) {
-      //   print("*********");
-      // }
-      // print("****发信息*****");
-      // GroupMessageService.sendGroupMessage(messageId, content);
-      // print("最后了");
+    // while (rel["code"] != 200) {
+    //   print("*********");
+    // }
+    // print("****发信息*****");
+    // GroupMessageService.sendGroupMessage(messageId, content);
+    // print("最后了");
 
-      // var lock = prefix.Lock();
-      // bool _bCounting = false;
-      // lock.synchronized(() async {
-      //   // _bCounting = !_bCounting;
+    // var lock = prefix.Lock();
+    // bool _bCounting = false;
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
 
-      //   GroupMessageService.creatGruop(
-      //       messageId, messageModel.title, targetIdList.join(',').toString());
-      //   print("****建群*****");
-      // });
-      // lock.synchronized(() async {
-      //   // _bCounting = !_bCounting;
-      //   GroupMessageService.sendGroupMessage(messageId, content);
-      //   print("****发信息*****");
-      // });
-    }
+    //   GroupMessageService.creatGruop(
+    //       messageId, messageModel.title, targetIdList.join(',').toString());
+    //   print("****建群*****");
+    // });
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
+    //   GroupMessageService.sendGroupMessage(messageId, content);
+    //   print("****发信息*****");
+    // });
+    // }
 
     sendMessageSuccess("发送成功");
   }

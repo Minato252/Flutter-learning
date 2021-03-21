@@ -75,7 +75,7 @@ class MessageItemFactory extends StatelessWidget {
             Container(
               width: 120,
               child: Text(
-                messageModel.title,
+                messageModel.title == null ? "没有标题" : messageModel.title,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -90,7 +90,7 @@ class MessageItemFactory extends StatelessWidget {
               width: 120,
               child: Chip(
                   label: Text(
-                messageModel.keyWord,
+                messageModel.keyWord == null ? "空关键词 " : messageModel.keyWord,
                 overflow: TextOverflow.ellipsis,
               )),
             )
