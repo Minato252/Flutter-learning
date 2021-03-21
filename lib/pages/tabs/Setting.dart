@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:weitong/Model/user_data.dart';
@@ -55,7 +57,10 @@ class _SettingPageState extends State<SettingPage> {
               label: Text("查询群消息")),
           FlatButtonWithIcon(
               onPressed: () async {
-                await _sendGroupMessage("18");
+                // await _sendGroupMessage("18");
+                List userList = ["222222"];
+                String content = "群定向消息测试55555";
+                await _sendDirectionMessage(userList, content);
               },
               icon: Icon(Icons.send),
               label: Text("发送群消息"))
@@ -93,6 +98,16 @@ class _SettingPageState extends State<SettingPage> {
     });
   }
 
+  _sendDirectionMessage(List userList, String messageContent) async {
+    // List userList = ["18270015296"];
+    TextMessage m = new TextMessage();
+    m.content = messageContent;
+    MessageContent content = m;
+    var rel = await RongIMClient.sendDirectionalMessage(
+        RCConversationType.Group, "19", userList, content);
+    print(rel);
+  }
+
   _creatGruop() async {
     String random = Random().nextInt(1000000).toString();
 
@@ -103,7 +118,7 @@ class _SettingPageState extends State<SettingPage> {
     var uuid = Uuid();
     var groupId = uuid.v1();
     print("********************" + groupId);
-    String menber = "18270015296,222222";
+    String menber = "18270015296,222222,55";
 
     var dio = Dio();
     dio.options.contentType = "application/x-www-form-urlencoded";
@@ -115,9 +130,9 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/create.json",
-        data: {"userId": menber, "groupId": groupId, "groupName": "哈哈"});
+        data: {"userId": menber, "groupId": "19", "groupName": "哈哈"});
     print(rel.data);
-    await _sendGroupMessage(groupId);
+    await _sendGroupMessage("19");
   }
 
   _searchGruopMember() async {
@@ -141,13 +156,13 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
-        data: {"groupId": "18"});
+        data: {"groupId": "19"});
     print(rel.data);
   }
 
   _sendGroupMessage(String groupId) async {
     TextMessage txtMessage = new TextMessage();
-    txtMessage.content = "这条消息来自 Flutter";
+    txtMessage.content = "这条消息来自 Flutter群消息，不要点击";
     Message msg = await RongIMClient.sendMessage(
         RCConversationType.Group, groupId, txtMessage);
     print(msg);

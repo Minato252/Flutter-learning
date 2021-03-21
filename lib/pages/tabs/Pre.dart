@@ -249,6 +249,52 @@ class _PreAndSendState extends State<PreAndSend> {
     }
   }
 
+  _sendGroupMessage() async {
+    List rel = await GroupMessageService.searchGruopMember("11");
+    List<String> groupMember = [];
+    for (int i = 0; i < rel.length; i++) {
+      groupMember.add(rel[i]["id"]);
+    }
+    print(groupMember);
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+    var parsedJson = json.decode(jsonTree);
+    List users = [];
+    List users2 = [];
+    Tree.getAllPeople(parsedJson, users);
+    for (int i = 0; i < users.length; i++) {
+      if (groupMember.contains(users[i]["id"])) {
+        users2.add(users[i]);
+      }
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    for (int i = 0; i < users.length; i++) {
+      if (users[i]["id"] == id) {
+        users.removeAt(i);
+      }
+    }
+    List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => ContactListPage(users2)));
+
+    targetIdList = [];
+    if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+      targetAllList[0].forEach((element) {
+        targetIdList.add(element["id"]);
+      });
+      await _sendMessage();
+    }
+
+    if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+      targetAllList[1].forEach((element) {
+        noteIdList.add(element["id"]);
+        noteNameList.add(element["name"]);
+      });
+      _sendNoteMessage();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     notehtmlCode = messageModel.htmlCode;
@@ -278,6 +324,8 @@ class _PreAndSendState extends State<PreAndSend> {
                   //   // Navigator.pop(context);
                   // }
                   //加载联系人列表
+
+                  await _sendGroupMessage();
                   final ps = Provider.of<ProviderServices>(context);
                   Map userInfo = ps.userInfo;
                   String jsonTree =
@@ -297,6 +345,7 @@ class _PreAndSendState extends State<PreAndSend> {
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
                               ContactListPage(users)));
+
                   targetIdList = [];
                   if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
                     targetAllList[0].forEach((element) {
@@ -574,20 +623,6 @@ class _PreAndSendState extends State<PreAndSend> {
     }
 
     sendMessageSuccess("发送成功");
-  }
-
-  _nonthing() {}
-
-  _sendGroupMessage(String content, String groupId) async {
-    // TextMessage txtMessage = new TextMessage();
-
-    // txtMessage.content = content;
-    // Message msg = await RongIMClient.sendMessage(
-    //     RCConversationType.Group, groupId, txtMessage);
-    // // print("send message start senderUserId = " + msg.senderUserId);
-    // print("msg" + msg.toString());
-    // return msg;
-    var lock = Lock();
   }
 
   _sendNoteMessage() async {
