@@ -121,14 +121,14 @@ class _ConversationItemState extends State<ConversationItem> {
   }
 
   void _getPortrait(String targetId, String userId) async {
-    var rel_1 = await Dio()
+    /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);
     var rel_2 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + userId);
     setState(() {
       photoUrl_target = rel_1.data["portrait"].toString();
       photoUrl_user = rel_2.data["portrait"].toString();
-    });
+    });*/
   }
 
   @override
