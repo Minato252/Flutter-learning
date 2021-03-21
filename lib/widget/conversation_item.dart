@@ -122,13 +122,14 @@ class _ConversationItemState extends State<ConversationItem> {
 
   void _getPortrait(String targetId, String userId) async {
     /*var rel_1 = await Dio()
-        .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);
+        .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
     var rel_2 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + userId);
     setState(() {
-      photoUrl_target = rel_1.data["portrait"].toString();
+      //photoUrl_target = rel_1.data["portrait"].toString();
       photoUrl_user = rel_2.data["portrait"].toString();
-    });*/
+      photoUrl_target = photoUrl_user;
+    });
   }
 
   @override
@@ -193,7 +194,7 @@ class _ConversationItemState extends State<ConversationItem> {
             Expanded(
               child: Column(
                 children: <Widget>[
-                  Container(
+                  /*Container(
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     // child: Text(
@@ -207,17 +208,47 @@ class _ConversationItemState extends State<ConversationItem> {
                     //         color: Color(RCColor.MessageNameBgColor))),
                     child: Container(
                       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: ClipOval(
-                        child: Image.network(
-                          // photoUrl,
-                          photoUrl_user,
-                          fit: BoxFit.cover,
-                          width: ScreenAdapter.width(100),
-                          height: ScreenAdapter.width(100),
-                        ),
+                      child: Text(
+                        message.senderUserId,
+                        style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ),
-                  ),
+                  ),*/
+
+                  Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      // child: Text(
+                      //     // (this.user == null || this.user.id == null
+                      //     //     ? ""
+                      //     //     : this.user.id),
+                      //     // "demo1",
+                      //     this.message.senderUserId,
+                      //     style: TextStyle(
+                      //         fontSize: RCFont.MessageNameFont,
+                      //         color: Color(RCColor.MessageNameBgColor))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            message.senderUserId,
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: ClipOval(
+                              child: Image.network(
+                                // photoUrl,
+                                photoUrl_user,
+                                fit: BoxFit.cover,
+                                width: ScreenAdapter.width(100),
+                                height: ScreenAdapter.width(100),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+
                   buildMessageWidget(),
                   // Container(
                   //   alignment: Alignment.centerRight,
@@ -269,31 +300,58 @@ class _ConversationItemState extends State<ConversationItem> {
             Expanded(
               child: Column(
                 children: <Widget>[
-                  Container(
+                  /* Container(
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                     // child: Text(
-                    //   // (this.user == null || this.user.id == null
-                    //   //     ? ""
-                    //   //     : this.user.id),
-                    //   // "demo2", //暂时写成demo
-                    //   this.message.targetId,
-                    //   style:
-                    //       TextStyle(color: Color(RCColor.MessageNameBgColor)),
-                    // ),
+                    //     // (this.user == null || this.user.id == null
+                    //     //     ? ""
+                    //     //     : this.user.id),
+                    //     // "demo1",
+                    //     this.message.senderUserId,
+                    //     style: TextStyle(
+                    //         fontSize: RCFont.MessageNameFont,
+                    //         color: Color(RCColor.MessageNameBgColor))),
                     child: Container(
                       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: ClipOval(
-                        child: Image.network(
-                          // photoUrl,
-                          photoUrl_target,
-                          fit: BoxFit.cover,
-                          width: ScreenAdapter.width(100),
-                          height: ScreenAdapter.width(100),
-                        ),
+                      child: Text(
+                        message.senderUserId,
+                        style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ),
-                  ),
+                  ),*/
+                  Container(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      // child: Text(
+                      //   // (this.user == null || this.user.id == null
+                      //   //     ? ""
+                      //   //     : this.user.id),
+                      //   // "demo2", //暂时写成demo
+                      //   this.message.targetId,
+                      //   style:
+                      //       TextStyle(color: Color(RCColor.MessageNameBgColor)),
+                      // ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            child: ClipOval(
+                              child: Image.network(
+                                // photoUrl,
+                                photoUrl_target,
+                                fit: BoxFit.cover,
+                                width: ScreenAdapter.width(100),
+                                height: ScreenAdapter.width(100),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            message.senderUserId,
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                        ],
+                      )),
                   buildMessageWidget(),
                 ],
               ),
