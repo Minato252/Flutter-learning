@@ -17,18 +17,22 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/group/GroupPre.dart';
 
 class GroupMessageCreate extends StatefulWidget {
   String targetGroupId;
   String title;
-  GroupMessageCreate({String targetGroupId, String title}) {
+  /*GroupMessageCreate({String targetGroupId, String title}) {
     this.targetGroupId = targetGroupId;
     this.title = title;
-  }
+  }*/
+  GroupMessageCreate({Key key, this.targetGroupId, this.title})
+      : super(key: key);
 
   @override
   _GroupMessageCreateState createState() =>
       _GroupMessageCreateState(targetGroupId = targetGroupId, title = title);
+  /*targetGroupId = targetGroupId, title = title*/
 }
 
 class _GroupMessageCreateState extends State<GroupMessageCreate>
@@ -73,7 +77,8 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                 )),
             FlatButton(
                 onPressed: () {
-                  _sendMessage(controller);
+                  //print(widget.targetGroupId);
+                  _sendMessage(controller, widget.targetGroupId);
                 },
                 child: Text(
                   "预览",
@@ -253,7 +258,8 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     });
   }
 
-  _sendMessage(SimpleRichEditController controller) async {
+  _sendMessage(
+      SimpleRichEditController controller, String targetGroupId) async {
     // newTitleFormKey.currentState.save(); //测试标题是否含有关键词
     // if (newTitleFormKey.currentState.validate()) {
 //标题含有关键词
@@ -276,14 +282,16 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
             ")");
     List<RichEditData> l = new List<RichEditData>.from(controller.data);
     Navigator.push(context, MaterialPageRoute(builder: (c) {
-      return PreAndSend(
+      return GroupPre(
         messageModel: messageModel,
         editable: true,
         data: l,
         isSearchResult: false,
+        targetGroupId: targetGroupId,
       );
     }));
     print("发送成功");
+    //print(targetGroupId);
   }
   // }
 }
