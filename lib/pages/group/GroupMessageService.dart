@@ -67,13 +67,14 @@ class GroupMessageService {
     return rel.data["users"];
   }
 
-  static sendDirectionMessage(List userList, String messageContent) async {
+  static sendDirectionMessage(
+      List userList, String groupId, String messageContent) async {
     // List userList = ["18270015296"];
     TextMessage m = new TextMessage();
     m.content = messageContent;
     MessageContent content = m;
     var rel = await RongIMClient.sendDirectionalMessage(
-        RCConversationType.Group, "19", userList, content);
+        RCConversationType.Group, groupId, userList, content);
     print(rel);
   }
 
