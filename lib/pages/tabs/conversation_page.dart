@@ -798,7 +798,7 @@ class _ConversationPageState extends State<ConversationPage>
                   // );
 
                   return GroupMessageCreate(
-                    targetGroupId: messageModel.messageId,
+                    targetGroupId: messageModel.messageId, //传群id
                     title: messageModel.title,
                     // fromUserId: prefs.getString("id"),
                   );
