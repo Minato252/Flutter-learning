@@ -68,10 +68,10 @@ class MessageItemFactory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
-              "标题:  ",
-              style: TextStyle(fontSize: 20.0),
-            ),
+            // Text(
+            //   "标题:  ",
+            //   style: TextStyle(fontSize: 20.0),
+            // ),
             Container(
               width: 120,
               child: Text(
@@ -85,7 +85,7 @@ class MessageItemFactory extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text("关键词:  "),
+            // Text("关键词:  "),
             Container(
               width: 120,
               child: Chip(

@@ -249,6 +249,7 @@ class _PreAndSendState extends State<PreAndSend> {
     }
   }
 
+//获取群成员
   _sendGroupMessage() async {
     List rel = await GroupMessageService.searchGruopMember("11");
     List<String> groupMember = [];
