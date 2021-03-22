@@ -187,6 +187,7 @@ class GroupPre extends StatefulWidget {
   String targetGroupId;
   double myFontSize = 15.0;
   bool isSearchResult = false;
+
   GroupPre({
     MessageModel messageModel,
     bool editable = false,
