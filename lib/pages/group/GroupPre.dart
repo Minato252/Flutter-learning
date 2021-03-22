@@ -319,6 +319,23 @@ class _GroupPreState extends State<GroupPre> {
       }
     }
 
+    // print(messageModel.title);
+
+    //发送给服务器
+    var rel1 = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": "null",
+      "messages": messageModel.htmlCode,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId
+    });
+
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
       targetAllList[1].forEach((element) {
         noteIdList.add(element["id"]);
@@ -350,6 +367,8 @@ class _GroupPreState extends State<GroupPre> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
+                  //print("1111111111111111111111111");
+                  //print(messageModel.modify);
                   //把群id传到了这里，然后根据id获取群成员。
                   print(targetGroupId);
                   _sendGroupMessage(targetGroupId);

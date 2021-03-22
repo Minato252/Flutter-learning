@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
+import 'package:weitong/pages/group/GroupPre.dart';
+import 'package:weitong/pages/group/Grouptran.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
@@ -889,7 +891,8 @@ class _ConversationPageState extends State<ConversationPage>
       //   messageModel: messageModel,
       // );
 //d429a1c0-8a5a-11eb-8941-7f87d9c9c40e
-      return PreAndSend(
+      //return PreAndSend(
+      return Grouptran(
         messageModel: messageModel,
         isSearchResult: false,
       );

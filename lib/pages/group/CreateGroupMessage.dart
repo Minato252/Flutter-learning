@@ -90,10 +90,11 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
           ],
         ),
         body: SafeArea(
-            child: SingleChildScrollView(
-          child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
+          child: SingleChildScrollView(
+              child: Container(
+                  padding: EdgeInsets.all(20),
+                  child:
+                      /*Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Column(
@@ -167,50 +168,51 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                           //     ],
                           //   ),
                           // ),
-                          Divider(),
-                          SafeArea(
-                            child: SizedBox(
-                              height: ScreenAdapter.height(650),
-                              child: MultiProvider(
-                                providers: [
-                                  ChangeNotifierProvider(
-                                    builder: (_) => VoiceRecordProvider(),
-                                  )
-                                ],
-                                child: RichEdit(
-                                    controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
-                              ),
-                              // Container(
-                              //   child: TextField(
-                              //     minLines: 18,
-                              //     keyboardType: TextInputType.multiline,
-                              //     maxLines: null,
-                              //     decoration: InputDecoration(
-                              //         border: OutlineInputBorder(), hintText: "输入内容"),
-                              //   ),
-                              // ),
-                              // Divider(),
-                              // Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              //   children: [
-                              //     FlatButton(
-                              //         onPressed: () {}, child: Icon(Icons.note_add)),
-                              //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
-                              //     FlatButton(
-                              //         onPressed: () {}, child: Icon(Icons.video_call)),
-                              //   ],
-                              // ),
-                            ),
-                            /*JdButton(
+                          Divider(),*/
+                      SafeArea(
+                    child: SizedBox(
+                      height: ScreenAdapter.height(650),
+                      child: MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            builder: (_) => VoiceRecordProvider(),
+                          )
+                        ],
+                        child: RichEdit(
+                            controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                      ),
+                      // Container(
+                      //   child: TextField(
+                      //     minLines: 18,
+                      //     keyboardType: TextInputType.multiline,
+                      //     maxLines: null,
+                      //     decoration: InputDecoration(
+                      //         border: OutlineInputBorder(), hintText: "输入内容"),
+                      //   ),
+                      // ),
+                      // Divider(),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //   children: [
+                      //     FlatButton(
+                      //         onPressed: () {}, child: Icon(Icons.note_add)),
+                      //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
+                      //     FlatButton(
+                      //         onPressed: () {}, child: Icon(Icons.video_call)),
+                      //   ],
+                      // ),
+                    ),
+                    /*JdButton(
                 text: "预览",
                 cb: () {
                   _sendMessage(controller);
                 },
               ),*/
-                          )
-                        ]),
-                  ])),
-        )));
+                  )
+                  // ]),
+                  // ]
+                  )),
+        ));
   }
 
   String _validateNewTitle(value) {
@@ -275,6 +277,8 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     MessageModel messageModel = MessageModel(
         htmlCode: htmlCode,
         title: title,
+        // messageId:targetGroupId,
+
         // keyWord: _curchosedTag,
         hadLook: prefs.get("name") +
             "(" +
