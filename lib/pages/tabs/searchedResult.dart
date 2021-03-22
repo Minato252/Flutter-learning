@@ -30,7 +30,7 @@ class _SearchedResultState extends State<SearchedResult> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("查询到了${messageList.length}条结果"),
+          title: Text("查询到了${messageList.length}条内容"),
         ),
         body: Column(
           children: [

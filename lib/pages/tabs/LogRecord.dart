@@ -9,6 +9,7 @@ import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/tabs/chooseUser/ChoseList.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
 import 'package:weitong/pages/tabs/searchedResult.dart';
+import 'package:weitong/pages/tabs/sresult.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -261,12 +262,31 @@ class _LogRecordPageState extends State<LogRecordPage>
           }
         }
       });
+      //print(l);
+      /* List title = [];
+      List content = [];
+      Map<String, List<MessageModel>> map = new Map.fromIterable(l.reversed,
+          key: (key) => key.title,
+          value: (value) {
+            return l.reversed
+                .where((item) => item.title == value.title)
+                .toList();
+          });
+      // Map<int, List<MessageModel>> ageMapperUsers = groupBy(list, (user) => user.age);
+      map.forEach((k, v) {
+        title.add(k);
+        content.add(v);
+        // print('$k --- ${v.map((value) => value.title).join(",")}');
+      });*/
+      List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+      //r = l.reversed;
+      _showMessageByTitle(r);
 
-      Navigator.push(
+      /*  Navigator.push(
           context,
           new MaterialPageRoute(
               builder: (context) =>
-                  new SearchedResult(new List<MessageModel>.from(l.reversed))));
+                  new SearchedResult(new List<MessageModel>.from(l.reversed))));*/
     }
 
     //有关键词有id且有日期
@@ -286,6 +306,42 @@ class _LogRecordPageState extends State<LogRecordPage>
 
     //     """)
     // ];
+  }
+
+  _showMessageByTitle(List<MessageModel> messageList) {
+    List<String> titleList = new List(); //获取查询到的所以标题
+    for (int i = 0; i < messageList.length; i++) {
+      String title = messageList[i].title;
+      if (!titleList.contains(title)) {
+        titleList.add(title);
+      }
+    }
+    // List<List<MessageModel>> conList = new List(titleList.length);
+    List conList = new List();
+    for (int i = 0; i < titleList.length; i++) {
+      List<MessageModel> list = new List();
+      conList.add(list);
+    }
+    // List
+    for (int i = 0; i < messageList.length; i++) {
+      for (int j = 0; j < titleList.length; j++) {
+        if (titleList[j] == messageList[i].title) {
+          conList[j].add(messageList[i]);
+        }
+      }
+    }
+    print(conList);
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (context) =>
+                new sresult(title: titleList, content: conList)));
+
+    // Navigator.push(context, MaterialPageRoute(builder: (c) {
+    //   return SearchMessagePage(conList: conList
+    //       // title:title,
+    //       );
+    // }));
   }
 
   _awaitReturnChooseTag(BuildContext context) async {
