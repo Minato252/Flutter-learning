@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart' as prefix;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'dart:developer' as developer;
 
@@ -63,6 +64,7 @@ class _ConversationItemState extends State<ConversationItem> {
 
   String photoUrl_target = "";
   String photoUrl_user = "";
+  Map photoUrlMap = new Map();
 
   _ConversationItemState(
       ConversationItemDelegate delegate,
@@ -122,13 +124,24 @@ class _ConversationItemState extends State<ConversationItem> {
   }
 
   void _getPortrait(String targetId, String userId) async {
+    String groupId = this.message.targetId;
+    List member = await GroupMessageService.searchGruopMember(groupId);
+    // Map map = new Map();
+
+    for (int i = 0; i < member.length; i++) {
+      var rel = await Dio().post(
+          "http://47.110.150.159:8080/record/selectrecord?id=" +
+              member[i]["id"]);
+      photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
     var rel_2 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + userId);
     setState(() {
       //photoUrl_target = rel_1.data["portrait"].toString();
-      photoUrl_user = rel_2.data["portrait"].toString();
+      photoUrl_user = photoUrlMap[prefs.getString("id")];
       photoUrl_target = photoUrl_user;
     });
   }
@@ -240,7 +253,10 @@ class _ConversationItemState extends State<ConversationItem> {
                             child: ClipOval(
                               child: Image.network(
                                 // photoUrl,
-                                photoUrl_user,
+                                // photoUrl_user,
+                                photoUrlMap[message.senderUserId] == null
+                                    ? ""
+                                    : photoUrlMap[message.senderUserId],
                                 fit: BoxFit.cover,
                                 width: ScreenAdapter.width(100),
                                 height: ScreenAdapter.width(100),
@@ -340,7 +356,10 @@ class _ConversationItemState extends State<ConversationItem> {
                             child: ClipOval(
                               child: Image.network(
                                 // photoUrl,
-                                photoUrl_target,
+                                // photoUrl_target ,
+                                photoUrlMap[message.senderUserId] == null
+                                    ? ""
+                                    : photoUrlMap[message.senderUserId],
                                 fit: BoxFit.cover,
                                 width: ScreenAdapter.width(100),
                                 height: ScreenAdapter.width(100),
@@ -349,6 +368,7 @@ class _ConversationItemState extends State<ConversationItem> {
                           ),
                           Text(
                             message.senderUserId,
+                            // SharedPreferences prefs = await SharedPreferences.getInstance();
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
                         ],
