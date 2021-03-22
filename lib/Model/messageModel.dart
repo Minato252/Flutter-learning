@@ -14,7 +14,7 @@ class MessageModel {
   String hadLook;
   String messageId = "";
 
-  bool modify = false;
+  bool modify = true;
 
   MessageModel(
       {String htmlCode,
