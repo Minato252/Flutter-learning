@@ -121,7 +121,7 @@ Scrollbar getPre(
           //     // '#12': Style(width: 400, height: 400),
           //   },
           // ),
-          Divider(),
+          isSearchResult ? Divider() : Text(""),
           // Container(
           //   child: messageModel.htmlCode ==
           //           """<p><span style="font-size:15px;"></span></p>"""
@@ -564,8 +564,8 @@ class _GrouptranState extends State<Grouptran> {
     // print(messageModel.title);
 
     //发送给服务器
-    print(htmlCode2);
-    print("1111111111111111111");
+    //print(htmlCode2);
+    //print("1111111111111111111");
     var rel1 = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": "null",

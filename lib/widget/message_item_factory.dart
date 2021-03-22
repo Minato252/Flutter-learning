@@ -7,6 +7,8 @@ import 'package:weitong/Model/messageModel.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:developer' as developer;
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart' as dom;
 
 import 'package:weitong/Model/style.dart';
 
@@ -74,15 +76,19 @@ class MessageItemFactory extends StatelessWidget {
             // ),
             Container(
               width: 120,
+              height: 70,
               child: Text(
-                messageModel.title == null ? "没有标题" : messageModel.title,
+                //messageModel.title == null ? "没有标题" : messageModel.title,
+                _content(messageModel.htmlCode) == ""
+                    ? "内容为空"
+                    : _content(messageModel.htmlCode),
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 20.0),
+                style: TextStyle(fontSize: 22.0),
               ),
             )
           ],
         ),
-        Row(
+        /* Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Text("关键词:  "),
@@ -91,13 +97,129 @@ class MessageItemFactory extends StatelessWidget {
               child: Chip(
                   label: Text(
                 messageModel.keyWord == null ? "空关键词 " : messageModel.keyWord,
+                //_content(messageModel.htmlCode),
                 overflow: TextOverflow.ellipsis,
               )),
             )
           ],
-        ),
+        ),*/
       ],
     );
+  }
+
+//提取出消息的内容
+  String _content(htmlCode) {
+    //提取出内容
+    var str = "$htmlCode";
+    String result = "";
+
+    List resultList = [];
+    var document = parse(str);
+    List<dom.Element> children = document.children;
+    Function fn;
+    fn = (children) {
+      for (int i = 0; i < children.length; i++) {
+        dom.Element ele = children[i];
+        String localName = ele.localName;
+        if (localName == 'html' || localName == 'head' || localName == 'body') {
+          if (ele.children.length > 0) {
+            fn(ele.children);
+          }
+          continue;
+        }
+
+        if (ele.children.length > 0) {
+          dom.Element firstChildEle = ele.children.first;
+          String preTag = '<${ele.localName}>';
+          String firstChildTag = '<${firstChildEle.localName}';
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "<${ele.localName}\.*>(.*)$firstChildTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            //print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              //resultList.add(text);
+              result = result + text;
+            }
+          });
+
+          //  print(
+          //     '==============================================================================\n\n');
+          fn(ele.children);
+
+          dom.Element lastChildEle = ele.children.last;
+          String lastChildTag = '</${lastChildEle.localName}>';
+          preTag = '</${ele.localName}';
+          //  print('lastChildTag: $lastChildTag, preTag: $preTag');
+
+          regStr = "$lastChildTag(.*)$preTag";
+          matches = RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            // print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              //resultList.add(text);
+              result = result + text;
+            }
+          });
+        } else {
+          String text = ele.innerHtml;
+          //  print('~~~提取出文本: $text');
+          if (text != null && text.length > 0) {
+            // resultList.add(text);
+            result = result + text;
+          }
+
+          if (localName == 'img') {
+            String src = ele.attributes['src'];
+            //picture = true;
+            resultList.add(src);
+          } else if (localName == 'video') {
+            String src = ele.attributes['src'];
+            resultList.add(src);
+          } else if (localName == 'audio') {
+            String src = ele.attributes['src'];
+            resultList.add(src);
+          }
+        }
+
+        if (i < children.length - 1) {
+          dom.Element netEle = children[i + 1];
+          String currentTag = '</${ele.localName}>';
+          String netTag = netEle != null ? '<${netEle.localName}' : '';
+          // print('currentTag: $currentTag, netTag: $netTag');
+
+          String outerHtml = ele.outerHtml;
+          String regStr = "$currentTag(.*)$netTag";
+          List<RegExpMatch> matches =
+              RegExp(regStr).allMatches(outerHtml).toList();
+          matches.forEach((RegExpMatch match) {
+            String text = match.group(1);
+            //print('~~~提取出文本: $text');
+            if (text != null && text.length > 0) {
+              //resultList.add(text);
+              result = result + text;
+            }
+          });
+        }
+      }
+    };
+    fn(children);
+    // return result;
+    if (result == "" && resultList.length != 0) {
+      if (resultList[0].contains('jpg') || resultList[0].contains('png')) {
+        return "图片";
+      } else if (resultList[0].contains('mp4')) {
+        return "视频";
+      } else if (resultList[0].contains('mp3')) {
+        return "音频";
+      }
+    } else {
+      return result;
+    }
   }
 
   ///图片消息 item
