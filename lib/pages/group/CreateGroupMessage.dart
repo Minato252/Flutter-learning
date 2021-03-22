@@ -69,7 +69,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                   _clearMessage(controller);
                 },
                 child: Text(
-                  "清空富文本",
+                  "清空内容",
                   style: TextStyle(
                       fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
