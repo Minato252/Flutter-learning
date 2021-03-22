@@ -118,6 +118,7 @@ class GroupMessageService {
         });
     print(rel);
     print(rel.data);
+    print("************创建群id是：$groupId*********");
     await sendGroupMessage("$groupId", messageContent);
   }
 

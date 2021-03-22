@@ -270,8 +270,8 @@ class _GroupPreState extends State<GroupPre> {
     Map userInfo = ps.userInfo;
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
-    List users = [];
-    List users2 = [];
+    List users = []; //树的总人数
+    List users2 = []; //群成员
     Tree.getAllPeople(parsedJson, users);
     for (int i = 0; i < users.length; i++) {
       if (groupMember.contains(users[i]["id"])) {
@@ -280,11 +280,11 @@ class _GroupPreState extends State<GroupPre> {
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String id = prefs.getString("id");
-    for (int i = 0; i < users.length; i++) {
-      if (users[i]["id"] == id) {
-        users.removeAt(i);
-      }
-    }
+    // for (int i = 0; i < users.length; i++) {
+    //   if (users[i]["id"] == id) {
+    //     users2.removeAt(i);
+    //   }
+    // }
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(users2)));
 
@@ -293,6 +293,9 @@ class _GroupPreState extends State<GroupPre> {
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);
       });
+      if (!targetIdList.contains(id)) {
+        targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
+      }
       // await _sendMessage();
       bool isDirctionMessage = false;
       for (int i = 0; i < groupMember.length; i++) {
@@ -300,19 +303,19 @@ class _GroupPreState extends State<GroupPre> {
           isDirctionMessage = true;
         }
       }
-      var uuid = Uuid();
-      var messageId = uuid.v1();
-      messageModel.messageId = messageId;
-      messageModel.fromuserid = await prefs.getString("id");
+      // var uuid = Uuid();
+      // var messageId = uuid.v1();
+      // messageModel.messageId = messageId;
+      messageModel.messageId = groupId;
+      messageModel.fromuserid = prefs.getString("id");
       content = messageModel.toJsonString();
       if (isDirctionMessage) {
         //未全选群成员，即对部分人隐藏内容
         await GroupMessageService.sendDirectionMessage(
             targetIdList, groupId, content);
       } else {
-        //全选群成员，发送功课消息
-        await GroupMessageService.creatGruop(groupId, messageModel.title,
-            targetIdList.join(',').toString(), content);
+        //全选群成员，发送群消息
+        await GroupMessageService.sendGroupMessage(groupId, content);
       }
     }
 

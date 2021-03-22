@@ -590,8 +590,9 @@ class _PreAndSendState extends State<PreAndSend> {
     //     targetIdList.join(',').toString(), content);
     print(targetIdList.join(',').toString());
     print("title:" + messageModel.title);
-    await GroupMessageService.creatGruop(messageId, messageModel.title,
-        targetIdList.join(',').toString(), content);
+    print("**************在创建群之前的messageId是：" + messageModel.messageId);
+    await GroupMessageService.creatGruop(messageModel.messageId,
+        messageModel.title, targetIdList.join(',').toString(), content);
     // print("*********");
     // Future.delayed(Duration(seconds: 3), () {
     // GroupMessageService.sendGroupMessage("11", content);
@@ -623,7 +624,7 @@ class _PreAndSendState extends State<PreAndSend> {
     //   print("****发信息*****");
     // });
     // }
-
+    print(messageId);
     sendMessageSuccess("发送成功");
   }
 
