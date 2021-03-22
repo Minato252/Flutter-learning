@@ -72,7 +72,7 @@ Scrollbar getPre(
                             ),
                           ),
                         ),
-                        Chip(label: Text(messageModel.keyWord)),
+                        //  Chip(label: Text(messageModel.keyWord)),
                       ],
                     ),
                     Align(

@@ -78,7 +78,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
             FlatButton(
                 onPressed: () {
                   //print(widget.targetGroupId);
-                  _sendMessage(controller, widget.targetGroupId);
+                  _sendMessage(controller, widget.targetGroupId, widget.title);
                 },
                 child: Text(
                   "预览",
@@ -258,8 +258,8 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     });
   }
 
-  _sendMessage(
-      SimpleRichEditController controller, String targetGroupId) async {
+  _sendMessage(SimpleRichEditController controller, String targetGroupId,
+      String title) async {
     // newTitleFormKey.currentState.save(); //测试标题是否含有关键词
     // if (newTitleFormKey.currentState.validate()) {
 //标题含有关键词
@@ -275,7 +275,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     MessageModel messageModel = MessageModel(
         htmlCode: htmlCode,
         title: title,
-        keyWord: _curchosedTag,
+        // keyWord: _curchosedTag,
         hadLook: prefs.get("name") +
             "(" +
             new DateTime.now().toString().split('.')[0] +
@@ -288,6 +288,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
         data: l,
         isSearchResult: false,
         targetGroupId: targetGroupId,
+        // title:title,
       );
     }));
     print("发送成功");

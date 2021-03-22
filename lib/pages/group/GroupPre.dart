@@ -37,6 +37,7 @@ import 'package:weitong/pages/tabs/chooseUser/contacts_list_page.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:synchronized/synchronized.dart' as prefix;
+import 'package:weitong/pages/group/PretoRichEditGroup.dart';
 
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
@@ -415,8 +416,10 @@ class _GroupPreState extends State<GroupPre> {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onPressed: () {
                         Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (context) => new PretoRichEdit(data,
-                                messageModel.title, messageModel.keyWord)));
+                            builder: (context) => new PretoRichEditGroup(
+                                data,
+                                messageModel
+                                    .title /*, messageModel.keyWord*/)));
                       })
                   : SizedBox(
                       width: 0,
