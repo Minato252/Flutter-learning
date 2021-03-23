@@ -131,14 +131,17 @@ class _ConversationItemState extends State<ConversationItem> {
     for (int i = 0; i < member.length; i++) {
       var rel = await Dio().post(
           "http://47.110.150.159:8080/record/selectrecord?id=" +
-              member[i]["id"]);
+              member[i]["id"] +
+              "&type=member");
       photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
-    var rel_2 = await Dio()
-        .post("http://47.110.150.159:8080/record/selectrecord?id=" + userId);
+    var rel_2 = await Dio().post(
+        "http://47.110.150.159:8080/record/selectrecord?id=" +
+            userId +
+            "&type=member");
     setState(() {
       //photoUrl_target = rel_1.data["portrait"].toString();
       photoUrl_user = photoUrlMap[prefs.getString("id")];

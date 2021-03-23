@@ -142,8 +142,10 @@ class _UserPageState extends State<UserPage> {
   void _getPortrait() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     this.id = prefs.get("id");
-    var rel = await Dio()
-        .post("http://47.110.150.159:8080/record/selectrecord?id=" + this.id);
+    var rel = await Dio().post(
+        "http://47.110.150.159:8080/record/selectrecord?id=" +
+            this.id +
+            "&type=member");
     setState(() {
       this.photoUrl = rel.data["portrait"].toString();
       isLoadFinshed = true;
@@ -192,12 +194,12 @@ class _UserPageState extends State<UserPage> {
       // return path;
       url = await UploadFile.fileUplod(path);
       var r = await Dio().post("http://47.110.150.159:8080/record/updatarecord",
-          data: {"id": this.id, "portrait": url});
+          data: {"id": this.id, "portrait": url, "type": "member"});
       return url;
     }
     url = await UploadFile.fileUplod(oldPath);
     var r = await Dio().post("http://47.110.150.159:8080/record/updatarecord",
-        data: {"id": this.id, "portrait": url});
+        data: {"id": this.id, "portrait": url, "type": "member"});
 
     return url;
   }
