@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:weitong/Model/MessageModelToConversation.dart';
 import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
+
 import 'package:weitong/pages/tabs/chooseUser/ChoseList.dart';
 import 'package:weitong/pages/tabs/friendList.dart';
 import 'package:weitong/pages/tabs/searchedResult.dart';
-import 'package:weitong/pages/tabs/sresult.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_util.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -215,11 +218,12 @@ class _LogRecordPageState extends State<LogRecordPage>
 
   searchMessage() async {
     bool isEmpty = true;
-    String url = "http://47.110.150.159:8080/messages/selectId?";
+    String url = "http://47.110.150.159:8080/messages/select?";
     if (_searchTag != "" && _searchTag != null) {
       //有关键词
       isEmpty = false;
-      url += "keyWords=$_searchTag&";
+      // url += "keyWords=$_searchTag&";
+      url += "keyWords=1群&";
     }
 
     if (_searchTime != null) {
@@ -232,80 +236,58 @@ class _LogRecordPageState extends State<LogRecordPage>
     if (_searchStaffId != "" && _searchStaffId != null) {
       //有id
       isEmpty = false;
-      url += "id=$_searchStaffId&";
+      url += "fromuserid=$_searchStaffId&";
     } else if (!isEmpty) {
-      //没id,且别的不为空，需要查找
-      List<Map> subStaff = await _getSubs();
-      for (int i = 0; i < subStaff.length; i++) {
-        url += "id=${subStaff[i]["id"]}&";
-      }
+      // // 没id,且别的不为空，需要查找
+      // List<Map> subStaff = await _getSubs();
+      // for (int i = 0; i < subStaff.length; i++) {
+      //   url += "fromuserid=${subStaff[i]["id"]}&";
+      // }
     } else {
       //没id，别的也没，就不用查找
       MyToast.AlertMesaage("请至少选择一项");
       print("请至少选择一项");
       return;
     }
-
+    print(url);
     var rel = await Dio().post(url);
-    Map m = rel.data;
+    // Map m = rel.data;
+    // if (m.isEmpty) {
+    //   Navigator.push(context,
+    //       new MaterialPageRoute(builder: (context) => new NullResult()));
+    // } else {
+    //   List<MessageModel> l = new List<MessageModel>();
+    //   m.forEach((key, value) {
+    //     if (value is List) {
+    //       for (int i = 0; i < value.length; i++) {
+    //         MessageModel mm = MessageModel.formServerJsonString(value[i]);
+    //         mm.modify = true;
+    //         l.add(mm);
+    //       }
+    //     }
+    //   });
+
+    List m = rel.data;
+
     if (m.isEmpty) {
       Navigator.push(context,
           new MaterialPageRoute(builder: (context) => new NullResult()));
     } else {
       List<MessageModel> l = new List<MessageModel>();
-      m.forEach((key, value) {
-        if (value is List) {
-          for (int i = 0; i < value.length; i++) {
-            MessageModel mm = MessageModel.formServerJsonString(value[i]);
-            mm.modify = true;
-            l.add(mm);
-          }
-        }
-      });
-      //print(l);
-      /* List title = [];
-      List content = [];
-      Map<String, List<MessageModel>> map = new Map.fromIterable(l.reversed,
-          key: (key) => key.title,
-          value: (value) {
-            return l.reversed
-                .where((item) => item.title == value.title)
-                .toList();
-          });
-      // Map<int, List<MessageModel>> ageMapperUsers = groupBy(list, (user) => user.age);
-      map.forEach((k, v) {
-        title.add(k);
-        content.add(v);
-        // print('$k --- ${v.map((value) => value.title).join(",")}');
-      });*/
+      for (int i = 0; i < m.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        mm.modify = true;
+        l.add(mm);
+      }
+
+      // Navigator.push(
+      //     context,
+      //     new MaterialPageRoute(
+      //         builder: (context) =>
+      //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
       List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-      //r = l.reversed;
-      _showMessageByTitle(r);
-
-      /*  Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) =>
-                  new SearchedResult(new List<MessageModel>.from(l.reversed))));*/
+      _showMessageByTitle(r); //按标题去展示消息
     }
-
-    //有关键词有id且有日期
-    //按照关键词+id+日期查找
-    // List<MessageModel> l = [
-    //   MessageModel.formServerJsonString("""
-    //         {
-    //     "mId": 29,
-    //     "mTitle": "ok",
-    //     "mKeywords": "im",
-    //     "mPostmessages": "Hello Word",
-    //     "mStatus": "0",
-    //     "mTime": "2021-01-22 00:00:00.000000",
-    //     "mFromuserid": "188777777",
-    //     "mTouserid": "173XXXXXX"
-    // }
-
-    //     """)
-    // ];
   }
 
   _showMessageByTitle(List<MessageModel> messageList) {
@@ -318,30 +300,32 @@ class _LogRecordPageState extends State<LogRecordPage>
     }
     // List<List<MessageModel>> conList = new List(titleList.length);
     List conList = new List();
+    List conversation = new List(); //conversation类型二维数组
     for (int i = 0; i < titleList.length; i++) {
       List<MessageModel> list = new List();
       conList.add(list);
+      List<Conversation> con = new List();
+      conversation.add(con);
     }
     // List
+
     for (int i = 0; i < messageList.length; i++) {
       for (int j = 0; j < titleList.length; j++) {
         if (titleList[j] == messageList[i].title) {
           conList[j].add(messageList[i]);
+          Conversation item =
+              MessageModelToConversation.transation(messageList[i]);
+          conversation[j].add(item);
         }
       }
     }
-    print(conList);
-    Navigator.push(
-        context,
-        new MaterialPageRoute(
-            builder: (context) =>
-                new sresult(title: titleList, content: conList)));
+    // print(conList);
 
-    // Navigator.push(context, MaterialPageRoute(builder: (c) {
-    //   return SearchMessagePage(conList: conList
-    //       // title:title,
-    //       );
-    // }));
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: conversation
+          // title:title,
+          );
+    }));
   }
 
   _awaitReturnChooseTag(BuildContext context) async {

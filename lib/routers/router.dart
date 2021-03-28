@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
+import 'package:weitong/pages/SearchMessage/search_conversation_page.dart';
 import 'package:weitong/pages/tabs/ChooseUser.dart';
 import 'package:weitong/pages/tabs/Message.dart';
 import 'package:weitong/pages/tabs/Setting.dart';
@@ -35,6 +36,8 @@ final routes = {
 
   '/conversation': (context, {arguments}) =>
       ConversationPage(arguments: arguments),
+  '/searchConversation': (context, {arguments}) =>
+      SearchConversationPage(arguments: arguments),
   // '/form': (context, {arguments}) => FormPage(arguments: arguments),
   // '/readMessage': (context) => ReadMessage(),
   '/category': (BuildContext context) => new CategoryPage(),

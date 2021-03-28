@@ -92,7 +92,8 @@ class MessageModel {
       hadLook = json['mHadLook'];
       time = strToTime(json["mTime"]);
       fromuserid = json["mFromuserid"];
-      messageId = json['messageId'];
+      // messageId = json['messageId'];
+      messageId = json['mMesId'];
       // content = jsonEncode(json);
     } catch (e) {
       isJson = false;

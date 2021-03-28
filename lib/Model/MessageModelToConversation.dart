@@ -1,10 +1,11 @@
 import 'package:weitong/Model/messageModel.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
-class conversationToMessageModel {
-  Conversation transation(MessageModel messageModel) {
+class MessageModelToConversation {
+  static Conversation transation(MessageModel messageModel) {
     TextMessage textMessage = new TextMessage();
-    textMessage.content = messageModel.content;
+    textMessage.content = messageModel.toJsonString();
+
     textMessage.destructDuration = 0;
     Conversation con = new Conversation();
     con.conversationType = 3;
@@ -15,11 +16,38 @@ class conversationToMessageModel {
     con.mentionedCount = 0;
     con.originContentMap = null;
     con.receivedStatus = 1;
+    con.objectName = "RC:TxtMsg";
     con.senderUserId = messageModel.fromuserid;
     //con.sentTime = messageModel.time;//格式不对
+    con.sentTime = 1234567899; //time是Int类型的
     con.sentStatus = 30;
     con.targetId = messageModel.messageId;
     con.unreadMessageCount = 0;
+    return con;
+  }
+
+  static Message conversatioToMessage(Conversation conversation) {
+    Message message = new Message();
+    message.canIncludeExpansion = false;
+    // TextMessage textMessage = new TextMessage();
+    message.content = conversation.latestMessageContent;
+    message.conversationType = conversation.conversationType;
+    message.expansionDic = null;
+    message.extra = "";
+    message.messageConfig = null; //不确定
+    message.messageDirection = 2; //不确定
+    // message.messageId = 46;
+    message.messagePushConfig = null;
+    message.messageUId = conversation.targetId;
+    message.objectName = "RC:TxtMsg";
+    message.originContentMap = null;
+    message.readReceiptInfo = null;
+    message.receivedStatus = 1;
+    message.senderUserId = conversation.senderUserId;
+    message.sentStatus = 30;
+    message.sentTime = conversation.sentTime;
+    message.targetId = conversation.targetId;
+    return message;
   }
 }
 

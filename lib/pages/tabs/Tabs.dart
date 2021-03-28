@@ -31,7 +31,7 @@ class _TabsState extends State<Tabs> {
   int _currentIndex = 0;
   List<Widget> _pagelist = [
     MessagePage(),
-    // GropuMessagePage(),
+    GropuMessagePage(),
     MessageCreate(),
     LogRecordPage(),
     UserPage()
@@ -240,7 +240,7 @@ class _TabsState extends State<Tabs> {
         fixedColor: Colors.red,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.textsms), title: Text("消息")),
-          // BottomNavigationBarItem(icon: Icon(Icons.group), title: Text("群")),
+          BottomNavigationBarItem(icon: Icon(Icons.group), title: Text("测试群")),
           BottomNavigationBarItem(icon: Icon(Icons.create), title: Text("创建")),
           BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("查询")),
           BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("我的"))

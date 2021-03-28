@@ -196,7 +196,8 @@ class _ConversationListItemState extends State<ConversationListItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            title == null ? "没有标题" : title,
+            // title == null ? "没有标题" : title,
+            title == null ? "没有标题2222" : title,
             style: TextStyle(
                 fontSize: RCFont.ConListTitleFont,
                 color: Color(RCColor.ConListTitleColor),
