@@ -334,7 +334,8 @@ class _GroupPreState extends State<GroupPre> {
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": messageModel.messageId,
+      "Flag": "普通", //这里增加了flag
     });
 
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
@@ -426,7 +427,8 @@ class _GroupPreState extends State<GroupPre> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () {
-                  postRequestFunction(notehtmlCode);
+                  print(targetGroupId);
+                  postRequestFunction(notehtmlCode, targetGroupId);
                 },
               ),
               editable
@@ -726,8 +728,9 @@ class _GroupPreState extends State<GroupPre> {
         fontSize: 16.0);
   }
 
-//将信息内容保存到我的部分类别为“默认类别”
-  void postRequestFunction(String htmlCode) async {
+//将信息内容保存到服务器
+  void postRequestFunction(String htmlCode, String targetGroupId) async {
+    print(targetGroupId);
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
     //   // var htmlCode = await controller.generateHtmlUrl();
     //   String url = "http://47.110.150.159:8080/insertNote";
@@ -750,14 +753,16 @@ class _GroupPreState extends State<GroupPre> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var htmlCode = await controller.generateHtmlUrl();
-    String url = "http://47.110.150.159:8080/insertNote";
+    // String url = "http://47.110.150.159:8080/insertNote";
+    print("*");
+    print(targetGroupId);
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
         "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
-    Response response = await Dio().post(url, data: {
+    /* Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
       "nNote": "$htmlCode",
       "uId": "$id",
@@ -769,22 +774,23 @@ class _GroupPreState extends State<GroupPre> {
       fromid = id;
     } else {
       fromid = messageModel.fromuserid;
-    }
+    }*/
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
       "messages": html,
-      "touserid": prefs.get("id"),
-      "fromuserid": fromid,
+      "touserid": targetGroupId,
+      "fromuserid": prefs.get("id"),
       "title": messageModel.title,
       "hadLook": prefs.get("name") +
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": targetGroupId,
+      "Flag": "草稿",
     });
 
-    MyToast.AlertMesaage("已将内容保存至草稿中！");
+    MyToast.AlertMesaage("已将内容保存！");
   }
 }
 

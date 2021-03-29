@@ -231,6 +231,7 @@ class _LogRecordPageState extends State<LogRecordPage>
 
       isEmpty = false;
       url += "time=${_searchTime.toString().split(" ")[0]}&";
+      print("time=${_searchTime.toString().split(" ")[0]}");
     }
 
     if (_searchStaffId != "" && _searchStaffId != null) {

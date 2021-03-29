@@ -64,7 +64,10 @@ class _ConversationItemState extends State<ConversationItem> {
 
   String photoUrl_target = "";
   String photoUrl_user = "";
+  String name_target = "";
+  String name_user = "";
   Map photoUrlMap = new Map();
+  Map nameUrlMap = new Map();
 
   _ConversationItemState(
       ConversationItemDelegate delegate,
@@ -134,7 +137,13 @@ class _ConversationItemState extends State<ConversationItem> {
               member[i]["id"] +
               "&type=member");
       photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+
+      //获取用户名
+      var relname = await Dio().post(
+          "http://47.110.150.159:8080/getinformation?id=" + member[i]["id"]);
+      nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
     }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
@@ -142,10 +151,14 @@ class _ConversationItemState extends State<ConversationItem> {
         "http://47.110.150.159:8080/record/selectrecord?id=" +
             userId +
             "&type=member");
+    var relname2 = await Dio()
+        .post("http://47.110.150.159:8080/getinformation?id=" + userId);
     setState(() {
       //photoUrl_target = rel_1.data["portrait"].toString();
       photoUrl_user = photoUrlMap[prefs.getString("id")];
       photoUrl_target = photoUrl_user;
+      name_user = nameUrlMap[prefs.getString("id")];
+      name_target = name_user;
     });
   }
 
@@ -248,7 +261,9 @@ class _ConversationItemState extends State<ConversationItem> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            message.senderUserId,
+                            nameUrlMap[message.senderUserId] == null
+                                ? ""
+                                : nameUrlMap[message.senderUserId],
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
                           Container(
@@ -370,7 +385,9 @@ class _ConversationItemState extends State<ConversationItem> {
                             ),
                           ),
                           Text(
-                            message.senderUserId,
+                            nameUrlMap[message.senderUserId] == null
+                                ? ""
+                                : nameUrlMap[message.senderUserId],
                             // SharedPreferences prefs = await SharedPreferences.getInstance();
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),

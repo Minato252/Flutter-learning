@@ -10,6 +10,7 @@ class MessageModel {
   DateTime time;
   String fromuserid;
   bool isJson = true;
+  String flag;
 
   String hadLook;
   String messageId = "";
@@ -21,12 +22,14 @@ class MessageModel {
       String title,
       String keyWord,
       String hadLook,
-      DateTime dateTime})
+      DateTime dateTime,
+      String flag})
       : htmlCode = htmlCode,
         title = title,
         hadLook = hadLook,
         keyWord = keyWord,
-        time = dateTime;
+        time = dateTime,
+        flag = flag;
 
   MessageModel.fromJson(Map<String, dynamic> json) {
     //通过Map转换
@@ -35,6 +38,7 @@ class MessageModel {
     htmlCode = json['htmlCode'];
     hadLook = json['hadLook'];
     messageId = json['messageId'];
+    flag = json['flag'];
     content = jsonEncode(json);
   }
 
@@ -46,6 +50,7 @@ class MessageModel {
     data['htmlCode'] = this.htmlCode;
     data['hadLook'] = this.hadLook;
     data['messageId'] = this.messageId;
+    data['flag'] = this.flag;
     return data;
   }
 
@@ -65,6 +70,7 @@ class MessageModel {
       htmlCode = json['htmlCode'];
       hadLook = json['hadLook'];
       messageId = json['messageId'];
+      flag = json["mFlag"];
     } catch (e) {
       isJson = false;
     }
@@ -94,6 +100,7 @@ class MessageModel {
       fromuserid = json["mFromuserid"];
       // messageId = json['messageId'];
       messageId = json['mMesId'];
+      flag = json["mFlag"];
       // content = jsonEncode(json);
     } catch (e) {
       isJson = false;

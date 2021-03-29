@@ -76,14 +76,14 @@ class MessageItemFactory extends StatelessWidget {
             // ),
             Container(
               width: 120,
-              height: 70,
+              height: 50,
               child: Text(
                 //messageModel.title == null ? "没有标题" : messageModel.title,
                 _content(messageModel.htmlCode) == ""
                     ? "内容为空"
                     : _content(messageModel.htmlCode),
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 22.0),
+                style: TextStyle(fontSize: 18.0),
               ),
             )
           ],

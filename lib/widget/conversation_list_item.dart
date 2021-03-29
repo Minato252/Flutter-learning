@@ -156,7 +156,8 @@ class _ConversationListItemState extends State<ConversationListItem> {
         MessageModel messageModel = MessageModel.fromJsonString(
             conversation.latestMessageContent.conversationDigest());
         if (messageModel.isJson) {
-          digest = "关键词：${messageModel.keyWord} 标题：${messageModel.title}";
+          digest = "";
+          //"关键词：${messageModel.keyWord} 标题：${messageModel.title}";
         } else {
           digest = conversation.latestMessageContent.conversationDigest();
         }

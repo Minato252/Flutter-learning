@@ -329,7 +329,7 @@ class _GrouptranState extends State<Grouptran> {
                   postRequestFunction(notehtmlCode);
                 },
               ),
-              editable
+              /* editable
                   ? FlatButtonWithIcon(
                       label: Text("遮蔽"),
                       icon: Icon(Icons.edit),
@@ -342,7 +342,7 @@ class _GrouptranState extends State<Grouptran> {
                   : SizedBox(
                       width: 0,
                       height: 0,
-                    ),
+                    ),*/
               Container(
                 height: 150.0,
                 child: Column(
@@ -660,10 +660,11 @@ class _GrouptranState extends State<Grouptran> {
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": messageModel.messageId,
+      "Flag": "普通", //这里增加了flag
     });
-    print("1111111111111111111111");
-    print(rel);
+    //print("1111111111111111111111");
+    //  print(rel);
 
     //print("222222222222222222222222");
     //print(rel1);
@@ -745,8 +746,10 @@ class _GrouptranState extends State<Grouptran> {
         fontSize: 16.0);
   }
 
-//将信息内容保存到我的部分类别为“默认类别”
+//将信息内容保存到服务器
   void postRequestFunction(String htmlCode) async {
+    //print(targetGroupId);
+
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
     //   // var htmlCode = await controller.generateHtmlUrl();
     //   String url = "http://47.110.150.159:8080/insertNote";
@@ -769,14 +772,14 @@ class _GrouptranState extends State<Grouptran> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var htmlCode = await controller.generateHtmlUrl();
-    String url = "http://47.110.150.159:8080/insertNote";
+    //String url = "http://47.110.150.159:8080/insertNote";
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
         "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
-    Response response = await Dio().post(url, data: {
+    /*Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
       "nNote": "$htmlCode",
       "uId": "$id",
@@ -788,22 +791,25 @@ class _GrouptranState extends State<Grouptran> {
       fromid = id;
     } else {
       fromid = messageModel.fromuserid;
-    }
+    }*/
+    // print("*");
+    // print(messageModel.messageId);
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
       "messages": html,
-      "touserid": prefs.get("id"),
-      "fromuserid": fromid,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
       "title": messageModel.title,
       "hadLook": prefs.get("name") +
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": messageModel.messageId,
+      "Flag": "草稿",
     });
 
-    MyToast.AlertMesaage("已将内容保存至草稿中！");
+    MyToast.AlertMesaage("已将内容保存！");
   }
 }
 
@@ -825,7 +831,7 @@ class Pre extends StatelessWidget {
     ScreenAdapter.init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("预览页面"),
+        title: Text("内容"),
         actions: [
           Row(
             children: [

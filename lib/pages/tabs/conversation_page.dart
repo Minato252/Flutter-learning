@@ -4,11 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/Model/MessageModelToConversation.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
 import 'package:weitong/pages/group/GroupPre.dart';
 import 'package:weitong/pages/group/Grouptran.dart';
+import 'package:weitong/pages/tabs/NullResult.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
@@ -43,6 +46,7 @@ class _ConversationPageState extends State<ConversationPage>
   Map arguments;
   int conversationType;
   String targetId;
+  String searchGroupId;
 
   List phrasesList = new List(); // 快捷回复，短语数组
   List messageDataSource = new List(); //消息数组
@@ -787,6 +791,21 @@ class _ConversationPageState extends State<ConversationPage>
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
           FlatButton(
+              onPressed: () {
+                TextMessage mymessage = messageDataSource[0].content;
+                int time = messageDataSource[0].sentTime;
+                MessageModel messageModel =
+                    MessageModel.fromJsonString(mymessage.content);
+                readAll(messageModel.messageId, time);
+              },
+              child: Text(
+                "全阅",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
+          FlatButton(
               onPressed: () async {
                 TextMessage mymessage = messageDataSource[0].content;
                 MessageModel messageModel =
@@ -838,6 +857,104 @@ class _ConversationPageState extends State<ConversationPage>
             ],
           ),
         ));
+  }
+
+  @override
+  void readAll(String groupId, int time) async {
+    ///print(groupId);
+    //print(time);
+    //String str = "2021-03-29 17:28:13";
+    MessageModel messageModel = new MessageModel();
+    //DateTime time1 = messageModel.strToTime(str);
+    //print("*");
+    //print(time1);
+    //int trantime = time1.millisecondsSinceEpoch;
+    // print(trantime);
+    // print("*");
+    // DateTime msgTime = DateTime.fromMillisecondsSinceEpoch(time);
+    String url = "http://47.110.150.159:8080/messages/select?";
+    //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+    url += "touserid=$groupId";
+    var rel = await Dio().post(url);
+    // print(rel.data);
+    // print(msgTime);
+    List m = rel.data;
+    if (m.isEmpty) {
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new NullResult()));
+    } else {
+      List<MessageModel> l = new List<MessageModel>();
+      for (int i = 0; i < m.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        mm.modify = true;
+        //  print(mm.time);
+        // String str = "${mm.time}";
+        DateTime time1 = mm.time;
+        //DateTime time1 = messageModel.strToTime(mm.time);
+        int trantime = time1.millisecondsSinceEpoch;
+        //print(trantime);
+        if (trantime <= time && mm.flag != "草稿") {
+          l.add(mm);
+        }
+      }
+
+      // Navigator.push(
+      //     context,
+      //     new MaterialPageRoute(
+      //         builder: (context) =>
+      //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
+      List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+      _showMessageByTitle(r); //按标题去展示消息
+    }
+  }
+
+  _showMessageByTitle(List<MessageModel> messageList) {
+    List<String> titleList = new List(); //获取查询到的所以标题
+    for (int i = 0; i < messageList.length; i++) {
+      String title = messageList[i].title;
+      if (!titleList.contains(title)) {
+        titleList.add(title);
+      }
+    }
+    // List<List<MessageModel>> conList = new List(titleList.length);
+    List conList = new List();
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < titleList.length; i++) {
+      List<MessageModel> list = new List();
+      conList.add(list);
+      List<Conversation> con = new List();
+      conversation.add(con);
+    }
+    // List
+
+    for (int i = 0; i < messageList.length; i++) {
+      for (int j = 0; j < titleList.length; j++) {
+        if (titleList[j] == messageList[i].title) {
+          conList[j].add(messageList[i]);
+          Conversation item =
+              MessageModelToConversation.transation(messageList[i]);
+          conversation[j].add(item);
+        }
+      }
+    }
+    // print(conList);
+
+    /*Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: conversation
+          // title:title,
+          );
+    }));*/
+
+    Conversation conversation1 = conversation[0][0];
+    TextMessage mymessage = conversation1.latestMessageContent;
+    MessageModel messageModel = MessageModel.fromJsonString(mymessage.content);
+    Map arg = {
+      "coversationType": conversation1.conversationType,
+      "targetId": conversation1.targetId,
+      "conversation": conversation[0],
+      "title": messageModel.title
+    };
+    Navigator.pushNamed(context, "/searchConversation", arguments: arg);
   }
 
   @override

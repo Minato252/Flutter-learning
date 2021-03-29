@@ -326,6 +326,7 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
         ),
       );
     } else if (message.messageDirection == prefix.RCMessageDirection.Receive) {
+      // else if (message.senderUserId != userId) {
       return Expanded(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,

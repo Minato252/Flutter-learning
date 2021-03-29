@@ -364,7 +364,7 @@ class _PreAndSendState extends State<PreAndSend> {
                   }
                 },
               ),
-              FlatButtonWithIcon(
+              /* FlatButtonWithIcon(
                 label: Text("保存"),
                 icon: Icon(
                   Icons.save,
@@ -373,7 +373,7 @@ class _PreAndSendState extends State<PreAndSend> {
                 onPressed: () {
                   postRequestFunction(notehtmlCode);
                 },
-              ),
+              ),*/
               editable
                   ? FlatButtonWithIcon(
                       label: Text("遮蔽"),
@@ -607,10 +607,11 @@ class _PreAndSendState extends State<PreAndSend> {
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": messageModel.messageId,
+      "Flag": "普通", //这里增加了flag
     });
-    print("1111111111111111111111");
-    print(rel);
+    //print("1111111111111111111111");
+    //print(rel);
 
     //存储群组关系
 
@@ -731,7 +732,7 @@ class _PreAndSendState extends State<PreAndSend> {
         fontSize: 16.0);
   }
 
-//将信息内容保存到我的部分类别为“默认类别”
+//将信息内容保存到服务器
   void postRequestFunction(String htmlCode) async {
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
     //   // var htmlCode = await controller.generateHtmlUrl();
@@ -755,12 +756,12 @@ class _PreAndSendState extends State<PreAndSend> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var htmlCode = await controller.generateHtmlUrl();
-    String url = "http://47.110.150.159:8080/insertNote";
+
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
         "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-
+    /*String url = "http://47.110.150.159:8080/insertNote";
     ///发起post请求
     Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
@@ -774,22 +775,24 @@ class _PreAndSendState extends State<PreAndSend> {
       fromid = id;
     } else {
       fromid = messageModel.fromuserid;
-    }
+    }*/
+    print(messageModel.messageId);
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
       "messages": html,
-      "touserid": prefs.get("id"),
-      "fromuserid": fromid,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
       "title": messageModel.title,
       "hadLook": prefs.get("name") +
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": messageModel.messageId
+      "MesId": messageModel.messageId,
+      "Flag": "草稿"
     });
 
-    MyToast.AlertMesaage("已将内容保存至草稿中！");
+    MyToast.AlertMesaage("已将内容保存！");
   }
 }
 
