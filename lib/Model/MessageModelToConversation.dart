@@ -19,7 +19,8 @@ class MessageModelToConversation {
     con.objectName = "RC:TxtMsg";
     con.senderUserId = messageModel.fromuserid;
     //con.sentTime = messageModel.time;//格式不对
-    con.sentTime = 1234567899; //time是Int类型的
+    // con.sentTime = 1234567899; //time是Int类型的
+    con.sentTime = messageModel.time.millisecondsSinceEpoch;
     con.sentStatus = 30;
     con.targetId = messageModel.messageId;
     con.unreadMessageCount = 0;

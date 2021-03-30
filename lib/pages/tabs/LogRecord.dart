@@ -218,12 +218,12 @@ class _LogRecordPageState extends State<LogRecordPage>
 
   searchMessage() async {
     bool isEmpty = true;
-    String url = "http://47.110.150.159:8080/messages/select?";
+    String url = "http://47.110.150.159:8080/messages/fuzzyselect?";
     if (_searchTag != "" && _searchTag != null) {
       //有关键词
       isEmpty = false;
-      // url += "keyWords=$_searchTag&";
-      url += "keyWords=1群&";
+      url += "keyWords=$_searchTag&";
+      // url += "keyWords=1群&";
     }
 
     if (_searchTime != null) {
@@ -270,6 +270,8 @@ class _LogRecordPageState extends State<LogRecordPage>
 
     List m = rel.data;
 
+    _getSubMessage(url, m); //把下级的群消息也加到m中
+
     if (m.isEmpty) {
       Navigator.push(context,
           new MaterialPageRoute(builder: (context) => new NullResult()));
@@ -291,18 +293,63 @@ class _LogRecordPageState extends State<LogRecordPage>
     }
   }
 
-  _showMessageByTitle(List<MessageModel> messageList) {
-    List<String> titleList = new List(); //获取查询到的所以标题
-    for (int i = 0; i < messageList.length; i++) {
-      String title = messageList[i].title;
-      if (!titleList.contains(title)) {
-        titleList.add(title);
+  _getSubMessage(String url, List m) async {
+    List subUser = await _getSubs(); //获得下级
+    List<String> subIdList = new List(); //所有下级所在的群id
+
+    for (int i = 0; i < subUser.length; i++) {
+      //该循环获取下级群id
+      String subUserId = subUser[0]["id"];
+      var rel = await Dio().post("http://47.110.150.159:8080/group/select",
+          data: {"groupcreatorid": subUserId}); //获取下级的群id
+      List subIdLIstItem = rel.data;
+      for (int j = 0; j < subIdLIstItem.length; j++) {
+        if (!subIdList.contains(subIdLIstItem[j]["groupid"])) {
+          subIdList.add(subIdLIstItem[j]["groupid"]);
+        }
       }
     }
+    for (int i = 0; i < subIdList.length; i++) {
+      //根据下级群id拉去所有群消息
+      var result = await Dio().post(url + "touserid=" + subIdList[i]);
+      List rm = result.data;
+      for (int j = 0; j < rm.length; j++) {
+        if (!m.contains(rm[j])) {
+          m.add(rm[j]);
+        }
+      }
+    }
+    return m;
+  }
+
+  _showMessageByTitle(List<MessageModel> messageList) async {
+    List<String> idList = new List(); //获取查询到的自己所有群id
+    for (int i = 0; i < messageList.length; i++) {
+      String mid = messageList[i].messageId;
+      if (!idList.contains(mid)) {
+        idList.add(mid);
+      }
+    }
+
+    // List<String> subIdList = new List(); //所有下级所在的群id,且该群id不会再自己有的群id重复
+    // List subUser = await _getSubs(); //获得下级
+    // for (int i = 0; i < subUser.length; i++) {
+    //   String subUserId = subUser[0]["id"];
+    //   var rel = await Dio().post("http://47.110.150.159:8080/group/select",
+    //       data: {"groupcreatorid": subUserId}); //获取下级的群id
+    //   List subIdLIstItem = rel.data;
+    //   for (int j = 0; j < subIdLIstItem.length; j++) {
+    //     if (!subIdList.contains(subIdLIstItem[j]["groupid"]) &&
+    //         !idList.contains(subIdLIstItem[j]["groupid"])) {
+    //       subIdList.add(subIdLIstItem[j]["groupid"]);
+    //     }
+    //   }
+    // }
+
     // List<List<MessageModel>> conList = new List(titleList.length);
     List conList = new List();
     List conversation = new List(); //conversation类型二维数组
-    for (int i = 0; i < titleList.length; i++) {
+    for (int i = 0; i < idList.length; i++) {
       List<MessageModel> list = new List();
       conList.add(list);
       List<Conversation> con = new List();
@@ -311,8 +358,8 @@ class _LogRecordPageState extends State<LogRecordPage>
     // List
 
     for (int i = 0; i < messageList.length; i++) {
-      for (int j = 0; j < titleList.length; j++) {
-        if (titleList[j] == messageList[i].title) {
+      for (int j = 0; j < idList.length; j++) {
+        if (idList[j] == messageList[i].messageId) {
           conList[j].add(messageList[i]);
           Conversation item =
               MessageModelToConversation.transation(messageList[i]);
@@ -320,6 +367,39 @@ class _LogRecordPageState extends State<LogRecordPage>
         }
       }
     }
+    // int beforeCount = idList.length; //以前的标题长度
+    // List<MessageModel> l = new List<MessageModel>();
+    // //根据下级群id去获取所有下级群消息
+    // for (int i = 0; i < subIdList.length; i++) {
+    //   var result = await Dio().post(
+    //       "http://47.110.150.159:8080/messages/fuzzyselect?touserid=" +
+    //           subIdList[i]);
+    //   List m = result.data;
+
+    //   for (int i = 0; i < m.length; i++) {
+    //     MessageModel mm = MessageModel.formServerJsonString(m[i]);
+    //     mm.modify = true;
+    //     l.add(mm);
+    //   }
+    // }
+    // List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+
+    // for (int i = 0; i < subIdList.length; i++) {
+    //   List<MessageModel> list = new List();
+    //   conList.add(list);
+    //   List<Conversation> con = new List();
+    //   conversation.add(con);
+    // }
+
+    // for (int i = 0; i < r.length; i++) {
+    //   for (int j = 0; j < subIdList.length; j++) {
+    //     if (subIdList[j] == r[i].messageId) {
+    //       conList[j + beforeCount].add(r[i]);
+    //       Conversation item = MessageModelToConversation.transation(r[i]);
+    //       conversation[j + beforeCount].add(item);
+    //     }
+    //   }
+    // }
     // print(conList);
 
     Navigator.push(context, MaterialPageRoute(builder: (c) {
