@@ -374,20 +374,20 @@ class _PreAndSendState extends State<PreAndSend> {
                   postRequestFunction(notehtmlCode);
                 },
               ),*/
-              editable
-                  ? FlatButtonWithIcon(
-                      label: Text("遮蔽"),
-                      icon: Icon(Icons.edit),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onPressed: () {
-                        Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (context) => new PretoRichEdit(data,
-                                messageModel.title, messageModel.keyWord)));
-                      })
-                  : SizedBox(
-                      width: 0,
-                      height: 0,
-                    ),
+              // editable
+              //     ? FlatButtonWithIcon(
+              //         label: Text("遮蔽"),
+              //         icon: Icon(Icons.edit),
+              //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              //         onPressed: () {
+              //           Navigator.of(context).push(new MaterialPageRoute(
+              //               builder: (context) => new PretoRichEdit(data,
+              //                   messageModel.title, messageModel.keyWord)));
+              //         })
+              //     : SizedBox(
+              //         width: 0,
+              //         height: 0,
+              //       ),
               Container(
                 height: 150.0,
                 child: Column(
