@@ -982,7 +982,7 @@ class _ConversationPageState extends State<ConversationPage>
       "conversation": conversation[0],
       "title": messageModel.title
     };
-    Navigator.pushNamed(context, "/searchConversation", arguments: arg);
+    Navigator.pushNamed(context, '/allread', arguments: arg);
   }
 
   @override

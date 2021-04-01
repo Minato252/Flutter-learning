@@ -27,16 +27,17 @@ enum ConversationStatus {
   VoiceRecorder, //语音输入，页面中间回弹出录音的 gif
 }
 
-class SearchConversationPage extends StatefulWidget {
+class ALLReadSearchConversationPage extends StatefulWidget {
   final Map arguments;
-  SearchConversationPage({Key key, this.arguments}) : super(key: key);
+  ALLReadSearchConversationPage({Key key, this.arguments}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() =>
-      _SearchConversationPageState(arguments: this.arguments);
+      _ALLReadSearchConversationPageState(arguments: this.arguments);
 }
 
-class _SearchConversationPageState extends State<SearchConversationPage>
+class _ALLReadSearchConversationPageState
+    extends State<ALLReadSearchConversationPage>
     implements MessageContentListDelegate {
   String pageName = "example.SearchConversationPage";
   Map arguments;
@@ -66,7 +67,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
   bool isSecretChat = false;
   bool isFirstGetHistoryMessages = true;
 
-  _SearchConversationPageState({this.arguments});
+  _ALLReadSearchConversationPageState({this.arguments});
   @override
   void initState() {
     super.initState();
@@ -791,15 +792,9 @@ class _SearchConversationPageState extends State<SearchConversationPage>
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
-          FlatButton(
+          /*FlatButton(
               onPressed: () async {
-                print("*");
-                print(targetId);
-                print(titleContent);
-                print("*");
-                //TextMessage mymessage = messageDataSource[0].content;
-                TextMessage mymessage =
-                    messageDataSource[0].latestMessageContent;
+                TextMessage mymessage = messageDataSource[0].content;
                 MessageModel messageModel =
                     MessageModel.fromJsonString(mymessage.content);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -811,11 +806,8 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                   // );
 
                   return GroupMessageCreate(
-                    //targetGroupId: messageModel.messageId, //传群id
-
-                    targetGroupId: targetId,
-                    //title: messageModel.title,
-                    title: titleContent,
+                    targetGroupId: messageModel.messageId, //传群id
+                    title: messageModel.title,
                     // fromUserId: prefs.getString("id"),
                   );
                 }));
@@ -826,7 +818,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
-              )),
+              )),*/
         ]),
         body: Container(
           child: Stack(

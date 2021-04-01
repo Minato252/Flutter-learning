@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
 import 'package:weitong/pages/SearchMessage/search_conversation_page.dart';
+import 'package:weitong/pages/group/ALLReadSearchConversation.dart';
 import 'package:weitong/pages/tabs/ChooseUser.dart';
 import 'package:weitong/pages/tabs/Message.dart';
 import 'package:weitong/pages/tabs/Setting.dart';
@@ -46,6 +47,8 @@ final routes = {
   '/preedit': (context) => PreEdit(),
   '/setting': (context) => SettingPage(),
   '/user': (context) => UserPage(),
+  '/allread': (context, {arguments}) =>
+      ALLReadSearchConversationPage(arguments: arguments),
 };
 
 //固定写法
