@@ -604,12 +604,12 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       needSendShelterMessageList.add(id);
     }
     for (int i = 0; i < allIdInGroup.length; i++) {
-      if (allIdInGroup.contains(needSendShelterMessageList)) {
+      if (allIdInGroup[i].contains(needSendShelterMessageList)) {
         var rel = await Dio()
             .post("http://47.110.150.159:8080/shelter/insert", data: {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
-          "touserid": allIdInGroup[i], //要发送的联系人
+          "touserid": allIdInGroup[i]["id"], //要发送的联系人
           "fromuserid": messageModel.messageId, //群id
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
