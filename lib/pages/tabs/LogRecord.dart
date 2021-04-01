@@ -222,7 +222,7 @@ class _LogRecordPageState extends State<LogRecordPage>
     if (_searchTag != "" && _searchTag != null) {
       //有关键词
       isEmpty = false;
-      url += "keyWords=$_searchTag&";
+      url += "mTitle=$_searchTag&";
       // url += "keyWords=1群&";
     }
 
