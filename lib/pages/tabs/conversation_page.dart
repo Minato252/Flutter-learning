@@ -10,6 +10,7 @@ import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
 import 'package:weitong/pages/group/GroupPre.dart';
+import 'package:weitong/pages/group/GroupshelterCreateMessage.dart';
 import 'package:weitong/pages/group/Grouptran.dart';
 import 'package:weitong/pages/tabs/NullResult.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
@@ -826,7 +827,34 @@ class _ConversationPageState extends State<ConversationPage>
                 }));
               },
               child: Text(
-                "回复",
+                "普通回复",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
+          FlatButton(
+              onPressed: () async {
+                TextMessage mymessage = messageDataSource[0].content;
+                MessageModel messageModel =
+                    MessageModel.fromJsonString(mymessage.content);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                // _clearMessage(controller);
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  // return Pre(
+                  //   messageModel: messageModel,
+                  // );
+
+                  return GroupShelterMessageCreate(
+                    targetGroupId: messageModel.messageId, //传群id
+                    title: messageModel.title,
+                    // fromUserId: prefs.getString("id"),
+                  );
+                }));
+              },
+              child: Text(
+                "遮蔽回复",
                 style: TextStyle(
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
