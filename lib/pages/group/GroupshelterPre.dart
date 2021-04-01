@@ -179,7 +179,7 @@ Scrollbar getPre(
 _sendMessage(SimpleRichEditController controller) async {}
 //这个类在初始化时传入html代码就可以生成对应的页面了,还附带了确认发送的按钮
 
-class GroupPre extends StatefulWidget {
+class GroupShelterPre extends StatefulWidget {
   MessageModel messageModel;
   String content;
   bool editable;
@@ -188,7 +188,7 @@ class GroupPre extends StatefulWidget {
   double myFontSize = 15.0;
   bool isSearchResult = false;
 
-  GroupPre({
+  GroupShelterPre({
     MessageModel messageModel,
     bool editable = false,
     bool isSearchResult,
@@ -203,7 +203,7 @@ class GroupPre extends StatefulWidget {
     this.targetGroupId = targetGroupId;
   }
   @override
-  _GroupPreState createState() => _GroupPreState(
+  _GroupShelterPreState createState() => _GroupShelterPreState(
       messageModel: messageModel,
       editable: editable,
       data: data,
@@ -211,7 +211,7 @@ class GroupPre extends StatefulWidget {
       targetGroupId: targetGroupId);
 }
 
-class _GroupPreState extends State<GroupPre> {
+class _GroupShelterPreState extends State<GroupShelterPre> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
@@ -230,7 +230,7 @@ class _GroupPreState extends State<GroupPre> {
   SimpleRichEditController controller;
 
   bool isSearchResult = false;
-  _GroupPreState(
+  _GroupShelterPreState(
       {MessageModel messageModel,
       bool editable = false,
       bool isSearchResult,
@@ -322,7 +322,7 @@ class _GroupPreState extends State<GroupPre> {
 
     // print(messageModel.title);
 
-    //发送给服务器
+    /* //发送给服务器
     var rel1 = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": "null",
@@ -336,7 +336,7 @@ class _GroupPreState extends State<GroupPre> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
-    });
+    });*/
 
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
       targetAllList[1].forEach((element) {
@@ -345,6 +345,7 @@ class _GroupPreState extends State<GroupPre> {
       });
       _sendNoteMessage();
     }
+    _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
   }
 
   @override
@@ -431,20 +432,20 @@ class _GroupPreState extends State<GroupPre> {
                   postRequestFunction(notehtmlCode, targetGroupId);
                 },
               ),
-              /* editable
-                  ? FlatButtonWithIcon(
-                      label: Text("遮蔽"),
-                      icon: Icon(Icons.edit),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onPressed: () {
-                        Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (context) => new PretoRichEditGroup(
-                                data,
-                                messageModel.title,
-                                /*, messageModel.keyWord*/
-                                messageModel.messageId)));
-                      })
-                  : SizedBox(
+              //  editable?
+              FlatButtonWithIcon(
+                  label: Text("遮蔽"),
+                  icon: Icon(Icons.edit),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onPressed: () {
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (context) => new PretoRichEditGroup(
+                            data,
+                            messageModel.title,
+                            /*, messageModel.keyWord*/
+                            messageModel.messageId)));
+                  }),
+              /*: SizedBox(
                       width: 0,
                       height: 0,
                     ),*/
@@ -684,6 +685,73 @@ class _GroupPreState extends State<GroupPre> {
     }
 
     sendMessageSuccess("发送成功");
+  }
+
+  _sendShelterMessage(List allIdInGroup) async {
+    //把遮蔽消息存入遮蔽表中
+    List allid = [];
+    for (int i = 0; i < allIdInGroup.length; i++) {
+      allid.add(allIdInGroup[i]['id']);
+    }
+    List superList = new List(); //存储权限高的人
+    superList.add("11"); //假数据，假设11权限高
+    List needSendShelterMessageList = targetIdList; //需求发送遮蔽消息的人
+    for (int i = 0; i < superList.length; i++) {
+      //把权限高的人加到发送遮蔽联系人列表中
+      if (!needSendShelterMessageList.contains(superList[i])) {
+        needSendShelterMessageList.add(superList[i]);
+      }
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    if (!needSendShelterMessageList.contains(id)) {
+      //把自己也加上，后期查询要用
+      needSendShelterMessageList.add(id);
+    }
+    //Dio dio = Dio();
+    for (int i = 0; i < allid.length; i++) {
+      // if (allid.contains(needSendShelterMessageList)) {
+      if (needSendShelterMessageList.contains(allid[i])) {
+        Dio dio = Dio();
+        var rel =
+            await dio.post("http://47.110.150.159:8080/shelter/insert", data: {
+          "keywords": messageModel.keyWord,
+          "messages": messageModel.htmlCode,
+          "touserid": allid[i], //要发送的联系人
+          "fromuserid": messageModel.messageId, //群id
+          "title": messageModel.title,
+          "hadLook": prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")",
+          "MesId": messageModel.messageId,
+          "Flag": "普通", //这里增加了flag
+        });
+      }
+    }
+    for (int i = 0; i < allid.length; i++) {
+      // if (allid.contains(needSendShelterMessageList)) {
+      if (!needSendShelterMessageList.contains(allid[i])) {
+        Dio dio1 = Dio();
+        String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
+        messageModel.htmlCode = newHtml;
+
+        var rel =
+            await dio1.post("http://47.110.150.159:8080/shelter/insert", data: {
+          "keywords": messageModel.keyWord,
+          "messages": messageModel.htmlCode,
+          "touserid": allid[i],
+          "fromuserid": messageModel.messageId,
+          "title": messageModel.title,
+          "hadLook": prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")",
+          "MesId": messageModel.messageId,
+          "Flag": "普通", //这里增加了flag
+        });
+      }
+    }
   }
 
   _sendNoteMessage() async {
