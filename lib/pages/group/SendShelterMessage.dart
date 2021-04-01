@@ -586,7 +586,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     sendMessageSuccess("发送成功");
   }
 
-  _sendShelterMessage(List allIdInGroup) async {
+  /* _sendShelterMessage(List allIdInGroup) async {
     //把遮蔽消息存入遮蔽表中
     List superList = new List(); //存储权限高的人
     superList.add("11"); //假数据，假设11权限高
@@ -627,6 +627,73 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
           "touserid": allIdInGroup[i],
+          "fromuserid": messageModel.messageId,
+          "title": messageModel.title,
+          "hadLook": prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")",
+          "MesId": messageModel.messageId,
+          "Flag": "普通", //这里增加了flag
+        });
+      }
+    }
+  }*/
+
+  _sendShelterMessage(List allIdInGroup) async {
+    //把遮蔽消息存入遮蔽表中
+    List allid = [];
+    for (int i = 0; i < allIdInGroup.length; i++) {
+      allid.add(allIdInGroup[i]['id']);
+    }
+    List superList = new List(); //存储权限高的人
+    superList.add("11"); //假数据，假设11权限高
+    List needSendShelterMessageList = targetIdList; //需求发送遮蔽消息的人
+    for (int i = 0; i < superList.length; i++) {
+      //把权限高的人加到发送遮蔽联系人列表中
+      if (!needSendShelterMessageList.contains(superList[i])) {
+        needSendShelterMessageList.add(superList[i]);
+      }
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    if (!needSendShelterMessageList.contains(id)) {
+      //把自己也加上，后期查询要用
+      needSendShelterMessageList.add(id);
+    }
+    //Dio dio = Dio();
+    for (int i = 0; i < allid.length; i++) {
+      // if (allid.contains(needSendShelterMessageList)) {
+      if (needSendShelterMessageList.contains(allid[i])) {
+        Dio dio = Dio();
+        var rel =
+            await dio.post("http://47.110.150.159:8080/shelter/insert", data: {
+          "keywords": messageModel.keyWord,
+          "messages": messageModel.htmlCode,
+          "touserid": allid[i], //要发送的联系人
+          "fromuserid": messageModel.messageId, //群id
+          "title": messageModel.title,
+          "hadLook": prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")",
+          "MesId": messageModel.messageId,
+          "Flag": "普通", //这里增加了flag
+        });
+      }
+    }
+    for (int i = 0; i < allid.length; i++) {
+      // if (allid.contains(needSendShelterMessageList)) {
+      if (!needSendShelterMessageList.contains(allid[i])) {
+        Dio dio1 = Dio();
+        String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
+        messageModel.htmlCode = newHtml;
+
+        var rel =
+            await dio1.post("http://47.110.150.159:8080/shelter/insert", data: {
+          "keywords": messageModel.keyWord,
+          "messages": messageModel.htmlCode,
+          "touserid": allid[i],
           "fromuserid": messageModel.messageId,
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
