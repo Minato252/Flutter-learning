@@ -452,6 +452,62 @@ class Tree {
     return details;
   }
 
+  static List getFathersRights(
+      parsedJson, List fathersRightsList, String rightName) {
+    if (parsedJson is Map) {
+      var result = null;
+      parsedJson.forEach((key, value) {
+        if (key == rightName) {
+          result = List.from(fathersRightsList);
+        } else if (key == "$staff") {
+          result = null;
+        } else {
+          List newList = List.from(fathersRightsList);
+          newList.add(key);
+          var temp = getFathersRights(value, newList, rightName);
+          if (temp is List) {
+            result = temp;
+          }
+        }
+      });
+      return result;
+    } else {
+      return null;
+    }
+  }
+
+  static List getFathersRightStaffIds(
+      parsedJson, List fathersRightStaffsList, String rightName) {
+    if (parsedJson is Map) {
+      var result = null;
+      parsedJson.forEach((key, value) {
+        if (key == rightName) {
+          Set s = Set.from(fathersRightStaffsList);
+
+          result = s.toList();
+        } else if (key == "$staff") {
+          result = null;
+        } else {
+          List newList = List.from(fathersRightStaffsList);
+          if (parsedJson[key]["$staff"] is List) {
+            List staffs = parsedJson[key]["$staff"];
+            for (int i = 0; i < staffs.length; i++) {
+              newList.add(staffs[i]["id"]);
+            }
+          }
+
+          var temp = getFathersRightStaffIds(value, newList, rightName);
+          if (temp is List) {
+            result = temp;
+          }
+        }
+      });
+      return result;
+    } else {
+      return null;
+    }
+  }
+
   static Future<Map> getUserInfoAndSave(
       parsedJson, String password, String id, BuildContext context) async {
     //   if (parsedJson is Map<String, dynamic>) {

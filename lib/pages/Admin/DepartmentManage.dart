@@ -76,6 +76,22 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
                 EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
               },
             ),
+            IconButton(
+              icon: Icon(Icons.ac_unit),
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String id = prefs.getString("adminId");
+                String jsonTree = await Tree.getTreeFormSer(id, true, context);
+//修改jsonTree字符串
+                var parsedJson = json.decode(jsonTree);
+                List ll = Tree.getFathersRights(parsedJson, [], "开发");
+                List llstaff =
+                    Tree.getFathersRightStaffIds(parsedJson, [], "开发");
+
+                print(ll);
+                print(llstaff);
+              },
+            ),
           ],
         ),
         body: Column(
