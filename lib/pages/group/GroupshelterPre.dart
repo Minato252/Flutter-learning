@@ -782,6 +782,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
         });
       }
     }
+    sendMessageSuccess("发送成功");
   }
 
   _sendNoteMessage() async {
