@@ -372,6 +372,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     });
                     _sendNoteMessage();
                   }
+                  _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                 },
               ),
               /* FlatButtonWithIcon(
@@ -551,17 +552,19 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
 
     print("****************这里打印targetIdList****");
     print(targetIdList.join(',').toString());
-    var uuid = Uuid();
-    var messageId = uuid.v1();
-    messageModel.messageId = messageId;
+    // var uuid = Uuid();
+    // var messageId = uuid.v1();
+    // messageModel.messageId = messageId;
     messageModel.fromuserid = prefs.getString("id");
     content = messageModel.toJsonString();
 
     print(targetIdList.join(',').toString());
     print("title:" + messageModel.title);
     print("**************在创建群之前的messageId是：" + messageModel.messageId);
-    await GroupMessageService.creatGruop(messageModel.messageId,
-        messageModel.title, targetIdList.join(',').toString(), content);
+    // await GroupMessageService.creatGruop(messageModel.messageId,
+    //     messageModel.title, targetIdList.join(',').toString(), content);
+    await GroupMessageService.sendDirectionMessage(
+        targetIdList, messageModel.messageId, content);
 
     //发给服务器
     // var rel = await Dio()
@@ -579,7 +582,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     //   "Flag": "普通", //这里增加了flag
     // });
 
-    print(messageId);
+    // print(messageId);
     sendMessageSuccess("发送成功");
   }
 
@@ -606,8 +609,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
             .post("http://47.110.150.159:8080/shelter/insert", data: {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
-          "touserid": messageModel.messageId,
-          "fromuserid": prefs.get("id"),
+          "touserid": allIdInGroup[i], //要发送的联系人
+          "fromuserid": messageModel.messageId, //群id
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
               "(" +
@@ -623,8 +626,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
             .post("http://47.110.150.159:8080/shelter/insert", data: {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
-          "touserid": messageModel.messageId,
-          "fromuserid": prefs.get("id"),
+          "touserid": allIdInGroup[i],
+          "fromuserid": messageModel.messageId,
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
               "(" +
