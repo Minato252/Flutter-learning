@@ -23,12 +23,14 @@ class MessageModel {
       String keyWord,
       String hadLook,
       DateTime dateTime,
+      String messageId,
       String flag})
       : htmlCode = htmlCode,
         title = title,
         hadLook = hadLook,
         keyWord = keyWord,
         time = dateTime,
+        messageId = messageId,
         flag = flag;
 
   MessageModel.fromJson(Map<String, dynamic> json) {

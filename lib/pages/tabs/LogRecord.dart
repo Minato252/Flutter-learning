@@ -528,8 +528,10 @@ class _LogRecordPageState extends State<LogRecordPage>
 
     List rightList = userInfoAll["right"].split(",");
 
+    // List superList = new List();
     List users = [];
     rightList.forEach((element) {
+      // Tree.getSuperRight(parsedJson, element, superList);
       Map subRight = Tree.getSubRight(parsedJson, element);
       print("subRight" + subRight.toString());
       subRight.forEach((key, value) {

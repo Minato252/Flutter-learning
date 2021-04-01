@@ -277,6 +277,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     MessageModel messageModel = MessageModel(
         htmlCode: htmlCode,
         title: title,
+        messageId: targetGroupId,
         // messageId:targetGroupId,
 
         // keyWord: _curchosedTag,

@@ -511,6 +511,12 @@ class Tree {
     return null;
   }
 
+  static void getSuperRight(parsedJson, String right, List superList) {
+    if (parsedJson is Map<String, dynamic>) {
+      // findParent(right, parsedJson);
+    }
+  }
+
   static bool isMyModel(String jsonTree) {
 //判断这个树是否是采用手机端的模式
     var parsedJson = json.decode(jsonTree);

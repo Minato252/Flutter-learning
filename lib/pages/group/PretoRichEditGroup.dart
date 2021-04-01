@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/group/SendShelterMessage.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/Pre.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
@@ -14,26 +15,30 @@ import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 class PretoRichEditGroup extends StatefulWidget {
   List<RichEditData> data;
   String title;
+  String groupId;
   //String keyWords;
 
-  PretoRichEditGroup(this.data, this.title);
+  PretoRichEditGroup(this.data, this.title, this.groupId);
   @override
   _PretoRichEditGroupState createState() =>
-      _PretoRichEditGroupState(data, title);
+      _PretoRichEditGroupState(data, title, groupId);
 }
 
 class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   @override
   List<RichEditData> data;
   String title;
+  String groupId;
   //String keyWords;
 
   String id;
   SimpleRichEditController controller;
-  _PretoRichEditGroupState(List<RichEditData> data, String title) {
+  _PretoRichEditGroupState(
+      List<RichEditData> data, String title, String groupId) {
     this.data = new List<RichEditData>();
     this.data.addAll(data);
     this.title = title;
+    this.groupId = groupId;
     //this.keyWords = keyWords;
     this.controller = SimpleRichEditController();
 
@@ -165,10 +170,11 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     MessageModel messageModel = MessageModel(
         htmlCode: htmlCode,
         title: title,
+        messageId: groupId,
         //keyWord: keyWords,
         hadLook: prefs.get("id"));
     Navigator.push(context, MaterialPageRoute(builder: (c) {
-      return PreAndSend(
+      return SendShelterMessagePage(
         messageModel: messageModel,
         isSearchResult: false,
       );
