@@ -330,6 +330,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       _sendNoteMessage();
     }
     // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
+    sendMessageSuccess("发送成功");
   }
 
   @override

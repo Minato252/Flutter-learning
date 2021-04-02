@@ -362,6 +362,7 @@ class _GroupPreState extends State<GroupPre> {
       });
       _sendNoteMessage();
     }
+    sendMessageSuccess("发送成功");
   }
 
   @override
