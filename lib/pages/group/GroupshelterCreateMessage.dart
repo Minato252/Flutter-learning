@@ -173,7 +173,7 @@ class _GroupShelterMessageCreateState extends State<GroupShelterMessageCreate>
                           Divider(),*/
                       SafeArea(
                     child: SizedBox(
-                      height: ScreenAdapter.height(650),
+                      height: ScreenAdapter.height(1000),
                       child: MultiProvider(
                         providers: [
                           ChangeNotifierProvider(
