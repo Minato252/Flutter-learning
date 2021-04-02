@@ -551,6 +551,20 @@ class _GrouptranState extends State<Grouptran> {
       messageModel.htmlCode = messageModel.htmlCode + htmlCode;
 
       content = messageModel.toJsonString();
+      var rel1 = await Dio()
+          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+        "keywords": "null",
+        "messages": htmlCode2,
+        "touserid": messageModel.messageId,
+        "fromuserid": prefs.get("id"),
+        "title": messageModel.title,
+        "hadLook": prefs.get("name") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")",
+        "MesId": messageModel.messageId
+      });
+
       if (isDirctionMessage) {
         //未全选群成员，即对部分人隐藏内容
         await GroupMessageService.sendDirectionMessage(
@@ -563,7 +577,7 @@ class _GrouptranState extends State<Grouptran> {
 
     // print(messageModel.title);
 
-    //发送给服务器
+    /* //发送给服务器
     //print(htmlCode2);
     //print("1111111111111111111");
     var rel1 = await Dio()
@@ -578,7 +592,7 @@ class _GrouptranState extends State<Grouptran> {
           new DateTime.now().toString().split('.')[0] +
           ")",
       "MesId": messageModel.messageId
-    });
+    });*/
 
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
       targetAllList[1].forEach((element) {
@@ -587,6 +601,7 @@ class _GrouptranState extends State<Grouptran> {
       });
       _sendNoteMessage();
     }
+    sendMessageSuccess("发送成功");
   }
 
   _sendMessage() async {
