@@ -890,24 +890,117 @@ class _ConversationPageState extends State<ConversationPage>
   @override
   void readAll(String groupId, int time) async {
     ///print(groupId);
-    //print(time);
-    //String str = "2021-03-29 17:28:13";
     MessageModel messageModel = new MessageModel();
-    //DateTime time1 = messageModel.strToTime(str);
-    //print("*");
-    //print(time1);
-    //int trantime = time1.millisecondsSinceEpoch;
-    // print(trantime);
-    // print("*");
-    // DateTime msgTime = DateTime.fromMillisecondsSinceEpoch(time);
+    //从正常的message列表中获取消息
     String url = "http://47.110.150.159:8080/messages/select?";
     //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
     url += "touserid=$groupId";
     var rel = await Dio().post(url);
-    // print(rel.data);
-    // print(msgTime);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //从遮蔽表中获取消息
+    Dio dio = Dio();
+    var rel1 = await dio.post("http://47.110.150.159:8080/shelter/select",
+        data: {"MesId": groupId, "touserid": prefs.get("id")});
+
     List m = rel.data;
-    if (m.isEmpty) {
+    List z = rel1.data; //从遮蔽表中获取的消息
+    List to;
+    int k = 0; //用于定位zz中的位置
+    List<MessageModel> lm = new List<MessageModel>();
+    List<MessageModel> lz = new List<MessageModel>();
+    List<MessageModel> l = new List<MessageModel>();
+
+    if (m.isEmpty && z.isEmpty) {
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new NullResult()));
+    } else if (!(m.isEmpty || z.isEmpty)) {
+      //List<MessageModel> l = new List<MessageModel>();
+      for (int i = 0; i < m.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        mm.modify = true;
+        lm.add(mm);
+      }
+      for (int j = 0; j < z.length; j++) {
+        MessageModel zz = MessageModel.formServerJsonString(z[j]);
+        zz.modify = true;
+        lz.add(zz);
+      }
+      for (int i = 0; i < m.length; i++) {
+        // MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        // mm.modify = true;
+        DateTime time1 = lm[i].time;
+        int trantime1 = time1.millisecondsSinceEpoch;
+        for (int j = k; j < z.length; j++) {
+          // MessageModel zz = MessageModel.formServerJsonString(z[j]);
+          // mm.modify = true;
+          DateTime time2 = lz[j].time;
+          int trantime2 = time2.millisecondsSinceEpoch;
+          if (trantime1 < trantime2 &&
+              trantime1 <= time &&
+              lm[i].flag != "草稿") {
+            l.add(lm[i]);
+            break;
+          } else if (trantime1 > trantime2 && trantime2 <= time) {
+            l.add(lz[j]);
+            k++;
+          }
+        }
+      }
+
+      if (k < z.length) {
+        for (int j = k; j < z.length; j++) {
+          DateTime time2 = lz[j].time;
+          int trantime3 = time2.millisecondsSinceEpoch;
+          if (trantime3 <= time) {
+            l.add(lz[j]);
+          }
+        }
+
+        //  print(mm.time);
+        // String str = "${mm.time}";
+        // DateTime time1 = mm.time;
+        //DateTime time1 = messageModel.strToTime(mm.time);
+        //int trantime = time1.millisecondsSinceEpoch;
+        //print(trantime);
+        //if (trantime <= time && mm.flag != "草稿") {
+        //   l.add(mm);
+        // }
+      }
+    } else {
+      if (m.isEmpty) {
+        to = z;
+      } else if (z.isEmpty) {
+        to = m;
+      }
+      /*List<MessageModel> l = new List<MessageModel>();
+      for (int i = 0; i < m.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        mm.modify = true;
+        //  print(mm.time);
+        // String str = "${mm.time}";
+        DateTime time1 = mm.time;
+        //DateTime time1 = messageModel.strToTime(mm.time);
+        int trantime = time1.millisecondsSinceEpoch;
+        //print(trantime);
+        if (trantime <= time && mm.flag != "草稿") {
+          l.add(mm);
+        }*/
+      // List<MessageModel> l = new List<MessageModel>();
+      for (int i = 0; i < to.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(to[i]);
+        mm.modify = true;
+        //  print(mm.time);
+        // String str = "${mm.time}";
+        DateTime time1 = mm.time;
+        //DateTime time1 = messageModel.strToTime(mm.time);
+        int trantime = time1.millisecondsSinceEpoch;
+        //print(trantime);
+        if (trantime <= time && mm.flag != "草稿") {
+          l.add(mm);
+        }
+      }
+    }
+    /* if (m.isEmpty) {
       Navigator.push(context,
           new MaterialPageRoute(builder: (context) => new NullResult()));
     } else {
@@ -932,8 +1025,11 @@ class _ConversationPageState extends State<ConversationPage>
       //         builder: (context) =>
       //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
       List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-      _showMessageByTitle(r); //按标题去展示消息
-    }
+      _showMessageByTitle(r);
+      //按标题去展示消息
+    }*/
+    List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+    _showMessageByTitle(r);
   }
 
   _showMessageByTitle(List<MessageModel> messageList) {

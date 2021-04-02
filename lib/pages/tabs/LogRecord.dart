@@ -272,7 +272,7 @@ class _LogRecordPageState extends State<LogRecordPage>
     List m = rel.data;
     print("1**********" + m.length.toString());
 
-    _getSubMessage(url, m); //把下级的群消息也加到m中
+    await _getSubMessage(url, m); //把下级的群消息也加到m中
     print("2**********" + m.length.toString());
     await _getShelterMessage(m); //获取遮蔽表的消息
     print("3*******" + m.length.toString());
@@ -348,21 +348,6 @@ class _LogRecordPageState extends State<LogRecordPage>
       }
     }
 
-    // List<String> subIdList = new List(); //所有下级所在的群id,且该群id不会再自己有的群id重复
-    // List subUser = await _getSubs(); //获得下级
-    // for (int i = 0; i < subUser.length; i++) {
-    //   String subUserId = subUser[0]["id"];
-    //   var rel = await Dio().post("http://47.110.150.159:8080/group/select",
-    //       data: {"groupcreatorid": subUserId}); //获取下级的群id
-    //   List subIdLIstItem = rel.data;
-    //   for (int j = 0; j < subIdLIstItem.length; j++) {
-    //     if (!subIdList.contains(subIdLIstItem[j]["groupid"]) &&
-    //         !idList.contains(subIdLIstItem[j]["groupid"])) {
-    //       subIdList.add(subIdLIstItem[j]["groupid"]);
-    //     }
-    //   }
-    // }
-
     // List<List<MessageModel>> conList = new List(titleList.length);
     List conList = new List();
     List conversation = new List(); //conversation类型二维数组
@@ -384,41 +369,8 @@ class _LogRecordPageState extends State<LogRecordPage>
         }
       }
     }
-    // int beforeCount = idList.length; //以前的标题长度
-    // List<MessageModel> l = new List<MessageModel>();
-    // //根据下级群id去获取所有下级群消息
-    // for (int i = 0; i < subIdList.length; i++) {
-    //   var result = await Dio().post(
-    //       "http://47.110.150.159:8080/messages/fuzzyselect?touserid=" +
-    //           subIdList[i]);
-    //   List m = result.data;
 
-    //   for (int i = 0; i < m.length; i++) {
-    //     MessageModel mm = MessageModel.formServerJsonString(m[i]);
-    //     mm.modify = true;
-    //     l.add(mm);
-    //   }
-    // }
-    // List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-
-    // for (int i = 0; i < subIdList.length; i++) {
-    //   List<MessageModel> list = new List();
-    //   conList.add(list);
-    //   List<Conversation> con = new List();
-    //   conversation.add(con);
-    // }
-
-    // for (int i = 0; i < r.length; i++) {
-    //   for (int j = 0; j < subIdList.length; j++) {
-    //     if (subIdList[j] == r[i].messageId) {
-    //       conList[j + beforeCount].add(r[i]);
-    //       Conversation item = MessageModelToConversation.transation(r[i]);
-    //       conversation[j + beforeCount].add(item);
-    //     }
-    //   }
-    // }
-    // print(conList);
-
+    print(conversation);
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: conversation
           // title:title,

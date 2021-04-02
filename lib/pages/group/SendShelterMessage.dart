@@ -372,6 +372,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     });
                     _sendNoteMessage();
                   }
+
                   _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                 },
               ),
@@ -646,8 +647,37 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     for (int i = 0; i < allIdInGroup.length; i++) {
       allid.add(allIdInGroup[i]['id']);
     }
-    List superList = new List(); //存储权限高的人
-    superList.add("11"); //假数据，假设11权限高
+
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+
+//修改jsonTree字符串
+    var parsedJson = json.decode(jsonTree);
+    Map userInfoAll =
+        await Tree.getUserInfo(userInfo["id"], userInfo["password"]);
+
+    List rightList = userInfoAll["right"].split(",");
+
+    List ll = Tree.getFathersRights(parsedJson, [], rightList[0]);
+    List llstaff = Tree.getFathersRightStaffIds(parsedJson, [], rightList[0]);
+    if (rightList.length > 1) {
+      //多个权限情况
+      for (int i = 1; i < rightList.length; i++) {
+        List ll2 = Tree.getFathersRights(parsedJson, [], rightList[i]);
+        List lls2taff =
+            Tree.getFathersRightStaffIds(parsedJson, [], rightList[i]);
+        for (int j = 0; j < lls2taff.length; j++) {
+          if (!llstaff.contains(lls2taff[j])) {
+            llstaff.add(lls2taff[j]);
+          }
+        }
+      }
+    }
+
+    List superList = llstaff; //存储权限高的人
+    // superList.add("11"); //假数据，假设11权限高
     List needSendShelterMessageList = targetIdList; //需求发送遮蔽消息的人
     for (int i = 0; i < superList.length; i++) {
       //把权限高的人加到发送遮蔽联系人列表中
@@ -661,26 +691,27 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
     }
+
     //Dio dio = Dio();
-    for (int i = 0; i < allid.length; i++) {
+    for (int i = 0; i < needSendShelterMessageList.length; i++) {
       // if (allid.contains(needSendShelterMessageList)) {
-      if (needSendShelterMessageList.contains(allid[i])) {
-        Dio dio = Dio();
-        var rel =
-            await dio.post("http://47.110.150.159:8080/shelter/insert", data: {
-          "keywords": messageModel.keyWord,
-          "messages": messageModel.htmlCode,
-          "touserid": allid[i], //要发送的联系人
-          "fromuserid": prefs.get("id"), //群id
-          "title": messageModel.title,
-          "hadLook": prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")",
-          "MesId": messageModel.messageId,
-          "Flag": "普通", //这里增加了flag
-        });
-      }
+      // if (needSendShelterMessageList.contains(allid[i])) {
+      Dio dio = Dio();
+      var rel =
+          await dio.post("http://47.110.150.159:8080/shelter/insert", data: {
+        "keywords": messageModel.keyWord,
+        "messages": messageModel.htmlCode,
+        "touserid": needSendShelterMessageList[i], //要发送的联系人
+        "fromuserid": prefs.get("id"), //群id
+        "title": messageModel.title,
+        "hadLook": prefs.get("name") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")",
+        "MesId": messageModel.messageId,
+        "Flag": "普通", //这里增加了flag
+      });
+      // }
     }
     for (int i = 0; i < allid.length; i++) {
       // if (allid.contains(needSendShelterMessageList)) {
@@ -705,6 +736,9 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
         });
       }
     }
+    // sendMessageSuccess("发送成功");
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   _sendNoteMessage() async {
