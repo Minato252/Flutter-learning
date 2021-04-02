@@ -6,6 +6,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/MessageModelToConversation.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
@@ -269,8 +270,12 @@ class _LogRecordPageState extends State<LogRecordPage>
     //   });
 
     List m = rel.data;
+    print("1**********" + m.length.toString());
 
     _getSubMessage(url, m); //把下级的群消息也加到m中
+    print("2**********" + m.length.toString());
+    await _getShelterMessage(m); //获取遮蔽表的消息
+    print("3*******" + m.length.toString());
 
     if (m.isEmpty) {
       Navigator.push(context,
@@ -291,6 +296,18 @@ class _LogRecordPageState extends State<LogRecordPage>
       List<MessageModel> r = new List<MessageModel>.from(l.reversed);
       _showMessageByTitle(r); //按标题去展示消息
     }
+  }
+
+  _getShelterMessage(List m) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    var rel = await Dio().post("http://47.110.150.159:8080/shelter/select",
+        data: {"touserid": id});
+    List shelterMessage = rel.data;
+    for (int i = 0; i < shelterMessage.length; i++) {
+      m.add(shelterMessage[i]);
+    }
+    return m;
   }
 
   _getSubMessage(String url, List m) async {

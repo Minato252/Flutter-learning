@@ -671,7 +671,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
           "touserid": allid[i], //要发送的联系人
-          "fromuserid": messageModel.messageId, //群id
+          "fromuserid": prefs.get("id"), //群id
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
               "(" +
@@ -694,7 +694,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
           "touserid": allid[i],
-          "fromuserid": messageModel.messageId,
+          "fromuserid": prefs.get("id"),
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
               "(" +

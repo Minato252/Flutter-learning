@@ -733,6 +733,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String id = prefs.getString("id");
+
     if (!needSendShelterMessageList.contains(id)) {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
@@ -748,7 +749,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
         "keywords": messageModel.keyWord,
         "messages": messageModel.htmlCode,
         "touserid": needSendShelterMessageList[i], //要发送的联系人
-        "fromuserid": messageModel.messageId, //群id
+        "fromuserid": prefs.get("id"), //群id
         "title": messageModel.title,
         "hadLook": prefs.get("name") +
             "(" +
@@ -771,7 +772,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
           "keywords": messageModel.keyWord,
           "messages": messageModel.htmlCode,
           "touserid": allid[i],
-          "fromuserid": messageModel.messageId,
+          "fromuserid": prefs.get("id"),
           "title": messageModel.title,
           "hadLook": prefs.get("name") +
               "(" +
