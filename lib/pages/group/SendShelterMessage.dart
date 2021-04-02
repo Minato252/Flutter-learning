@@ -362,6 +362,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     targetAllList[0].forEach((element) {
                       targetIdList.add(element["id"]);
                     });
+                    await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                     await _sendMessage();
                   }
 
@@ -373,7 +374,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     _sendNoteMessage();
                   }
 
-                  _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
+                  // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                 },
               ),
               /* FlatButtonWithIcon(
@@ -718,12 +719,12 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       if (!needSendShelterMessageList.contains(allid[i])) {
         Dio dio1 = Dio();
         String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
-        messageModel.htmlCode = newHtml;
+        // messageModel.htmlCode = newHtml;
 
         var rel =
             await dio1.post("http://47.110.150.159:8080/shelter/insert", data: {
           "keywords": messageModel.keyWord,
-          "messages": messageModel.htmlCode,
+          "messages": newHtml,
           "touserid": allid[i],
           "fromuserid": prefs.get("id"),
           "title": messageModel.title,

@@ -310,6 +310,23 @@ class _GroupPreState extends State<GroupPre> {
       messageModel.messageId = groupId;
       messageModel.fromuserid = prefs.getString("id");
       content = messageModel.toJsonString();
+
+      //发送给服务器
+      var rel1 = await Dio()
+          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+        "keywords": "null",
+        "messages": messageModel.htmlCode,
+        "touserid": messageModel.messageId,
+        "fromuserid": prefs.get("id"),
+        "title": messageModel.title,
+        "hadLook": prefs.get("name") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")",
+        "MesId": messageModel.messageId,
+        "Flag": "普通", //这里增加了flag
+      });
+
       if (isDirctionMessage) {
         //未全选群成员，即对部分人隐藏内容
         await GroupMessageService.sendDirectionMessage(
@@ -322,21 +339,21 @@ class _GroupPreState extends State<GroupPre> {
 
     // print(messageModel.title);
 
-    //发送给服务器
-    var rel1 = await Dio()
-        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-      "keywords": "null",
-      "messages": messageModel.htmlCode,
-      "touserid": messageModel.messageId,
-      "fromuserid": prefs.get("id"),
-      "title": messageModel.title,
-      "hadLook": prefs.get("name") +
-          "(" +
-          new DateTime.now().toString().split('.')[0] +
-          ")",
-      "MesId": messageModel.messageId,
-      "Flag": "普通", //这里增加了flag
-    });
+    // //发送给服务器
+    // var rel1 = await Dio()
+    //     .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+    //   "keywords": "null",
+    //   "messages": messageModel.htmlCode,
+    //   "touserid": messageModel.messageId,
+    //   "fromuserid": prefs.get("id"),
+    //   "title": messageModel.title,
+    //   "hadLook": prefs.get("name") +
+    //       "(" +
+    //       new DateTime.now().toString().split('.')[0] +
+    //       ")",
+    //   "MesId": messageModel.messageId,
+    //   "Flag": "普通", //这里增加了flag
+    // });
 
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
       targetAllList[1].forEach((element) {

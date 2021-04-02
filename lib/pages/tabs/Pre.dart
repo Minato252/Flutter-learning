@@ -549,52 +549,6 @@ class _PreAndSendState extends State<PreAndSend> {
     messageModel.fromuserid = prefs.getString("id");
     content = messageModel.toJsonString();
 
-    // if (targetIdList.length == 1) {
-    //   String htmlCode2;
-    //   if (messageModel.modify) {
-    //     var htmlCode = await controller.generateHtmlUrl();
-    //     DateTime now = new DateTime.now();
-    //     String cure =
-    //         "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-    //     // content = content + cure + htmlCode;
-    //     htmlCode2 = messageModel.htmlCode + cure + htmlCode;
-    //     messageModel.htmlCode = messageModel.htmlCode + htmlCode;
-    //     content = messageModel.toJsonString();
-    //   } else {
-    //     htmlCode2 = messageModel.htmlCode;
-    //   }
-
-    //   content = messageModel.toJsonString();
-    //   for (String item in targetIdList) {
-    //     Message message = await IM.sendMessage(content, item);
-    //     // IM.sendMessage(content, item).whenComplete(() => null)
-
-    //     print("*************该消息的id是" +
-    //         messageModel.messageId +
-    //         "**********************");
-    //     var rel = await Dio()
-    //         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-    //       "keywords": messageModel.keyWord,
-    //       "messages": htmlCode2,
-    //       "touserid": item,
-    //       "fromuserid": prefs.get("id"),
-    //       "title": messageModel.title,
-    //       "hadLook": prefs.get("name") +
-    //           "(" +
-    //           new DateTime.now().toString().split('.')[0] +
-    //           ")",
-    //       "MesId": messageModel.messageId
-    //     });
-    //   }
-    // } else if (targetIdList.length > 1) {
-    // await GroupMessageService.creatGruop(messageId, messageModel.title,
-    //     targetIdList.join(',').toString(), content);
-    print(targetIdList.join(',').toString());
-    print("title:" + messageModel.title);
-    print("**************在创建群之前的messageId是：" + messageModel.messageId);
-    await GroupMessageService.creatGruop(messageModel.messageId,
-        messageModel.title, targetIdList.join(',').toString(), content);
-
     //发给服务器
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
@@ -610,6 +564,13 @@ class _PreAndSendState extends State<PreAndSend> {
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
     });
+
+    print(targetIdList.join(',').toString());
+    print("title:" + messageModel.title);
+    print("**************在创建群之前的messageId是：" + messageModel.messageId);
+    await GroupMessageService.creatGruop(messageModel.messageId,
+        messageModel.title, targetIdList.join(',').toString(), content);
+
     //print("1111111111111111111111");
     //print(rel);
 

@@ -288,6 +288,21 @@ class _LogRecordPageState extends State<LogRecordPage>
         l.add(mm);
       }
 
+      for (int i = 0; i < l.length; i++) {
+        int min = i;
+        for (int j = i + 1; j < l.length; j++) {
+          if (l[j].time.millisecondsSinceEpoch <
+              l[min].time.millisecondsSinceEpoch) {
+            min = j;
+          }
+        }
+        if (min != i) {
+          MessageModel t = l[i];
+          l[i] = l[min];
+          l[min] = t;
+        }
+      }
+
       // Navigator.push(
       //     context,
       //     new MaterialPageRoute(

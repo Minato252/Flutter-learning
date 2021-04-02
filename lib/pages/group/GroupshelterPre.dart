@@ -304,6 +304,8 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
           isDirctionMessage = true;
         }
       }
+
+      await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
       // var uuid = Uuid();
       // var messageId = uuid.v1();
       // messageModel.messageId = messageId;
@@ -320,24 +322,6 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       }
     }
 
-    // print(messageModel.title);
-
-    /* //发送给服务器
-    var rel1 = await Dio()
-        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-      "keywords": "null",
-      "messages": messageModel.htmlCode,
-      "touserid": messageModel.messageId,
-      "fromuserid": prefs.get("id"),
-      "title": messageModel.title,
-      "hadLook": prefs.get("name") +
-          "(" +
-          new DateTime.now().toString().split('.')[0] +
-          ")",
-      "MesId": messageModel.messageId,
-      "Flag": "普通", //这里增加了flag
-    });*/
-
     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
       targetAllList[1].forEach((element) {
         noteIdList.add(element["id"]);
@@ -345,7 +329,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       });
       _sendNoteMessage();
     }
-    _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
+    // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
   }
 
   @override
@@ -765,12 +749,12 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       if (!needSendShelterMessageList.contains(allid[i])) {
         Dio dio1 = Dio();
         String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
-        messageModel.htmlCode = newHtml;
+        // messageModel.htmlCode = newHtml;
 
         var rel =
             await dio1.post("http://47.110.150.159:8080/shelter/insert", data: {
           "keywords": messageModel.keyWord,
-          "messages": messageModel.htmlCode,
+          "messages": newHtml,
           "touserid": allid[i],
           "fromuserid": prefs.get("id"),
           "title": messageModel.title,
