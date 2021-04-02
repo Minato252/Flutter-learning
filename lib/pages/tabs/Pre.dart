@@ -149,7 +149,7 @@ Scrollbar getPre(
                   ),
           ),
           // Divider(),
-          messageModel.modify
+          /*  messageModel.modify
               ? SafeArea(
                   child: SizedBox(
                     height: ScreenAdapter.height(500),
@@ -166,7 +166,7 @@ Scrollbar getPre(
                         controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                   ),
                 )
-              : Text(""),
+              : Text(""),*/
 
           // Text("测试"),
         ],
