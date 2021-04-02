@@ -148,7 +148,7 @@ Scrollbar getPre(
                   ),
           ),
           // Divider(),
-          messageModel.modify
+          /* messageModel.modify
               ? SafeArea(
                   child: SizedBox(
                     height: ScreenAdapter.height(500),
@@ -167,7 +167,7 @@ Scrollbar getPre(
                 )
               : Text(""),
 
-          // Text("测试"),
+          // Text("测试"),*/
         ],
       ),
     )),
