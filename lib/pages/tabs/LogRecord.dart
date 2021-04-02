@@ -316,11 +316,19 @@ class _LogRecordPageState extends State<LogRecordPage>
   _getShelterMessage(List m) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String id = prefs.getString("id");
-    var rel = await Dio().post("http://47.110.150.159:8080/shelter/select",
-        data: {"touserid": id});
-    List shelterMessage = rel.data;
-    for (int i = 0; i < shelterMessage.length; i++) {
-      m.add(shelterMessage[i]);
+    List groupId = new List();
+    for (int i = 0; i < m.length; i++) {
+      if (!groupId.contains(m[i]["mMesId"])) {
+        groupId.add(m[i]["mMesId"]);
+      }
+    }
+    for (int j = 0; j < groupId.length; j++) {
+      var rel = await Dio().post("http://47.110.150.159:8080/shelter/select",
+          data: {"touserid": id, "fromuserid": groupId[j]});
+      List shelterMessage = rel.data;
+      for (int i = 0; i < shelterMessage.length; i++) {
+        m.add(shelterMessage[i]);
+      }
     }
     return m;
   }
@@ -328,7 +336,6 @@ class _LogRecordPageState extends State<LogRecordPage>
   _getSubMessage(String url, List m) async {
     List subUser = await _getSubs(); //获得下级
     List<String> subIdList = new List(); //所有下级所在的群id
-
     for (int i = 0; i < subUser.length; i++) {
       //该循环获取下级群id
       String subUserId = subUser[0]["id"];
