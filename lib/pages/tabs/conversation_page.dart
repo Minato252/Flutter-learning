@@ -898,17 +898,63 @@ class _ConversationPageState extends State<ConversationPage>
     var rel = await Dio().post(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //从遮蔽表中获取消息
-    Dio dio = Dio();
+    /* Dio dio = Dio();
     var rel1 = await dio.post("http://47.110.150.159:8080/shelter/select",
-        data: {"MesId": groupId, "touserid": prefs.get("id")});
+        data: {"MesId": groupId, "touserid": prefs.get("id")});*/
 
     List m = rel.data;
-    List z = rel1.data; //从遮蔽表中获取的消息
+
+    await _getShelterMessage(m, groupId); //获取遮蔽表的消息
+    print("3*******" + m.length.toString());
+
+    if (m.isEmpty) {
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new NullResult()));
+    } else {
+      List<MessageModel> l = new List<MessageModel>();
+      for (int i = 0; i < m.length; i++) {
+        MessageModel mm = MessageModel.formServerJsonString(m[i]);
+        mm.modify = true;
+        DateTime time1 = mm.time;
+        //DateTime time1 = messageModel.strToTime(mm.time);
+        int trantime = time1.millisecondsSinceEpoch;
+        //print(trantime);
+        if (trantime <= time && mm.flag != "草稿") {
+          l.add(mm);
+        }
+      }
+
+      for (int i = 0; i < l.length; i++) {
+        int min = i;
+        for (int j = i + 1; j < l.length; j++) {
+          if (l[j].time.millisecondsSinceEpoch <
+              l[min].time.millisecondsSinceEpoch) {
+            min = j;
+          }
+        }
+        if (min != i) {
+          MessageModel t = l[i];
+          l[i] = l[min];
+          l[min] = t;
+        }
+      }
+
+      // Navigator.push(
+      //     context,
+      //     new MaterialPageRoute(
+      //         builder: (context) =>
+      //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
+
+      /*List z = rel1.data; //从遮蔽表中获取的消息
     List to;
     int k = 0; //用于定位zz中的位置
     List<MessageModel> lm = new List<MessageModel>();
     List<MessageModel> lz = new List<MessageModel>();
     List<MessageModel> l = new List<MessageModel>();
+    MessageModel nn = MessageModel.formServerJsonString(m[3]);
+    int trantime3 = nn.time.millisecondsSinceEpoch;
+    print(trantime3);
+    print(time);
 
     if (m.isEmpty && z.isEmpty) {
       Navigator.push(context,
@@ -999,8 +1045,8 @@ class _ConversationPageState extends State<ConversationPage>
           l.add(mm);
         }
       }
-    }
-    /* if (m.isEmpty) {
+    }*/
+      /* if (m.isEmpty) {
       Navigator.push(context,
           new MaterialPageRoute(builder: (context) => new NullResult()));
     } else {
@@ -1028,8 +1074,22 @@ class _ConversationPageState extends State<ConversationPage>
       _showMessageByTitle(r);
       //按标题去展示消息
     }*/
-    List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-    _showMessageByTitle(r);
+      List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+      _showMessageByTitle(r);
+    }
+  }
+
+  _getShelterMessage(List m, String groupId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //String id = prefs.getString("id");
+    Dio dio = Dio();
+    var rel = await dio.post("http://47.110.150.159:8080/shelter/select",
+        data: {"MesId": groupId, "touserid": prefs.get("id")});
+    List shelterMessage = rel.data;
+    for (int i = 0; i < shelterMessage.length; i++) {
+      m.add(shelterMessage[i]);
+    }
+    return m;
   }
 
   _showMessageByTitle(List<MessageModel> messageList) {
