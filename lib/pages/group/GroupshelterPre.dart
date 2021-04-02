@@ -851,7 +851,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
-        "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+        "<p><span style=\"font-size:15px;color: blue\">以上是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
     /* Response response = await Dio().post(url, data: {

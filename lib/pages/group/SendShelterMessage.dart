@@ -848,7 +848,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
-        "<p><span style=\"font-size:15px;color: blue\">以下是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+        "<p><span style=\"font-size:15px;color: blue\">以上是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
     /*String url = "http://47.110.150.159:8080/insertNote";
     ///发起post请求
     Response response = await Dio().post(url, data: {

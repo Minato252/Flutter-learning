@@ -6,7 +6,9 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
 import 'package:weitong/pages/SearchMessage/search_message_content_list.dart';
+import 'package:weitong/pages/SearchMessage/search_message_pre.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
 import 'package:weitong/pages/group/GroupPre.dart';
 import 'package:weitong/pages/group/Grouptran.dart';
@@ -898,7 +900,8 @@ class _ALLReadSearchConversationPageState
       // );
 //d429a1c0-8a5a-11eb-8941-7f87d9c9c40e
       //return PreAndSend(
-      return Grouptran(
+      // return Grouptran(
+      return SearchMessagePrePage(
         messageModel: messageModel,
         isSearchResult: false,
       );

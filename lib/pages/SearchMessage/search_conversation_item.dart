@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart' as prefix;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/SearchMessage/search_message_item_factory.dart';
 import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/widget/message_item_factory.dart';
@@ -73,7 +74,10 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
 
   String photoUrl_target = "";
   String photoUrl_user = "";
+  String name_target = "";
+  String name_user = "";
   Map photoUrlMap = new Map();
+  Map nameUrlMap = new Map();
 
   String userId = "";
 
@@ -144,7 +148,7 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
     // });
   }
 
-  void _getPortrait(String targetId, String userId) async {
+  /*void _getPortrait(String targetId, String userId) async {
     String groupId = this.message.targetId;
     List member = await GroupMessageService.searchGruopMember(groupId);
     // Map map = new Map();
@@ -168,6 +172,41 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
       //photoUrl_target = rel_1.data["portrait"].toString();
       photoUrl_user = photoUrlMap[prefs.getString("id")];
       photoUrl_target = photoUrl_user;
+    });
+  }*/
+  void _getPortrait(String targetId, String userId) async {
+    String groupId = this.message.targetId;
+    List member = await GroupMessageService.searchGruopMember(groupId);
+    // Map map = new Map();
+
+    for (int i = 0; i < member.length; i++) {
+      var rel = await Dio().post(
+          "http://47.110.150.159:8080/record/selectrecord?id=" +
+              member[i]["id"] +
+              "&type=member");
+      photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+
+      //获取用户名
+      var relname = await Dio().post(
+          "http://47.110.150.159:8080/getinformation?id=" + member[i]["id"]);
+      nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
+    }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*var rel_1 = await Dio()
+        .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
+    var rel_2 = await Dio().post(
+        "http://47.110.150.159:8080/record/selectrecord?id=" +
+            userId +
+            "&type=member");
+    var relname2 = await Dio()
+        .post("http://47.110.150.159:8080/getinformation?id=" + userId);
+    setState(() {
+      //photoUrl_target = rel_1.data["portrait"].toString();
+      photoUrl_user = photoUrlMap[prefs.getString("id")];
+      photoUrl_target = photoUrl_user;
+      name_user = nameUrlMap[prefs.getString("id")];
+      name_target = name_user;
     });
   }
 
@@ -271,7 +310,9 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            message.senderUserId,
+                            nameUrlMap[message.senderUserId] == null
+                                ? ""
+                                : nameUrlMap[message.senderUserId],
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
                           Container(
@@ -394,8 +435,15 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                               ),
                             ),
                           ),
-                          Text(
+                          /*Text(
                             message.senderUserId,
+                            // SharedPreferences prefs = await SharedPreferences.getInstance();
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),*/
+                          Text(
+                            nameUrlMap[message.senderUserId] == null
+                                ? ""
+                                : nameUrlMap[message.senderUserId],
                             // SharedPreferences prefs = await SharedPreferences.getInstance();
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
@@ -568,8 +616,11 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: MessageItemFactory(
-                            message: message, needShow: needShowMessage),
+                        // child: MessageItemFactory(
+                        child: SearchMessageItemFactory(
+                            message: message,
+                            needShow: needShowMessage,
+                            userid: userId),
                       ),
                     ),
                   ),
