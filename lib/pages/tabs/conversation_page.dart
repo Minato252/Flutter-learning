@@ -227,7 +227,8 @@ class _ConversationPageState extends State<ConversationPage>
       burnMsgMap[message.messageId] = remainDuration;
       if (remainDuration == 0) {
         onGetHistoryMessages();
-        int index = -1;
+        // int index = -1;
+        int index = 0;
         for (var i = 0; i < messageDataSource.length; i++) {
           Message msg = messageDataSource[i];
           if (msg.messageId == message.messageId) {
@@ -324,7 +325,7 @@ class _ConversationPageState extends State<ConversationPage>
         onLoadRemoteHistoryMessages();
       }
     }
-    _refreshMessageContentListUI();
+    // _refreshMessageContentListUI();
   }
 
   onLoadRemoteHistoryMessages() async {
