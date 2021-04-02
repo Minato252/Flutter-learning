@@ -708,7 +708,13 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
 
     List superList = llstaff; //存储权限高的人
     // superList.add("11"); //假数据，假设11权限高
-    List needSendShelterMessageList = targetIdList; //需求发送遮蔽消息的人
+    // List needSendShelterMessageList = targetIdList; //需求发送遮蔽消息的人
+    List needSendShelterMessageList = [];
+    for (int i = 0; i < targetIdList.length; i++) {
+      if (!needSendShelterMessageList.contains(targetIdList[i])) {
+        needSendShelterMessageList.add(targetIdList[i]);
+      }
+    }
     for (int i = 0; i < superList.length; i++) {
       //把权限高的人加到发送遮蔽联系人列表中
       if (!needSendShelterMessageList.contains(superList[i])) {
