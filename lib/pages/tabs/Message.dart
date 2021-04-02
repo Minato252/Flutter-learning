@@ -54,16 +54,16 @@ class _MessagePageState extends State<MessagePage>
   updateConversationList() async {
     List list = await RongIMClient.getConversationList(displayConversationType);
     // Conversation
-    conList = [];
+    // conList = [];
     if (list != null) {
       list.sort((a, b) => b.sentTime.compareTo(a.sentTime));
 
-      for (int i = 0; i < list.length; i++) {
-        if (list[i].unreadMessageCount != 0) {
-          conList.add(list[i]);
-        }
-      }
-      // conList = list; //取消注释恢复原来拉去消息方式
+      // for (int i = 0; i < list.length; i++) {
+      //   if (list[i].unreadMessageCount != 0) {
+      //     conList.add(list[i]);
+      //   }
+      // }
+      conList = list; //取消注释恢复原来拉去消息方式
     }
     _renfreshUI();
   }
@@ -91,7 +91,8 @@ class _MessagePageState extends State<MessagePage>
       if (RCConnectionStatus.KickedByOtherClient == connectionStatus ||
           RCConnectionStatus.TokenIncorrect == connectionStatus ||
           RCConnectionStatus.UserBlocked == connectionStatus) {
-        String toast = "连接状态变化 $connectionStatus, 请退出后重新登录";
+        // String toast = "连接状态变化 $connectionStatus, 请退出后重新登录";
+        String toast = "您的账户在别的地方登入, 请注意账户安全";
         DialogUtil.showAlertDiaLog(context, toast,
             confirmButton: FlatButton(
                 onPressed: () async {

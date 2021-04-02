@@ -93,7 +93,8 @@ class _SearchMessagePageState extends State<SearchMessagePage>
       if (RCConnectionStatus.KickedByOtherClient == connectionStatus ||
           RCConnectionStatus.TokenIncorrect == connectionStatus ||
           RCConnectionStatus.UserBlocked == connectionStatus) {
-        String toast = "连接状态变化 $connectionStatus, 请退出后重新登录";
+        // String toast = "连接状态变化 $connectionStatus, 请退出后重新登录";
+        String toast = "您的账户在别的地方登入, 请注意账户安全";
         DialogUtil.showAlertDiaLog(context, toast,
             confirmButton: FlatButton(
                 onPressed: () async {
