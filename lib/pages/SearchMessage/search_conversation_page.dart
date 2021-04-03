@@ -938,8 +938,8 @@ class _SearchConversationPageState extends State<SearchConversationPage>
       // );
 //d429a1c0-8a5a-11eb-8941-7f87d9c9c40e
       //return PreAndSend(
-      //return Grouptran(
-      return SearchMessagePrePage(
+      return Grouptran(
+        // return SearchMessagePrePage(
         messageModel: messageModel,
         isSearchResult: false,
       );
