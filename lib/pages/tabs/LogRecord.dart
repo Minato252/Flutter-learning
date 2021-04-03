@@ -324,7 +324,7 @@ class _LogRecordPageState extends State<LogRecordPage>
     }
     for (int j = 0; j < groupId.length; j++) {
       var rel = await Dio().post("http://47.110.150.159:8080/shelter/select",
-          data: {"touserid": id, "mMesId": groupId[j]});
+          data: {"touserid": id, "MesId": groupId[j]});
       List shelterMessage = rel.data;
       for (int i = 0; i < shelterMessage.length; i++) {
         m.add(shelterMessage[i]);

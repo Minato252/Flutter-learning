@@ -6,6 +6,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
@@ -13,11 +14,14 @@ import 'package:html/dom.dart' as dom;
 import 'package:weitong/Model/style.dart';
 
 //构造聊天消息气泡的类
-class MessageItemFactory extends StatelessWidget {
+class SearchMessageItemFactory extends StatelessWidget {
   final String pageName = "example.MessageItemFactory";
   final Message message;
   final bool needShow;
-  const MessageItemFactory({Key key, this.message, this.needShow = true})
+  final userid;
+
+  const SearchMessageItemFactory(
+      {Key key, this.message, this.needShow = true, this.userid})
       : super(key: key);
 
 // //这里是他原来的================
@@ -775,19 +779,27 @@ class MessageItemFactory extends StatelessWidget {
     }
   }
 
-  Color _getMessageWidgetBGColor(int messageDirection) {
+  //Color _getMessageWidgetBGColor(int messageDirection) {
+  _getMessageWidgetBGColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Color color = Color(RCColor.MessageSendBgColor);
-    if (message.messageDirection == RCMessageDirection.Receive) {
+    /*if (message.messageDirection == RCMessageDirection.Receive) {
       color = Color(RCColor.MessageReceiveBgColor);
-    }
-    return color;
+    }*/
+    String userId = prefs.getString("id");
+
+    return userId;
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      color: _getMessageWidgetBGColor(message.messageDirection),
+      color: message.senderUserId == userid
+          ? Color(RCColor.MessageSendBgColor)
+          : Color(RCColor.MessageReceiveBgColor),
+      //message.messageDirection),
       //color: Colors.red,
       child: messageItem(context),
     );
