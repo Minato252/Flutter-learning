@@ -102,12 +102,12 @@ class _UserPageState extends State<UserPage> {
                 onTap: () {
                   Navigator.of(context).pushNamed('/category');
                 }),
-            ListTile(
-                leading: Icon(Icons.settings),
-                title: Text("设置"),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/setting');
-                }),
+            // ListTile(
+            //     leading: Icon(Icons.settings),
+            //     title: Text("设置"),
+            //     onTap: () {
+            //       Navigator.of(context).pushNamed('/setting');
+            //     }),
             JdButton(
               text: "退出登录",
               cb: () {
