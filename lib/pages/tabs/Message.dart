@@ -54,16 +54,16 @@ class _MessagePageState extends State<MessagePage>
   updateConversationList() async {
     List list = await RongIMClient.getConversationList(displayConversationType);
     // Conversation
-    conList = [];
+    // conList = [];
     if (list != null) {
       list.sort((a, b) => b.sentTime.compareTo(a.sentTime));
 
-      for (int i = 0; i < list.length; i++) {
-        if (list[i].unreadMessageCount != 0) {
-          conList.add(list[i]);
-        }
-      }
-      // conList = list; //取消注释恢复原来拉去消息方式
+      // for (int i = 0; i < list.length; i++) {
+      //   if (list[i].unreadMessageCount != 0) {
+      //     conList.add(list[i]);
+      //   }
+      // }
+      conList = list; //取消注释恢复原来拉去消息方式
     }
     _renfreshUI();
   }

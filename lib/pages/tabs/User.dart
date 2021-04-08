@@ -1,8 +1,13 @@
 //https://material.io/tools/icons/?icon=favorite&style=baseline
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +15,7 @@ import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
 import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
+import 'package:weitong/widget/MyNetImage.dart';
 import 'package:weitong/widget/loading.dart';
 import '../../main.dart';
 import '../../services/ScreenAdapter.dart';
@@ -36,6 +42,18 @@ class _UserPageState extends State<UserPage> {
     _getUserInfo();
     _getPortrait();
   }
+
+  // _savePhoto(String photoName, String url) async {
+  //   print("**************获取路径之前***********");
+  //   var appDocDir = await getTemporaryDirectory();
+  //   print("**************获取路径之后***********");
+  //   String savePath = appDocDir.path + "images/portrait/${photoName}.jpg";
+  //   print("**************获取路径之前***********" + savePath);
+  //   String fileUrl = url;
+  //   await Dio().download(fileUrl, savePath);
+  //   final result = await ImageGallerySaver.saveFile(savePath);
+  //   print(result);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +164,11 @@ class _UserPageState extends State<UserPage> {
         "http://47.110.150.159:8080/record/selectrecord?id=" +
             this.id +
             "&type=member");
+    // _savePhoto(id, rel.data["portrait"].toString());
+
     setState(() {
       this.photoUrl = rel.data["portrait"].toString();
+
       isLoadFinshed = true;
     });
   }

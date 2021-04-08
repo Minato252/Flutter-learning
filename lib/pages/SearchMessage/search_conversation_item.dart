@@ -7,6 +7,7 @@ import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/SearchMessage/search_message_item_factory.dart';
 import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
+import 'package:weitong/widget/MyNetImage.dart';
 import 'package:weitong/widget/message_item_factory.dart';
 import 'dart:developer' as developer;
 

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:provider/provider.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
+import 'package:weitong/pages/tabs/chooseUser/search_contacts_list.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/providerServices.dart';
 
@@ -16,17 +17,21 @@ class ContactListPage extends StatefulWidget {
   List users;
   bool isSingle;
   String title;
+  Function deleteStaff;
 
-  ContactListPage(this.users, {this.isSingle = false, this.title = "选择联系人"});
+  ContactListPage(this.users,
+      {this.isSingle = false, this.title = "选择联系人", this.deleteStaff});
   State<StatefulWidget> createState() {
-    return new _ContactListPageState(users, isSingle, title);
+    return new _ContactListPageState(users, isSingle, title, deleteStaff);
   }
 }
 
 class _ContactListPageState extends State<ContactListPage> {
   List<ContactInfo> _contacts = [];
   List users;
-  _ContactListPageState(this.users, this.isSingle, this.title);
+  Function deleteStaff;
+  _ContactListPageState(
+      this.users, this.isSingle, this.title, this.deleteStaff);
   double susItemHeight = 40;
   List<String> targIdList = [];
   List<String> noteList = [];
@@ -264,6 +269,34 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(
         title: Text(title),
         actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () async {
+                List<Map> users2 = List<Map>.from(users);
+                String rel = await showSearch(
+                    context: context, delegate: SearchContactList(users2));
+
+                print(rel);
+                String targetListString = rel.split(";")[0];
+                String noteListString = rel.split(";")[1];
+                List<String> targetListFromString =
+                    targetListString.split(',').toList();
+                List<String> noteListFromString =
+                    noteListString.split(',').toList();
+                for (int i = 0; i < targetListFromString.length; i++) {
+                  if (!targIdList.contains(targetListFromString[i])) {
+                    targIdList.add(targetListFromString[i]);
+                  }
+                }
+                for (int i = 0; i < noteListFromString.length; i++) {
+                  if (!noteList.contains(noteListFromString[i])) {
+                    noteList.add(noteListFromString[i]);
+                  }
+                }
+                print(targIdList);
+                print(noteList);
+                setState(() {});
+              }),
           FlatButton(
               onPressed: () {
                 _addAllorRemoveAll();
