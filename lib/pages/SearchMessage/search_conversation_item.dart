@@ -336,6 +336,12 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                       )),
 
                   buildMessageWidget(),
+                  Container(
+                    child: Text(
+                        DateTime.fromMillisecondsSinceEpoch(message.sentTime)
+                            .toString()
+                            .split('.')[0]),
+                  ),
                   // Container(
                   //   alignment: Alignment.centerRight,
                   //   padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -451,6 +457,12 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                         ],
                       )),
                   buildMessageWidget(),
+                  Container(
+                    child: Text(
+                        DateTime.fromMillisecondsSinceEpoch(message.sentTime)
+                            .toString()
+                            .split('.')[0]),
+                  ),
                 ],
               ),
             ),
