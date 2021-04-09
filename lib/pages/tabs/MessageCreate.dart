@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
@@ -247,34 +249,48 @@ class _MessageCreateState extends State<MessageCreate>
   _sendMessage(SimpleRichEditController controller) async {
     newTitleFormKey.currentState.save(); //测试标题是否含有关键词
     if (newTitleFormKey.currentState.validate()) {
-//标题含有关键词
+      //标题含有关键词
       //这个htmlCode就是所有消息的HTML代码了
       //或许我们可以加密了再传输？
       var htmlCode = await controller.generateHtmlUrl();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print(htmlCode);
 
-      // controller.generateHtml();
-      //这里是用html初始化一个页面
+      var rel = await Dio().post(
+          "http://47.110.150.159:8080/messages/select?mTitle=" + newTitle);
+      print(rel.data);
+      if (rel.data.length > 0) {
+        Fluttertoast.showToast(
+            msg: "该标题已经创建过",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER, // 消息框弹出的位置
+            timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        // controller.generateHtml();
+        //这里是用html初始化一个页面
 
-      MessageModel messageModel = MessageModel(
-          htmlCode: htmlCode,
-          title: newTitle,
-          keyWord: _curchosedTag,
-          hadLook: prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")");
-      List<RichEditData> l = new List<RichEditData>.from(controller.data);
-      Navigator.push(context, MaterialPageRoute(builder: (c) {
-        return PreAndSend(
-          messageModel: messageModel,
-          editable: true,
-          data: l,
-          isSearchResult: false,
-        );
-      }));
-      print("发送成功");
+        MessageModel messageModel = MessageModel(
+            htmlCode: htmlCode,
+            title: newTitle,
+            keyWord: _curchosedTag,
+            hadLook: prefs.get("name") +
+                "(" +
+                new DateTime.now().toString().split('.')[0] +
+                ")");
+        List<RichEditData> l = new List<RichEditData>.from(controller.data);
+        Navigator.push(context, MaterialPageRoute(builder: (c) {
+          return PreAndSend(
+            messageModel: messageModel,
+            editable: true,
+            data: l,
+            isSearchResult: false,
+          );
+        }));
+        print("发送成功");
+      }
     }
   }
 }
