@@ -792,7 +792,25 @@ class _ConversationPageState extends State<ConversationPage>
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
-          FlatButton(
+          SizedBox(
+            width: 60,
+            child: FlatButton(
+                onPressed: () {
+                  TextMessage mymessage = messageDataSource[0].content;
+                  int time = messageDataSource[0].sentTime;
+                  MessageModel messageModel =
+                      MessageModel.fromJsonString(mymessage.content);
+                  readAll(messageModel.messageId, time);
+                },
+                child: Text(
+                  "全阅",
+                  style: TextStyle(
+                      //fontSize: 15.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+          ),
+          /* FlatButton(
               onPressed: () {
                 TextMessage mymessage = messageDataSource[0].content;
                 int time = messageDataSource[0].sentTime;
@@ -803,11 +821,74 @@ class _ConversationPageState extends State<ConversationPage>
               child: Text(
                 "全阅",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    // fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
-              )),
-          FlatButton(
+              )),*/
+          SizedBox(
+            width: 60,
+            child: FlatButton(
+                onPressed: () async {
+                  TextMessage mymessage = messageDataSource[0].content;
+                  MessageModel messageModel =
+                      MessageModel.fromJsonString(mymessage.content);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+
+                  // _clearMessage(controller);
+                  Navigator.push(context, MaterialPageRoute(builder: (c) {
+                    // return Pre(
+                    //   messageModel: messageModel,
+                    // );
+
+                    return GroupMessageCreate(
+                      targetGroupId: messageModel.messageId, //传群id
+                      title: messageModel.title,
+                      // fromUserId: prefs.getString("id"),
+                    );
+                  }));
+                },
+                child: Text(
+                  //"普通回复",
+                  "回复",
+                  style: TextStyle(
+                      //fontSize: 20.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+          ),
+          /*SizedBox(
+            width: 60,
+            child: FlatButton(
+                onPressed: () async {
+                  TextMessage mymessage = messageDataSource[0].content;
+                  MessageModel messageModel =
+                      MessageModel.fromJsonString(mymessage.content);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+
+                  // _clearMessage(controller);
+                  Navigator.push(context, MaterialPageRoute(builder: (c) {
+                    // return Pre(
+                    //   messageModel: messageModel,
+                    // );
+
+                    return GroupShelterMessageCreate(
+                      targetGroupId: messageModel.messageId, //传群id
+                      title: messageModel.title,
+                      // fromUserId: prefs.getString("id"),
+                    );
+                  }));
+                },
+                child: Text(
+                  "遮蔽回复",
+                  style: TextStyle(
+                      // fontSize: 20.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+          ),*/
+          /*FlatButton(
               onPressed: () async {
                 TextMessage mymessage = messageDataSource[0].content;
                 MessageModel messageModel =
@@ -830,11 +911,11 @@ class _ConversationPageState extends State<ConversationPage>
               child: Text(
                 "普通回复",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    //fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
-              )),
-          FlatButton(
+              )),*/
+          /*FlatButton(
               onPressed: () async {
                 TextMessage mymessage = messageDataSource[0].content;
                 MessageModel messageModel =
@@ -857,10 +938,10 @@ class _ConversationPageState extends State<ConversationPage>
               child: Text(
                 "遮蔽回复",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    // fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
-              )),
+              )),*/
         ]),
         body: Container(
           child: Stack(

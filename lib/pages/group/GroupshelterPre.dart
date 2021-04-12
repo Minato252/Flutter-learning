@@ -760,7 +760,8 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       // if (allid.contains(needSendShelterMessageList)) {
       if (!needSendShelterMessageList.contains(allid[i])) {
         Dio dio1 = Dio();
-        String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
+        String newHtml = "<p>遮蔽信息</p>";
+        //"<p>这是一条遮蔽后的消息，您无法阅读</p>";
         // messageModel.htmlCode = newHtml;
 
         var rel =

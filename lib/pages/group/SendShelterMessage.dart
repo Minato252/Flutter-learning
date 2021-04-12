@@ -303,19 +303,38 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     content = messageModel.toJsonString();
     return Scaffold(
       appBar: AppBar(
-        title: Text("预览页面"),
+        // title: Text("预览页面"),
         actions: [
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              FlatButtonWithIcon(
+              FlatButton(
+                  child: Text(
+                    "编辑",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              /* FlatButtonWithIcon(
                 label: Text(
                   "发送",
                 ),
                 icon: Icon(
                   Icons.send,
                 ),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,*/
+              FlatButton(
+                child: Text(
+                  "发送",
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                ),
                 onPressed: () async {
                   // if (targetIdList == null) {
                   //   sendMessageSuccess("请选择您要发送的联系人！");
@@ -377,6 +396,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                   // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                 },
               ),
+
               /* FlatButtonWithIcon(
                 label: Text("保存"),
                 icon: Icon(
@@ -724,7 +744,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       // if (allid.contains(needSendShelterMessageList)) {
       if (!needSendShelterMessageList.contains(allid[i])) {
         Dio dio1 = Dio();
-        String newHtml = "<p>这是一条遮蔽后的消息，您无法阅读</p>";
+        String newHtml = "<p>遮蔽信息</p>";
+        //"<p>这是一条遮蔽后的消息，您无法阅读</p>";
         // messageModel.htmlCode = newHtml;
 
         var rel =

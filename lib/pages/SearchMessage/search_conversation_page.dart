@@ -819,14 +819,14 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                 }));
               },
               child: Text(
-                // "回复",
-                "普通回复",
+                "回复",
+                // "普通回复",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 15.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),
-          FlatButton(
+          /*FlatButton(
               onPressed: () async {
                 //TextMessage mymessage = messageDataSource[0].content;
                 TextMessage mymessage =
@@ -854,7 +854,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
-              )),
+              )),*/
         ]),
         body: Container(
           child: Stack(
