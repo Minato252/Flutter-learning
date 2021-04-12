@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
@@ -27,6 +28,8 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  static const platform = const MethodChannel('samples.flutter.io/battery');
+  String _batteryLevel = 'Unknown battery level.';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,10 +66,31 @@ class _SettingPageState extends State<SettingPage> {
                 await _sendDirectionMessage(userList, content);
               },
               icon: Icon(Icons.send),
-              label: Text("发送群消息"))
+              label: Text("发送群消息")),
+          FlatButtonWithIcon(
+              onPressed: () async {
+                await testAdriond();
+                print("*************运行安卓源码******" + _batteryLevel);
+              },
+              icon: Icon(Icons.send),
+              label: Text("测试调用安卓代码"))
         ],
       ),
     );
+  }
+
+  testAdriond() async {
+    String batteryLevel;
+    try {
+      final int result = await platform.invokeMethod('getBatteryLevel');
+      batteryLevel = 'Battery level at $result % .';
+    } on PlatformException catch (e) {
+      batteryLevel = "Failed to get battery level: '${e.message}'.";
+    }
+
+    setState(() {
+      _batteryLevel = batteryLevel;
+    });
   }
 
   myText() async {

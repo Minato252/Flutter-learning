@@ -139,7 +139,7 @@ Scrollbar getPre(
                 : Html(
                     data: messageModel.htmlCode,
                     style: {
-                      'img': Style(width: 300, height: 300),
+                      'img': Style(width: 200, height: 300),
                       'video': Style(width: 150, height: 150),
                       // 'text': Style(fontSize: FontSize.large)
                       //  "p":Style(,FontSize(20.0)),
@@ -548,6 +548,9 @@ class _PreAndSendState extends State<PreAndSend> {
     messageModel.messageId = messageId;
     messageModel.fromuserid = prefs.getString("id");
     content = messageModel.toJsonString();
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发给服务器
     var rel = await Dio()
@@ -563,6 +566,7 @@ class _PreAndSendState extends State<PreAndSend> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
+      "type": type.data,
     });
 
     print(targetIdList.join(',').toString());
@@ -737,6 +741,10 @@ class _PreAndSendState extends State<PreAndSend> {
     } else {
       fromid = messageModel.fromuserid;
     }*/
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
     print(messageModel.messageId);
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
@@ -750,7 +758,8 @@ class _PreAndSendState extends State<PreAndSend> {
           new DateTime.now().toString().split('.')[0] +
           ")",
       "MesId": messageModel.messageId,
-      "Flag": "草稿"
+      "Flag": "草稿",
+      "type": type.data,
     });
 
     MyToast.AlertMesaage("已将内容保存！");

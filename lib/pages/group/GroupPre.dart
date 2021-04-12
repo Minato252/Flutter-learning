@@ -311,6 +311,10 @@ class _GroupPreState extends State<GroupPre> {
       messageModel.fromuserid = prefs.getString("id");
       content = messageModel.toJsonString();
 
+      String useid = prefs.get("id");
+      var type = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
       //发送给服务器
       var rel1 = await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {
@@ -325,6 +329,7 @@ class _GroupPreState extends State<GroupPre> {
             ")",
         "MesId": messageModel.messageId,
         "Flag": "普通", //这里增加了flag
+        "type": type.data,
       });
 
       if (isDirctionMessage) {
@@ -644,6 +649,9 @@ class _GroupPreState extends State<GroupPre> {
       for (String item in targetIdList) {
         Message message = await IM.sendMessage(content, item);
         // IM.sendMessage(content, item).whenComplete(() => null)
+        String useid = prefs.get("id");
+        var type = await Dio()
+            .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
         print("*************该消息的id是" +
             messageModel.messageId +
@@ -659,7 +667,8 @@ class _GroupPreState extends State<GroupPre> {
               "(" +
               new DateTime.now().toString().split('.')[0] +
               ")",
-          "MesId": messageModel.messageId
+          "MesId": messageModel.messageId,
+          "type": type.data,
         });
       }
     } else if (targetIdList.length > 1) {
@@ -794,6 +803,11 @@ class _GroupPreState extends State<GroupPre> {
     } else {
       fromid = messageModel.fromuserid;
     }*/
+
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
@@ -807,6 +821,7 @@ class _GroupPreState extends State<GroupPre> {
           ")",
       "MesId": targetGroupId,
       "Flag": "草稿",
+      "type": type.data,
     });
 
     MyToast.AlertMesaage("已将内容保存！");

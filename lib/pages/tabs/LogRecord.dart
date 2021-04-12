@@ -218,8 +218,13 @@ class _LogRecordPageState extends State<LogRecordPage>
   }
 
   searchMessage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+    var type2 = type.data;
     bool isEmpty = true;
-    String url = "http://47.110.150.159:8080/messages/fuzzyselect?";
+    String url = "http://47.110.150.159:8080/messages/fuzzyselect?type=$type2&";
     if (_searchTag != "" && _searchTag != null) {
       //有关键词
       isEmpty = false;
