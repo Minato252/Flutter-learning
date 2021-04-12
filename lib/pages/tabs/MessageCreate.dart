@@ -273,114 +273,87 @@ class _MessageCreateState extends State<MessageCreate>
   _sendMessage(SimpleRichEditController controller) async {
     newTitleFormKey.currentState.save(); //测试标题是否含有关键词
     if (newTitleFormKey.currentState.validate()) {
-      //标题含有关键词
+//标题含有关键词
       //这个htmlCode就是所有消息的HTML代码了
       //或许我们可以加密了再传输？
       var htmlCode = await controller.generateHtmlUrl();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       print(htmlCode);
 
-      var rel = await Dio().post(
-          "http://47.110.150.159:8080/messages/select?mTitle=" + newTitle);
+      // controller.generateHtml();
+      //这里是用html初始化一个页面
 
-      if (rel.data.length > 0) {
-        Fluttertoast.showToast(
-            msg: "该标题已经创建过",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER, // 消息框弹出的位置
-            timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      } else {
-        // controller.generateHtml();
-        //这里是用html初始化一个页面
-
-        MessageModel messageModel = MessageModel(
-            htmlCode: htmlCode,
-            title: newTitle,
-            keyWord: _curchosedTag,
-            hadLook: prefs.get("name") +
-                "(" +
-                new DateTime.now().toString().split('.')[0] +
-                ")");
-        List<RichEditData> l = new List<RichEditData>.from(controller.data);
-        Navigator.push(context, MaterialPageRoute(builder: (c) {
-          return PreAndSend(
-            messageModel: messageModel,
-            editable: true,
-            data: l,
-            isSearchResult: false,
-          );
-        }));
-        print("发送成功");
-      }
+      MessageModel messageModel = MessageModel(
+          htmlCode: htmlCode,
+          title: newTitle,
+          keyWord: _curchosedTag,
+          hadLook: prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")");
+      List<RichEditData> l = new List<RichEditData>.from(controller.data);
+      Navigator.push(context, MaterialPageRoute(builder: (c) {
+        return PreAndSend(
+          messageModel: messageModel,
+          editable: true,
+          data: l,
+          isSearchResult: false,
+        );
+      }));
+      print("发送成功");
     }
   }
 
+//不需预览直接发送
   _senddirectMessage(SimpleRichEditController controller) async {
     newTitleFormKey.currentState.save(); //测试标题是否含有关键词
     if (newTitleFormKey.currentState.validate()) {
-      var rel = await Dio().post(
-          "http://47.110.150.159:8080/messages/select?mTitle=" + newTitle);
+      //标题含有关键词
+      //这个htmlCode就是所有消息的HTML代码了
+      //或许我们可以加密了再传输？
+      var htmlCode = await controller.generateHtmlUrl();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      print(htmlCode);
+      MessageModel messageModel = MessageModel(
+          htmlCode: htmlCode,
+          title: newTitle,
+          keyWord: _curchosedTag,
+          hadLook: prefs.get("name") +
+              "(" +
+              new DateTime.now().toString().split('.')[0] +
+              ")");
 
-      if (rel.data.length > 0) {
-        Fluttertoast.showToast(
-            msg: "该标题已经创建过",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER, // 消息框弹出的位置
-            timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      } else {
-        //标题含有关键词
-        //这个htmlCode就是所有消息的HTML代码了
-        //或许我们可以加密了再传输？
-        var htmlCode = await controller.generateHtmlUrl();
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        print(htmlCode);
-        MessageModel messageModel = MessageModel(
-            htmlCode: htmlCode,
-            title: newTitle,
-            keyWord: _curchosedTag,
-            hadLook: prefs.get("name") +
-                "(" +
-                new DateTime.now().toString().split('.')[0] +
-                ")");
+      final ps = Provider.of<ProviderServices>(context);
+      Map userInfo = ps.userInfo;
+      String jsonTree =
+          await Tree.getTreeFormSer(userInfo["id"], false, context);
+      var parsedJson = json.decode(jsonTree);
+      List users = [];
+      Tree.getAllPeople(parsedJson, users);
 
-        final ps = Provider.of<ProviderServices>(context);
-        Map userInfo = ps.userInfo;
-        String jsonTree =
-            await Tree.getTreeFormSer(userInfo["id"], false, context);
-        var parsedJson = json.decode(jsonTree);
-        List users = [];
-        Tree.getAllPeople(parsedJson, users);
-
-        String id = prefs.getString("id");
-        for (int i = 0; i < users.length; i++) {
-          if (users[i]["id"] == id) {
-            users.removeAt(i);
-          }
+      String id = prefs.getString("id");
+      for (int i = 0; i < users.length; i++) {
+        if (users[i]["id"] == id) {
+          users.removeAt(i);
         }
-        List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => ContactListPage(users)));
+      }
+      List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => ContactListPage(users)));
 
-        targetIdList = [];
-        if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-          targetAllList[0].forEach((element) {
-            targetIdList.add(element["id"]);
-          });
-          await _sendMessage2(messageModel);
-        }
+      targetIdList = [];
+      if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+        targetAllList[0].forEach((element) {
+          targetIdList.add(element["id"]);
+        });
+        await _sendMessage2(messageModel);
+      }
 
-        if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-          targetAllList[1].forEach((element) {
-            noteIdList.add(element["id"]);
-            noteNameList.add(element["name"]);
-          });
-          _sendNoteMessage();
-        }
+      if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+        targetAllList[1].forEach((element) {
+          noteIdList.add(element["id"]);
+          noteNameList.add(element["name"]);
+        });
+        _sendNoteMessage();
       }
     }
   }
@@ -398,9 +371,6 @@ class _MessageCreateState extends State<MessageCreate>
     messageModel.fromuserid = prefs.getString("id");
     String content;
     content = messageModel.toJsonString();
-    String useid = prefs.get("id");
-    var type = await Dio()
-        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发给服务器
     var rel = await Dio()
@@ -416,7 +386,6 @@ class _MessageCreateState extends State<MessageCreate>
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
-      "type": type.data,
     });
 
     print(targetIdList.join(',').toString());
