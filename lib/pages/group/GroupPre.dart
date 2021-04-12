@@ -39,6 +39,8 @@ import 'package:crypto/crypto.dart';
 import 'package:synchronized/synchronized.dart' as prefix;
 import 'package:weitong/pages/group/PretoRichEditGroup.dart';
 
+import 'GroupshelterCreateMessage.dart';
+
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
 
@@ -373,12 +375,43 @@ class _GroupPreState extends State<GroupPre> {
     content = messageModel.toJsonString();
     return Scaffold(
       appBar: AppBar(
-        title: Text("预览页面"),
+        //title: Text("预览页面"),
+        //title: Text("内容页面"),
         actions: [
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              FlatButtonWithIcon(
+              FlatButton(
+                  onPressed: () {
+                    //print(widget.targetGroupId);
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (context) => new PretoRichEditGroup(
+                            data,
+                            messageModel.title,
+                            /*, messageModel.keyWord*/
+                            messageModel.messageId)));
+                  },
+                  child: Text(
+                    "遮蔽",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+
+              FlatButton(
+                  onPressed: () {
+                    _sendGroupMessage(targetGroupId);
+                  },
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+
+              /*  FlatButtonWithIcon(
                 label: Text(
                   "发送",
                 ),
@@ -437,18 +470,40 @@ class _GroupPreState extends State<GroupPre> {
                     _sendNoteMessage();
                   }*/
                 },
-              ),
-              FlatButtonWithIcon(
-                label: Text("保存"),
-                icon: Icon(
-                  Icons.save,
+              ),*/
+
+              // FlatButtonWithIcon(
+              //  label: Text("保存"),
+              //  icon: Icon(
+              //   Icons.save,
+              //  ),
+              //  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              FlatButton(
+                child: Text(
+                  "编辑",
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
                 ),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  "保存",
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                ),
                 onPressed: () {
                   print(targetGroupId);
                   postRequestFunction(notehtmlCode, targetGroupId);
                 },
               ),
+
               /* editable
                   ? FlatButtonWithIcon(
                       label: Text("遮蔽"),
@@ -832,6 +887,7 @@ class Pre extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("预览页面"),
+        // title: Text("内容页面"),
         actions: [
           Row(
             children: [

@@ -77,9 +77,10 @@ class _GroupShelterMessageCreateState extends State<GroupShelterMessageCreate>
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("创建消息"),
+          //title: Text("创建消息"),
+          title: Text("发送"),
           actions: <Widget>[
-            FlatButton(
+            /*FlatButton(
                 onPressed: () {
                   _clearMessage(controller);
                 },
@@ -89,33 +90,40 @@ class _GroupShelterMessageCreateState extends State<GroupShelterMessageCreate>
                       fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
-                )),
-            FlatButton(
-                onPressed: () {
-                  //print(widget.targetGroupId);
-                  _sendMessage(controller, widget.targetGroupId, widget.title);
-                },
-                child: Text(
-                  "预览",
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                )),
-            FlatButton(
-                onPressed: () {
-                  //print(widget.targetGroupId);
-                  // _sendMessage(controller, widget.targetGroupId, widget.title);
-                  _sendGroupMessage(
-                      controller, widget.targetGroupId, widget.title);
-                },
-                child: Text(
-                  "发送",
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                )),
+                )),*/
+            SizedBox(
+              width: 55,
+              child: FlatButton(
+                  onPressed: () {
+                    //print(widget.targetGroupId);
+                    _sendMessage(
+                        controller, widget.targetGroupId, widget.title);
+                  },
+                  child: Text(
+                    "预览",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+            SizedBox(
+              width: 55,
+              child: FlatButton(
+                  onPressed: () {
+                    //print(widget.targetGroupId);
+                    // _sendMessage(controller, widget.targetGroupId, widget.title);
+                    _sendGroupMessage(
+                        controller, widget.targetGroupId, widget.title);
+                  },
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            )
           ],
         ),
         body: SafeArea(

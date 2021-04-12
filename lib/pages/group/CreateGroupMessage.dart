@@ -81,9 +81,10 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("创建消息"),
+          //title: Text("创建消息"),
+          //title: Text("发送"),
           actions: <Widget>[
-            FlatButton(
+            /* FlatButton(
                 onPressed: () {
                   _clearMessage(controller);
                 },
@@ -93,7 +94,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                       fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
-                )),
+                )),*/
             FlatButton(
                 onPressed: () {
                   //print(widget.targetGroupId);
@@ -102,7 +103,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                 child: Text(
                   "预览",
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 15.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -116,7 +117,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                 child: Text(
                   "发送",
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: 15.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
