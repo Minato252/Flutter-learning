@@ -549,6 +549,9 @@ class _GrouptranState extends State<Grouptran> {
           "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
       htmlCode2 = messageModel.htmlCode + cure + htmlCode;
       messageModel.htmlCode = messageModel.htmlCode + htmlCode;
+      String useid = prefs.get("id");
+      var type = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
       content = messageModel.toJsonString();
       var rel1 = await Dio()
@@ -562,7 +565,8 @@ class _GrouptranState extends State<Grouptran> {
             "(" +
             new DateTime.now().toString().split('.')[0] +
             ")",
-        "MesId": messageModel.messageId
+        "MesId": messageModel.messageId,
+        "type": type.data,
       });
 
       if (isDirctionMessage) {
@@ -662,6 +666,9 @@ class _GrouptranState extends State<Grouptran> {
     print("**************在创建群之前的messageId是：" + messageModel.messageId);
     await GroupMessageService.creatGruop(messageModel.messageId,
         messageModel.title, targetIdList.join(',').toString(), content);
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发给服务器
     var rel = await Dio()
@@ -677,6 +684,7 @@ class _GrouptranState extends State<Grouptran> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
+      "type": type.data,
     });
     //print("1111111111111111111111");
     //  print(rel);
@@ -809,6 +817,10 @@ class _GrouptranState extends State<Grouptran> {
     }*/
     // print("*");
     // print(messageModel.messageId);
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
@@ -822,6 +834,7 @@ class _GrouptranState extends State<Grouptran> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "草稿",
+      "type": type.data,
     });
 
     MyToast.AlertMesaage("已将内容保存！");

@@ -74,7 +74,9 @@ class _TabsState extends State<Tabs> {
   }
 
   void _showMessageOnApp() {
-    FlutterAppBadger.updateBadgeCount(1);
+    // FlutterAppBadger.updateBadgeCount(1);
+    int badgeCount = 1;
+    // ShortcutBadger.applyCount(context, badgeCount); //for 1.1.4+
   }
 
   initPlatformState2() async {

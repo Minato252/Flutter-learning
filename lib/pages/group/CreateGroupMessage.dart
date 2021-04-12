@@ -405,6 +405,9 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       messageModel.messageId = groupId;
       messageModel.fromuserid = prefs.getString("id");
       content = messageModel.toJsonString();
+      String useid = prefs.get("id");
+      var type = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
       //发送给服务器
       var rel1 = await Dio()
@@ -420,6 +423,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
             ")",
         "MesId": messageModel.messageId,
         "Flag": "普通", //这里增加了flag
+        "type": type.data,
       });
 
       if (isDirctionMessage) {

@@ -885,6 +885,10 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     } else {
       fromid = messageModel.fromuserid;
     }*/
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
     print(messageModel.messageId);
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
@@ -898,7 +902,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           new DateTime.now().toString().split('.')[0] +
           ")",
       "MesId": messageModel.messageId,
-      "Flag": "草稿"
+      "Flag": "草稿",
+      "type": type.data,
     });
 
     MyToast.AlertMesaage("已将内容保存！");

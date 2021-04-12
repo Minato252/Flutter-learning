@@ -551,6 +551,10 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
       messageModel.htmlCode = messageModel.htmlCode + htmlCode;
 
       content = messageModel.toJsonString();
+      String useid = prefs.get("id");
+      var type = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
       var rel1 = await Dio()
           .post("http://47.110.150.159:8080/messages/insertMessage", data: {
         "keywords": "null",
@@ -562,7 +566,8 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
             "(" +
             new DateTime.now().toString().split('.')[0] +
             ")",
-        "MesId": messageModel.messageId
+        "MesId": messageModel.messageId,
+        "type": type.data,
       });
 
       if (isDirctionMessage) {
@@ -662,6 +667,9 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
     print("**************在创建群之前的messageId是：" + messageModel.messageId);
     await GroupMessageService.creatGruop(messageModel.messageId,
         messageModel.title, targetIdList.join(',').toString(), content);
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发给服务器
     var rel = await Dio()
@@ -677,6 +685,7 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
+      "type": type.data,
     });
     //print("1111111111111111111111");
     //  print(rel);
@@ -809,6 +818,10 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
     }*/
     // print("*");
     // print(messageModel.messageId);
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
     var rel = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
@@ -822,6 +835,7 @@ class _SearchMessagePrePageState extends State<SearchMessagePrePage> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "草稿",
+      "type": type.data,
     });
 
     MyToast.AlertMesaage("已将内容保存！");
