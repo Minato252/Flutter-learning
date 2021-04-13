@@ -69,11 +69,11 @@ class _SettingPageState extends State<SettingPage> {
               label: Text("发送群消息")),
           FlatButtonWithIcon(
               onPressed: () async {
-                await testAdriond();
+                await GroupMessageService.joinGroup("11", "hh", "33");
                 print("*************运行安卓源码******" + _batteryLevel);
               },
               icon: Icon(Icons.send),
-              label: Text("测试调用安卓代码"))
+              label: Text("邀请群成员"))
         ],
       ),
     );
@@ -154,9 +154,9 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/create.json",
-        data: {"userId": menber, "groupId": "19", "groupName": "哈哈"});
+        data: {"userId": menber, "groupId": "11", "groupName": "hh"});
     print(rel.data);
-    await _sendGroupMessage("19");
+    // await _sendGroupMessage("19");
   }
 
   _searchGruopMember() async {
@@ -184,7 +184,7 @@ class _SettingPageState extends State<SettingPage> {
     dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
     dio.options.headers["RC-Timestamp"] = time;
     var rel = await dio.post("https://api-cn.ronghub.com/group/user/query.json",
-        data: {"groupId": "901f2be0-8a54-11eb-8d32-d3eb2f8c88ef"});
+        data: {"groupId": "11"});
     print(rel.data);
   }
 

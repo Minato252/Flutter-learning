@@ -133,4 +133,33 @@ class GroupMessageService {
     //     RCConversationType.Private, "222222", txtMessage);
     // print("send message start senderUserId = " + msg.senderUserId);
   }
+
+  static joinGroup(String groupId, String groupName, String userIdList) async {
+    String random = Random().nextInt(1000000).toString();
+
+    String time = DateTime.now().microsecondsSinceEpoch.toString();
+    // String signature = "zj8jV9ls6U" + random + time;
+    String signature = RongAppSecret + random + time;
+    var bytes = utf8.encode(signature);
+    // var uuid = Uuid();
+    // var groupId = uuid.v1();
+
+    var dio = Dio();
+    dio.options.contentType = "application/x-www-form-urlencoded";
+    // dio.options.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    // dio.options.headers["RC-App-Key"] = "pwe86ga5ps8o6";
+    dio.options.headers["RC-App-Key"] = RongAppKey;
+    dio.options.headers["RC-Nonce"] = random;
+    // dio.options.headers["RC-Signature"] = signature.hashCode.toString();
+    dio.options.headers["RC-Signature"] = sha1.convert(bytes).toString();
+    dio.options.headers["RC-Timestamp"] = time;
+    var rel = await dio.post("https://api-cn.ronghub.com/group/join.json",
+        data: {
+          "groupId": groupId,
+          "groupName": groupName,
+          "userId": userIdList
+        });
+    print(rel.data);
+    return rel.data["users"];
+  }
 }
