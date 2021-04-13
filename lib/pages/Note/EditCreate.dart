@@ -43,6 +43,10 @@ class _EditCreateState extends State<EditCreate> {
               //backgroundColor: Colors.deepOrangeAccent,
               //backgroundColor: Colors.yellow,
               actions: <Widget>[
+                FlatButton(onPressed: () {
+                  
+
+                }, child: Text("上传文件")),
                 IconButton(
                   icon: Icon(Icons.check_sharp),
                   onPressed: () {

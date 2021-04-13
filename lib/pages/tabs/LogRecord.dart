@@ -369,10 +369,19 @@ class _LogRecordPageState extends State<LogRecordPage>
       //根据下级群id拉去所有群消息
       var result = await Dio().post(url + "touserid=" + subIdList[i]);
       List rm = result.data;
+      int k;
       for (int j = 0; j < rm.length; j++) {
-        if (!m.contains(rm[j])) {
+        for(k=0;k<m.length;k++){
+          if(m[k]["mId"]==rm[j]["mId"]){
+            break;
+          }
+        }
+        if(k==m.length){
           m.add(rm[j]);
         }
+        /*if (!m.contains(rm[j])) {
+          m.add(rm[j]);
+        }*/
       }
     }
     return m;
