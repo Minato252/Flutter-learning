@@ -339,14 +339,26 @@ class _LogRecordPageState extends State<LogRecordPage>
   }
 
   _getSubMessage(String url, List m) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
     List subUser = await _getSubs(); //获得下级
+    Map userMap;
+    for (int i = 0; i < subUser.length; i++) {
+      if (subUser[i]["id"] == id) {
+        userMap = subUser[i];
+        break;
+      }
+    }
+    subUser.remove(userMap);
     List<String> subIdList = new List(); //所有下级所在的群id
     for (int i = 0; i < subUser.length; i++) {
       //该循环获取下级群id
-      String subUserId = subUser[0]["id"];
+      // if (subUser[i]["id"] == id) continue;
+      String subUserId = subUser[i]["id"];
       var rel = await Dio().post("http://47.110.150.159:8080/group/select",
           data: {"groupcreatorid": subUserId}); //获取下级的群id
       List subIdLIstItem = rel.data;
+      // print(subIdLIstItem);
       for (int j = 0; j < subIdLIstItem.length; j++) {
         if (!subIdList.contains(subIdLIstItem[j]["groupid"])) {
           subIdList.add(subIdLIstItem[j]["groupid"]);
@@ -364,6 +376,7 @@ class _LogRecordPageState extends State<LogRecordPage>
       }
     }
     return m;
+    print(m);
   }
 
   _showMessageByTitle(List<MessageModel> messageList) async {
