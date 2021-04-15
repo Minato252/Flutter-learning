@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/chooseUser/search_contacts_list.dart';
 import 'package:weitong/pages/tree/tree.dart';
@@ -15,14 +16,21 @@ import 'common/models.dart';
 class ContactListPage extends StatefulWidget {
   @override
   List users;
+  String groupid;
+  String grouptitle;
   bool isSingle;
   String title;
   Function deleteStaff;
 
   ContactListPage(this.users,
-      {this.isSingle = false, this.title = "选择联系人", this.deleteStaff});
+      {this.groupid,
+      this.grouptitle,
+      this.isSingle = false,
+      this.title = "",
+      this.deleteStaff});
   State<StatefulWidget> createState() {
-    return new _ContactListPageState(users, isSingle, title, deleteStaff);
+    return new _ContactListPageState(
+        users, groupid, grouptitle, isSingle, title, deleteStaff);
   }
 }
 
@@ -30,8 +38,10 @@ class _ContactListPageState extends State<ContactListPage> {
   List<ContactInfo> _contacts = [];
   List users;
   Function deleteStaff;
-  _ContactListPageState(
-      this.users, this.isSingle, this.title, this.deleteStaff);
+  String groupid;
+  String grouptitle;
+  _ContactListPageState(this.users, this.groupid, this.grouptitle,
+      this.isSingle, this.title, this.deleteStaff);
   double susItemHeight = 40;
   List<String> targIdList = [];
   List<String> noteList = [];
@@ -263,6 +273,52 @@ class _ContactListPageState extends State<ContactListPage> {
     setState(() {});
   }
 
+  void _addGroupUser() async {
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+    var parsedJson = json.decode(jsonTree);
+    List users1 = []; //树的总人数
+
+    Tree.getAllPeople(parsedJson, users1);
+    List<String> groupMember = [];
+    List users2 = []; //不在群成员的人
+    for (int i = 0; i < users.length; i++) {
+      groupMember.add(users[i]["id"]);
+    }
+    for (int i = 0; i < users1.length; i++) {
+      if (!groupMember.contains(users1[i]["id"])) {
+        users2.add(users1[i]);
+      }
+    }
+    List addtargetList = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => ContactListPage(
+              users2,
+            )));
+    List<String> targetIdList = [];
+    if (addtargetList[0] != null && !addtargetList[0].isEmpty) {
+      addtargetList[0].forEach((element) {
+        targetIdList.add(element["id"]);
+      });
+    }
+
+    String user;
+
+    user = listToString(targetIdList);
+    await GroupMessageService.joinGroup(groupid, grouptitle, user);
+    Navigator.pop(context);
+  }
+
+  String listToString(List<String> list) {
+    if (list == null) {
+      return null;
+    }
+    String result;
+    list.forEach((string) =>
+        {if (result == null) result = string else result = '$result,$string'});
+    return result.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,6 +359,18 @@ class _ContactListPageState extends State<ContactListPage> {
               },
               child: Text(
                 "全选/反选",
+                style: TextStyle(
+                    fontSize: 20.0,
+                    //fontWeight: FontWeight.w400,
+                    color: Colors.white),
+              )),
+          FlatButton(
+              onPressed: () {
+                //_addAllorRemoveAll();
+                _addGroupUser();
+              },
+              child: Text(
+                "新增",
                 style: TextStyle(
                     fontSize: 20.0,
                     //fontWeight: FontWeight.w400,

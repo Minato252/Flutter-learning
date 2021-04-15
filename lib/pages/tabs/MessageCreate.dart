@@ -371,6 +371,8 @@ class _MessageCreateState extends State<MessageCreate>
     messageModel.fromuserid = prefs.getString("id");
     String content;
     content = messageModel.toJsonString();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
 
     //发给服务器
     var rel = await Dio()
@@ -386,6 +388,7 @@ class _MessageCreateState extends State<MessageCreate>
           ")",
       "MesId": messageModel.messageId,
       "Flag": "普通", //这里增加了flag
+      "type": type.data,
     });
 
     print(targetIdList.join(',').toString());

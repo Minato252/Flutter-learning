@@ -288,8 +288,13 @@ class _GroupPreState extends State<GroupPre> {
     //     users2.removeAt(i);
     //   }
     // }
+    print(messageModel.title);
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ContactListPage(users2)));
+        builder: (BuildContext context) => ContactListPage(
+              users2,
+              groupid: groupId,
+              grouptitle: messageModel.title,
+            )));
 
     targetIdList = [];
     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
