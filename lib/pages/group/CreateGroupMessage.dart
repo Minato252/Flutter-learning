@@ -382,7 +382,11 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     //   }
     // }
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ContactListPage(users2)));
+        builder: (BuildContext context) => ContactListPage(
+              users2,
+              groupid: groupId,
+              grouptitle: title,
+            )));
 
     targetIdList = [];
     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {

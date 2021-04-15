@@ -257,8 +257,10 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     //     users2.removeAt(i);
     //   }
     // }
+
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ContactListPage(users2)));
+        builder: (BuildContext context) =>
+            ContactListPage(users2, groupid: groupId, grouptitle: title)));
 
     targetIdList = [];
     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
@@ -362,6 +364,8 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
     }
+    // String useid = prefs.get("id");
+    // var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
 
     //Dio dio = Dio();
     for (int i = 0; i < needSendShelterMessageList.length; i++) {
@@ -381,6 +385,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
             ")",
         "MesId": messageModel.messageId,
         "Flag": "普通", //这里增加了flag
+        // "type": type.data,
       });
       // }
     }
@@ -405,6 +410,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
               ")",
           "MesId": messageModel.messageId,
           "Flag": "普通", //这里增加了flag
+          // "type": type.data,
         });
       }
     }

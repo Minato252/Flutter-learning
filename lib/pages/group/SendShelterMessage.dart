@@ -371,10 +371,13 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                       users.removeAt(i);
                     }
                   }
-                  List targetAllList = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              ContactListPage(users3)));
+                  List targetAllList =
+                      await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) => ContactListPage(
+                                users3,
+                                groupid: messageModel.messageId,
+                                grouptitle: messageModel.title,
+                              )));
 
                   targetIdList = [];
                   if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
@@ -718,6 +721,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
     }
+    //String useid = prefs.get("id");
+    // var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
 
     //Dio dio = Dio();
     for (int i = 0; i < needSendShelterMessageList.length; i++) {
@@ -737,6 +742,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
             ")",
         "MesId": messageModel.messageId,
         "Flag": "普通", //这里增加了flag
+        //"type": type.data,
       });
       // }
     }
@@ -761,6 +767,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
               ")",
           "MesId": messageModel.messageId,
           "Flag": "普通", //这里增加了flag
+          // "type": type.data,
         });
       }
     }

@@ -371,12 +371,12 @@ class _LogRecordPageState extends State<LogRecordPage>
       List rm = result.data;
       int k;
       for (int j = 0; j < rm.length; j++) {
-        for(k=0;k<m.length;k++){
-          if(m[k]["mId"]==rm[j]["mId"]){
+        for (k = 0; k < m.length; k++) {
+          if (m[k]["mId"] == rm[j]["mId"]) {
             break;
           }
         }
-        if(k==m.length){
+        if (k == m.length) {
           m.add(rm[j]);
         }
         /*if (!m.contains(rm[j])) {
