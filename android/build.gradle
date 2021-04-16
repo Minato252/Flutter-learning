@@ -3,12 +3,18 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        flatDir {
+        dirs 'libs'
+        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "me.leolin:ShortcutBadger:1.1.22@aar"
+        
+        
     }
 }
 
@@ -16,6 +22,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 }
 

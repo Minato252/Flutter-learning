@@ -1,5 +1,4 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('ShortcutBadger-1.1.22.aar'))
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = '1.2.71'
     repositories {
