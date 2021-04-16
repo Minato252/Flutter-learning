@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterfileselector/flutterfileselector.dart';
 import 'package:flutterfileselector/model/drop_down_model.dart';
 import 'package:flutterfileselector/model/file_util_model.dart';
@@ -27,10 +28,34 @@ class _EditCreateState extends State<EditCreate> {
   SimpleRichEditController controller;
   String newTitle;
   List<FileModelUtil> v;
+  String _platformVersion = 'Unknown';
   //String category;
   //String id;
   final _formKey = GlobalKey<FormState>();
-  //EditCreate({Key key, this.category, this.id}) : super(key: key);
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    String platformVersion;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+//      platformVersion = await Flutterfileselector.platformVersion;
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+  }
+
   _EditCreateState() {
     controller = new SimpleRichEditController();
   }
