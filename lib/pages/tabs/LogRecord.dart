@@ -289,8 +289,12 @@ class _LogRecordPageState extends State<LogRecordPage>
       List<MessageModel> l = new List<MessageModel>();
       for (int i = 0; i < m.length; i++) {
         MessageModel mm = MessageModel.formServerJsonString(m[i]);
-        mm.modify = true;
-        l.add(mm);
+        if (mm.flag != '遮蔽' && mm.flag != "遮蔽的完整消息") {
+          mm.modify = true;
+          l.add(mm);
+        }
+        //mm.modify = true;
+        // l.add(mm);
       }
 
       for (int i = 0; i < l.length; i++) {

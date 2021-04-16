@@ -279,8 +279,8 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
 
     // await _getSubMessage(url, m); //把下级的群消息也加到m中
     print("2**********" + m.length.toString());
-    await _getShelterMessage(m); //获取遮蔽表的消息
-    print("3*******" + m.length.toString());
+    // await _getShelterMessage(m); //获取遮蔽表的消息
+    //  print("3*******" + m.length.toString());
 
     if (m.isEmpty) {
       Navigator.push(context,
@@ -293,7 +293,7 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
         l.add(mm);
       }
 
-      for (int i = 0; i < l.length; i++) {
+      /* for (int i = 0; i < l.length; i++) {
         int min = i;
         for (int j = i + 1; j < l.length; j++) {
           if (l[j].time.millisecondsSinceEpoch <
@@ -306,7 +306,7 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
           l[i] = l[min];
           l[min] = t;
         }
-      }
+      }*/
 
       // Navigator.push(
       //     context,
