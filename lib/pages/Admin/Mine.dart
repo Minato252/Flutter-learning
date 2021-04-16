@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/Admin/AdminLogRecord.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
@@ -16,7 +17,7 @@ class Mine extends StatefulWidget {
 
 class _MineState extends State<Mine> {
   @override
-  String id;
+  String id = "";
   void initState() {
     super.initState();
     _getAdminInfo();
@@ -77,17 +78,23 @@ class _MineState extends State<Mine> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.history),
+              leading: Icon(Icons.search),
               title: Text("记录"),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("设置"),
+              leading: Icon(Icons.search),
+              title: Text("查询"),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  return AdminLogRecordPage();
+                  // title:title,
+                }));
+              },
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("设置"),
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.settings),
+            //   title: Text("设置"),
+            // ),
             JdButton(
               text: "退出登录",
               cb: () {
