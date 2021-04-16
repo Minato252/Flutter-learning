@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
+
+import 'package:weitong/pages/Note/file.dart';
 import 'package:weitong/pages/SearchMessage/search_conversation_page.dart';
 import 'package:weitong/pages/group/ALLReadSearchConversation.dart';
 import 'package:weitong/pages/tabs/ChooseUser.dart';
@@ -49,6 +51,7 @@ final routes = {
   '/user': (context) => UserPage(),
   '/allread': (context, {arguments}) =>
       ALLReadSearchConversationPage(arguments: arguments),
+  '/fileselect': (context) => file(),
 };
 
 //固定写法

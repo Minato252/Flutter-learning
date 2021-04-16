@@ -288,6 +288,7 @@ class _GroupPreState extends State<GroupPre> {
     //     users2.removeAt(i);
     //   }
     // }
+    print(groupId);
     print(messageModel.title);
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
@@ -391,35 +392,40 @@ class _GroupPreState extends State<GroupPre> {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              FlatButton(
-                  onPressed: () {
-                    //print(widget.targetGroupId);
-                    Navigator.of(context).push(new MaterialPageRoute(
-                        builder: (context) => new PretoRichEditGroup(
-                            data,
-                            messageModel.title,
-                            /*, messageModel.keyWord*/
-                            messageModel.messageId)));
-                  },
-                  child: Text(
-                    "遮蔽",
-                    style: TextStyle(
-                        fontSize: 15.0,
-                        //fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  )),
-
-              FlatButton(
-                  onPressed: () {
-                    _sendGroupMessage(targetGroupId);
-                  },
-                  child: Text(
-                    "发送",
-                    style: TextStyle(
-                        fontSize: 15.0,
-                        //fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  )),
+              SizedBox(
+                width: 60,
+                child: FlatButton(
+                    onPressed: () {
+                      //print(widget.targetGroupId);
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (context) => new PretoRichEditGroup(
+                              data,
+                              messageModel.title,
+                              /*, messageModel.keyWord*/
+                              messageModel.messageId)));
+                    },
+                    child: Text(
+                      "遮蔽",
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          //fontWeight: FontWeight.w400,
+                          color: Colors.white),
+                    )),
+              ),
+              SizedBox(
+                width: 60,
+                child: FlatButton(
+                    onPressed: () {
+                      _sendGroupMessage(targetGroupId);
+                    },
+                    child: Text(
+                      "发送",
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          //fontWeight: FontWeight.w400,
+                          color: Colors.white),
+                    )),
+              ),
 
               /*  FlatButtonWithIcon(
                 label: Text(
@@ -488,30 +494,36 @@ class _GroupPreState extends State<GroupPre> {
               //   Icons.save,
               //  ),
               //  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              FlatButton(
-                child: Text(
-                  "编辑",
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
+              SizedBox(
+                width: 60,
+                child: FlatButton(
+                  child: Text(
+                    "编辑",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
               ),
-              FlatButton(
-                child: Text(
-                  "保存",
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
+              SizedBox(
+                width: 60,
+                child: FlatButton(
+                  child: Text(
+                    "保存",
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  ),
+                  onPressed: () {
+                    print(targetGroupId);
+                    postRequestFunction(notehtmlCode, targetGroupId);
+                  },
                 ),
-                onPressed: () {
-                  print(targetGroupId);
-                  postRequestFunction(notehtmlCode, targetGroupId);
-                },
               ),
 
               /* editable

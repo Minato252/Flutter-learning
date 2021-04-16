@@ -83,6 +83,9 @@ dependencies:
 
   lpinyin: ^1.0.9
   path:
+  file_picker: 
+  open_file:
+  flutterfileselector: ^0.0.7
 
 dev_dependencies:
   flutter_test:

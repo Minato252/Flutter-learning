@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutterfileselector/flutterfileselector.dart';
+import 'package:flutterfileselector/model/drop_down_model.dart';
+import 'package:flutterfileselector/model/file_util_model.dart';
 import 'package:rich_edit/rich_edit.dart';
+import 'package:weitong/pages/Note/File_select.dart';
 import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:dio/dio.dart';
+import 'package:weitong/pages/tabs/uploadFile.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/pages/Note/File_select.dart';
 
 class EditCreate extends StatefulWidget {
   String category;
@@ -20,6 +26,7 @@ class _EditCreateState extends State<EditCreate> {
 //class EditCreate extends StatelessWidget {
   SimpleRichEditController controller;
   String newTitle;
+  List<FileModelUtil> v;
   //String category;
   //String id;
   final _formKey = GlobalKey<FormState>();
@@ -43,10 +50,39 @@ class _EditCreateState extends State<EditCreate> {
               //backgroundColor: Colors.deepOrangeAccent,
               //backgroundColor: Colors.yellow,
               actions: <Widget>[
-                FlatButton(onPressed: () {
-                  
+                FlatButton(
+                  //onPressed: () {
+                  //   Navigator.of(context).pushNamed('/fileselect');
+                  // },
+                  // child: Text("上传文件")),
+                  child: FlutterSelect(
+                    /// todo:  标题
+                    /// todo:  按钮
+                    btn: Text(
+                      "上传文件",
+                      style: TextStyle(color: Colors.white),
+                    ),
 
-                }, child: Text("上传文件")),
+                    /// todo:  最大可选
+                    maxCount: 1,
+
+                    /// todo:  开启筛选
+                    isScreen: true,
+
+                    /// todo:  往数组里添加需要的格式
+                    /// todo:  自定义下拉选项，不传默认
+
+                    valueChanged: (v) async {
+                      // print(v[0].filePath);
+                      // this.v = v;
+                      // setState(() {});
+                      String title = v[0].fileName;
+                      String html = await generatefileHtmlUrl(v[0].filePath);
+                      postRequestFunction(html, title, '${widget.id}');
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
                 IconButton(
                   icon: Icon(Icons.check_sharp),
                   onPressed: () {
@@ -133,6 +169,21 @@ class _EditCreateState extends State<EditCreate> {
     Navigator.pop(context, "$htmlCode");
 
     // }
+  }
+
+  //上传文件
+  //Future<void>
+  Future<String> generatefileHtmlUrl(String path) async {
+    StringBuffer sb = StringBuffer();
+    String url;
+    url = await UploadFile.fileUplod(path);
+    sb.write("<p>");
+    sb.write("<span style=\"font-size:15px;\">");
+    //sb.write(element.data);
+    sb.write("${url}");
+    sb.write("<\/span>");
+    sb.write("<\/p>");
+    return sb.toString();
   }
 
   void postRequestFunction(String htmlCode, String title, String id) async {

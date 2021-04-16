@@ -1001,7 +1001,7 @@ class _ConversationPageState extends State<ConversationPage>
         //DateTime time1 = messageModel.strToTime(mm.time);
         int trantime = time1.millisecondsSinceEpoch;
         //print(trantime);
-        if (trantime <= time && mm.flag != "草稿") {
+        if (trantime <= time && mm.flag != "草稿" && mm.flag != '遮蔽') {
           l.add(mm);
         }
       }
