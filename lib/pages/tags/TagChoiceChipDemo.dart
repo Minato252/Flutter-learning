@@ -31,6 +31,9 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print("***********************${arguments['identify']}*******************");
     String id = prefs.get("id");
+    if (id == '' || id == null) {
+      id = prefs.get("adminId");
+    }
     var rel =
         await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
     List<String> s = rel.data.toString().split(',');
