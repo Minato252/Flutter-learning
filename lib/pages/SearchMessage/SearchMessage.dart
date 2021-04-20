@@ -14,6 +14,9 @@ import 'package:weitong/services/event_bus.dart';
 import 'package:weitong/widget/conversation_list_item.dart';
 import 'package:weitong/widget/dialog_util.dart';
 
+import 'package:weitong/pages/tabs/Tabs.dart';
+import 'package:locally/locally.dart';
+
 class SearchMessagePage extends StatefulWidget {
   List conList;
   SearchMessagePage({Key key, this.conList}) : super(key: key);
@@ -87,6 +90,14 @@ class _SearchMessagePageState extends State<SearchMessagePage>
       if (!hasPackage && left == 0 && isDisplayConversation) {
         updateConversationList();
       }
+      Locally locally = Locally(
+        context: context,
+        payload: 'test',
+        pageRoute: MaterialPageRoute(builder: (context) => Tabs()),
+        appIcon: 'mipmap/ic_launcher',
+      );
+
+      locally.show(title: "微通", message: "收到一条新消息");
     });
 
     RongIMClient.onConnectionStatusChange = (int connectionStatus) {

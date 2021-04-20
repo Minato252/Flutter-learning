@@ -79,7 +79,8 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         //title: Text("编辑页面"),
         actions: [
@@ -169,7 +170,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
               child: MultiProvider(
                 providers: [
                   ChangeNotifierProvider(
-                    builder: (_) => VoiceRecordProvider(),
+                    create: (_) => VoiceRecordProvider(),
                   )
                 ],
                 child: RichEdit(
@@ -473,7 +474,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
         msg: alrt,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER, // 消息框弹出的位置
-        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        timeInSecForIosWeb: 1, // 消息框持续的时间（目前的版本只有ios有效）
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);

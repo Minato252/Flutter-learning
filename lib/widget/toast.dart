@@ -7,7 +7,7 @@ class MyToast {
         msg: msg,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM, // 消息框弹出的位置
-        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        timeInSecForIosWeb: 1, // 消息框持续的时间（目前的版本只有ios有效）
         backgroundColor: color,
         textColor: Colors.white,
         fontSize: 16.0);

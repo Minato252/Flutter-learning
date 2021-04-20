@@ -16,7 +16,8 @@ import '../Model/UserModel.dart';
 import 'dart:convert' as convert;
 import 'package:weitong/Model/user_data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:locally/locally.dart';
+import '../widget/SecondScreen.dart';
 import 'Admin/AdminTabs.dart';
 
 String staff = "人员";
@@ -114,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
               // leading: IconButton(
               //   icon: Icon(Icons.close),
               //   onPressed: () {
-              //     Navigator.pop(context);
+              //     //
               //   },
               // ),
               title: Text("登录页面"),

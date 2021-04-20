@@ -12,6 +12,8 @@ import 'package:weitong/pages/Login.dart';
 import 'package:weitong/services/event_bus.dart';
 import 'package:weitong/widget/conversation_list_item.dart';
 import 'package:weitong/widget/dialog_util.dart';
+import 'package:weitong/pages/tabs/Tabs.dart';
+import 'package:locally/locally.dart';
 
 class GropuMessagePage extends StatefulWidget {
   GropuMessagePage({Key key}) : super(key: key);
@@ -79,6 +81,14 @@ class _GropuMessagePageState extends State<GropuMessagePage>
       if (!hasPackage && left == 0 && isDisplayConversation) {
         updateConversationList();
       }
+      Locally locally = Locally(
+        context: context,
+        payload: 'test',
+        pageRoute: MaterialPageRoute(builder: (context) => Tabs()),
+        appIcon: 'mipmap/ic_launcher',
+      );
+
+      locally.show(title: "微通", message: "收到一条新消息");
     });
 
     RongIMClient.onConnectionStatusChange = (int connectionStatus) {

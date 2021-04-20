@@ -186,7 +186,7 @@ class _MessageCreateState extends State<MessageCreate>
                               child: MultiProvider(
                                 providers: [
                                   ChangeNotifierProvider(
-                                    builder: (_) => VoiceRecordProvider(),
+                                    create: (_) => VoiceRecordProvider(),
                                   )
                                 ],
                                 child: RichEdit(
@@ -513,7 +513,7 @@ class _MessageCreateState extends State<MessageCreate>
         msg: alrt,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER, // 消息框弹出的位置
-        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        timeInSecForIosWeb: 1, // 消息框持续的时间（目前的版本只有ios有效）
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);

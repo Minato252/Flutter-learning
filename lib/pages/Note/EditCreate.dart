@@ -63,7 +63,8 @@ class _EditCreateState extends State<EditCreate> {
   Widget build(BuildContext context) {
     return new MaterialApp(
         home: new Scaffold(
-            resizeToAvoidBottomPadding: false,
+            // resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: false,
             appBar: AppBar(
               leading: IconButton(
                   icon: Icon(Icons.arrow_back),
@@ -154,11 +155,11 @@ class _EditCreateState extends State<EditCreate> {
                   Divider(),
                   SafeArea(
                     child: SizedBox(
-                        height: ScreenUtil.getInstance().setHeight(1000),
+                        height: ScreenUtil().setHeight(1000),
                         child: MultiProvider(
                           providers: [
                             ChangeNotifierProvider(
-                              builder: (_) => VoiceRecordProvider(),
+                              create: (_) => VoiceRecordProvider(),
                             )
                           ],
                           child: RichEdit(

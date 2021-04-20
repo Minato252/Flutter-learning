@@ -6,6 +6,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter_sound/flauto.dart';
 
 class VoiceRecordProvider with ChangeNotifier {
   bool ifTap;

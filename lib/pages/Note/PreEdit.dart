@@ -165,7 +165,8 @@ class _PreEditState extends State<PreEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
+        // resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           // title:Text("目录界面"),
           // centerTitle: true,
@@ -224,11 +225,11 @@ class _PreEditState extends State<PreEdit> {
               Divider(),
               SafeArea(
                 child: SizedBox(
-                  height: ScreenUtil.getInstance().setHeight(1000),
+                  height: ScreenUtil().setHeight(1000),
                   child: MultiProvider(
                     providers: [
                       ChangeNotifierProvider(
-                        builder: (_) => VoiceRecordProvider(),
+                        create: (_) => VoiceRecordProvider(),
                       )
                     ],
                     child: RichEdit(controller),

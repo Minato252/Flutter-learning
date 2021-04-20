@@ -59,7 +59,8 @@ class _PretoRichEditState extends State<PretoRichEdit> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("编辑页面"),
         actions: [
@@ -137,7 +138,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
                       child: MultiProvider(
                         providers: [
                           ChangeNotifierProvider(
-                            builder: (_) => VoiceRecordProvider(),
+                            create: (_) => VoiceRecordProvider(),
                           )
                         ],
                         child: RichEdit(

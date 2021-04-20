@@ -18,10 +18,10 @@ import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
-
+import 'package:locally/locally.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:developer' as developer;
-
+import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/widget/widget_util.dart';
 
 import 'Pre.dart';
@@ -174,6 +174,14 @@ class _ConversationPageState extends State<ConversationPage>
       _sendReadReceipt();
       // // 测试接收阅后即焚直接焚烧
       // RongIMClient.messageBeginDestruct(msg);
+      Locally locally = Locally(
+        context: context,
+        payload: 'test',
+        pageRoute: MaterialPageRoute(builder: (context) => Tabs()),
+        appIcon: 'mipmap/ic_launcher',
+      );
+
+      locally.show(title: "微通", message: "收到一条新消息");
     });
 
     EventBus.instance.addListener(EventKeys.ReceiveReadReceipt, (map) {
@@ -515,7 +523,7 @@ class _ConversationPageState extends State<ConversationPage>
 
   void showShortToast(String message) {
     Fluttertoast.showToast(
-        msg: message, toastLength: Toast.LENGTH_SHORT, timeInSecForIos: 1);
+        msg: message, toastLength: Toast.LENGTH_SHORT, timeInSecForIosWeb: 1);
   }
 
   /// 禁止随意调用 setState 接口刷新 UI，必须调用该接口刷新 UI

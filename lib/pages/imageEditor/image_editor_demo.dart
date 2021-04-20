@@ -145,7 +145,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                               child: SizedBox(),
                             ),
                             SizedBox(
-                              height: ScreenUtil.instance.setWidth(200.0),
+                              height: ScreenUtil().setWidth(200.0),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,

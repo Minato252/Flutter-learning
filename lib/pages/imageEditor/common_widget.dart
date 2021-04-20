@@ -73,8 +73,7 @@ class AspectRatioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(ScreenUtil.instance.setWidth(200.0),
-          ScreenUtil.instance.setWidth(200.0)),
+      size: Size(ScreenUtil().setWidth(200.0), ScreenUtil().setWidth(200.0)),
       painter: AspectRatioPainter(
           aspectRatio: aspectRatio,
           aspectRatioS: aspectRatioS,
