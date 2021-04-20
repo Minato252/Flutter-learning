@@ -260,6 +260,13 @@ class _ConversationItemState extends State<ConversationItem> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          Container(
+                            padding: EdgeInsets.all(25),
+                            child: Text(DateTime.fromMillisecondsSinceEpoch(
+                                    message.sentTime)
+                                .toString()
+                                .split('.')[0]),
+                          ),
                           Text(
                             nameUrlMap[message.senderUserId] == null
                                 ? ""
@@ -285,12 +292,12 @@ class _ConversationItemState extends State<ConversationItem> {
                       )),
 
                   buildMessageWidget(),
-                  Container(
-                    child: Text(
-                        DateTime.fromMillisecondsSinceEpoch(message.sentTime)
-                            .toString()
-                            .split('.')[0]),
-                  ),
+                  // Container(
+                  //   child: Text(
+                  //       DateTime.fromMillisecondsSinceEpoch(message.sentTime)
+                  //           .toString()
+                  //           .split('.')[0]),
+                  // ),
                   // Container(
                   //   alignment: Alignment.centerRight,
                   //   padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
@@ -397,15 +404,22 @@ class _ConversationItemState extends State<ConversationItem> {
                             // SharedPreferences prefs = await SharedPreferences.getInstance();
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
+                          Container(
+                            padding: EdgeInsets.all(25),
+                            child: Text(DateTime.fromMillisecondsSinceEpoch(
+                                    message.sentTime)
+                                .toString()
+                                .split('.')[0]),
+                          ),
                         ],
                       )),
                   buildMessageWidget(),
-                  Container(
-                    child: Text(
-                        DateTime.fromMillisecondsSinceEpoch(message.sentTime)
-                            .toString()
-                            .split('.')[0]),
-                  ),
+                  // Container(
+                  //   child: Text(
+                  //       DateTime.fromMillisecondsSinceEpoch(message.sentTime)
+                  //           .toString()
+                  //           .split('.')[0]),
+                  // ),
                 ],
               ),
             ),

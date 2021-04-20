@@ -505,7 +505,13 @@ class _GroupPreState extends State<GroupPre> {
                         color: Colors.white),
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
+                    Navigator.of(context).push(new MaterialPageRoute(
+                        builder: (context) => new PretoRichEdit(
+                            data,
+                            messageModel.title,
+                            messageModel.keyWord,
+                            targetGroupId)));
                   },
                 ),
               ),

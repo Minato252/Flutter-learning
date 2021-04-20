@@ -56,7 +56,7 @@ class _MessagePageState extends State<MessagePage>
     // Conversation
     // conList = [];
     if (list != null) {
-      list.sort((a, b) => b.sentTime.compareTo(a.sentTime));
+      // list.sort((a, b) => b.sentTime.compareTo(a.sentTime));
 
       // for (int i = 0; i < list.length; i++) {
       //   if (list[i].unreadMessageCount != 0) {

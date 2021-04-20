@@ -64,7 +64,7 @@ class _MessageCreateState extends State<MessageCreate>
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("创建消息"),
+          //title: Text("创建消息"),
           actions: <Widget>[
             FlatButton(
                 onPressed: () {
@@ -271,90 +271,118 @@ class _MessageCreateState extends State<MessageCreate>
   }
 
   _sendMessage(SimpleRichEditController controller) async {
+    //测试标题是否唯一
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     newTitleFormKey.currentState.save(); //测试标题是否含有关键词
-    if (newTitleFormKey.currentState.validate()) {
+    bool b = await checktitleonly(newTitle);
+    if (b) {
+      if (newTitleFormKey.currentState.validate()) {
 //标题含有关键词
-      //这个htmlCode就是所有消息的HTML代码了
-      //或许我们可以加密了再传输？
-      var htmlCode = await controller.generateHtmlUrl();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      print(htmlCode);
+        //这个htmlCode就是所有消息的HTML代码了
+        //或许我们可以加密了再传输？
+        var htmlCode = await controller.generateHtmlUrl();
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        print(htmlCode);
 
-      // controller.generateHtml();
-      //这里是用html初始化一个页面
+        // controller.generateHtml();
+        //这里是用html初始化一个页面
 
-      MessageModel messageModel = MessageModel(
-          htmlCode: htmlCode,
-          title: newTitle,
-          keyWord: _curchosedTag,
-          hadLook: prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")");
-      List<RichEditData> l = new List<RichEditData>.from(controller.data);
-      Navigator.push(context, MaterialPageRoute(builder: (c) {
-        return PreAndSend(
-          messageModel: messageModel,
-          editable: true,
-          data: l,
-          isSearchResult: false,
-        );
-      }));
-      print("发送成功");
+        MessageModel messageModel = MessageModel(
+            htmlCode: htmlCode,
+            title: newTitle,
+            keyWord: _curchosedTag,
+            hadLook: prefs.get("name") +
+                "(" +
+                new DateTime.now().toString().split('.')[0] +
+                ")");
+        List<RichEditData> l = new List<RichEditData>.from(controller.data);
+        Navigator.push(context, MaterialPageRoute(builder: (c) {
+          return PreAndSend(
+            messageModel: messageModel,
+            editable: true,
+            data: l,
+            isSearchResult: false,
+          );
+        }));
+        print("发送成功");
+      }
+    } else {
+      sendMessageSuccess("该标题已创建");
     }
+  }
+
+  Future<bool> checktitleonly(String title) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var rel =
+        await Dio().post("http://47.110.150.159:8080/group/select", data: {
+      "groupcreatorid": prefs.get("id"),
+    });
+    List r = rel.data;
+    for (int i = 0; i < r.length; i++) {
+      if (title == r[i]["groupname"]) {
+        return false;
+      }
+    }
+    return true;
   }
 
 //不需预览直接发送
   _senddirectMessage(SimpleRichEditController controller) async {
     newTitleFormKey.currentState.save(); //测试标题是否含有关键词
-    if (newTitleFormKey.currentState.validate()) {
-      //标题含有关键词
-      //这个htmlCode就是所有消息的HTML代码了
-      //或许我们可以加密了再传输？
-      var htmlCode = await controller.generateHtmlUrl();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      print(htmlCode);
-      MessageModel messageModel = MessageModel(
-          htmlCode: htmlCode,
-          title: newTitle,
-          keyWord: _curchosedTag,
-          hadLook: prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")");
+    bool b = await checktitleonly(newTitle);
+    if (b) {
+      if (newTitleFormKey.currentState.validate()) {
+        //标题含有关键词
+        //这个htmlCode就是所有消息的HTML代码了
+        //或许我们可以加密了再传输？
+        var htmlCode = await controller.generateHtmlUrl();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        print(htmlCode);
+        MessageModel messageModel = MessageModel(
+            htmlCode: htmlCode,
+            title: newTitle,
+            keyWord: _curchosedTag,
+            hadLook: prefs.get("name") +
+                "(" +
+                new DateTime.now().toString().split('.')[0] +
+                ")");
 
-      final ps = Provider.of<ProviderServices>(context);
-      Map userInfo = ps.userInfo;
-      String jsonTree =
-          await Tree.getTreeFormSer(userInfo["id"], false, context);
-      var parsedJson = json.decode(jsonTree);
-      List users = [];
-      Tree.getAllPeople(parsedJson, users);
+        final ps = Provider.of<ProviderServices>(context);
+        Map userInfo = ps.userInfo;
+        String jsonTree =
+            await Tree.getTreeFormSer(userInfo["id"], false, context);
+        var parsedJson = json.decode(jsonTree);
+        List users = [];
+        Tree.getAllPeople(parsedJson, users);
 
-      String id = prefs.getString("id");
-      for (int i = 0; i < users.length; i++) {
-        if (users[i]["id"] == id) {
-          users.removeAt(i);
+        String id = prefs.getString("id");
+        for (int i = 0; i < users.length; i++) {
+          if (users[i]["id"] == id) {
+            users.removeAt(i);
+          }
+        }
+        List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => ContactListPage(users)));
+
+        targetIdList = [];
+        if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+          targetAllList[0].forEach((element) {
+            targetIdList.add(element["id"]);
+          });
+          await _sendMessage2(messageModel);
+        }
+
+        if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+          targetAllList[1].forEach((element) {
+            noteIdList.add(element["id"]);
+            noteNameList.add(element["name"]);
+          });
+          _sendNoteMessage();
         }
       }
-      List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-          builder: (BuildContext context) => ContactListPage(users)));
-
-      targetIdList = [];
-      if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-        targetAllList[0].forEach((element) {
-          targetIdList.add(element["id"]);
-        });
-        await _sendMessage2(messageModel);
-      }
-
-      if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-        targetAllList[1].forEach((element) {
-          noteIdList.add(element["id"]);
-          noteNameList.add(element["name"]);
-        });
-        _sendNoteMessage();
-      }
+    } else {
+      sendMessageSuccess("该标题已创建");
     }
   }
 
