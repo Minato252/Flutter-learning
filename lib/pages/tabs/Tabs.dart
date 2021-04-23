@@ -13,6 +13,7 @@ import 'package:weitong/pages/group/GroupMessage.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/event_bus.dart';
 import 'package:weitong/services/providerServices.dart';
+import 'package:weitong/widget/mylocally.dart';
 import '../Login.dart';
 import 'LogRecord.dart';
 import 'MessageCreate.dart';
@@ -138,6 +139,7 @@ class _TabsState extends State<Tabs> {
     }
 
 //绑定接收消息
+// minato
     RongIMClient.onMessageReceivedWrapper =
         (Message msg, int left, bool hasPackage, bool offline) {
       String hasP = hasPackage ? "true" : "false";
@@ -160,6 +162,8 @@ class _TabsState extends State<Tabs> {
           "object onMessageReceivedWrapper objName: ${msg.objectName} content is null left:${left.toString()} hasPackage:$hasP offline:$off",
         );
       }
+
+      easyNotification().show();
       // if (currentState == AppLifecycleState.paused // 应用程序当前对用户不可见，不响应用户输入，并在后台运行。
       //     // && !checkNoficationQuietStatus()   //检查通知静止时间？
       //     ) {

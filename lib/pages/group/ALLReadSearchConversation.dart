@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:locally/locally.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/messageModel.dart';
@@ -12,6 +13,7 @@ import 'package:weitong/pages/SearchMessage/search_message_pre.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
 import 'package:weitong/pages/group/GroupPre.dart';
 import 'package:weitong/pages/group/Grouptran.dart';
+import 'package:weitong/pages/tabs/Tabs.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 // import 'package:weitong/widget/message_content_list.dart';
@@ -19,6 +21,7 @@ import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:weitong/widget/mylocally.dart';
 import 'dart:developer' as developer;
 
 import 'package:weitong/widget/widget_util.dart';
@@ -177,6 +180,9 @@ class _ALLReadSearchConversationPageState
       _sendReadReceipt();
       // // 测试接收阅后即焚直接焚烧
       // RongIMClient.messageBeginDestruct(msg);
+
+      // locally.show(title: "微通", message: "收到一条新消息");
+      // easyNotification().show();
     });
 
     EventBus.instance.addListener(EventKeys.ReceiveReadReceipt, (map) {

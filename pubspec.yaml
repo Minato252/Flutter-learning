@@ -86,6 +86,7 @@ dependencies:
   file_picker: 
   open_file:
   flutterfileselector: ^0.0.7
+  locally: ^0.2.6+9
 
   #不太好用 不能全屏
   # fijkplayer: ^0.8.7
