@@ -10,6 +10,10 @@ import 'package:weitong/widget/CustomPlayerWithControls.dart';
 import '../../main.dart';
 import 'uploadFile.dart';
 import 'package:weitong/pages/imageEditor/image_shower_demo.dart';
+// import 'package:video_viewer/video_viewer.dart';
+import 'package:flutter/services.dart';
+
+// import 'package:fijkplayer/fijkplayer.dart';
 //import 'package:flutter_sound/flutter_sound.dart';
 //import 'package:uuid/uuid.dart';
 
@@ -76,36 +80,125 @@ class SimpleRichEditController extends RichEditController {
     return;
   }
 
+//写的异步方法货的宽高
+  Future<Chewie> getAspectRatioChewie(String url) async {
+    VideoPlayerController vpc = VideoPlayerController.network(url);
+    await vpc.initialize();
+
+    return Chewie(
+      controller: ChewieController(
+        videoPlayerController: vpc,
+        autoPlay: false,
+        autoInitialize: true,
+        fullScreenByDefault: false,
+        aspectRatio: vpc.value.aspectRatio,
+      ),
+      // child: CustomPlayerWithControls(),
+    );
+  }
+
+  // void dispose() {
+  //   if (controllers != null) {
+  //     // 惯例。组件销毁时清理下
+  //     // _controller.removeListener(_videoListener);
+  //     controllers.forEach((key, value) {
+  //       value.dispose();
+  //     });
+  //   }
+  //   // super.dispose();
+  // }
+
   //生成视频view方法
   @override
   Widget generateVideoView(RichEditData data) {
-    if (!controllers.containsKey(data.data)) {
-      var controller = ChewieController(
-        videoPlayerController: VideoPlayerController.network(data.data),
-        autoPlay: false,
-        autoInitialize: true,
-        aspectRatio: 16 / 9,
-        fullScreenByDefault: false,
+    // if (!controllers.containsKey(data.data)) {
+    //    // // 原本的chewie，缺点：全屏只能竖屏===============================================
+    //   VideoPlayerController vpc = VideoPlayerController.network(data.data);
+    //   var controller = ChewieController(
+    //     videoPlayerController: vpc,
+    //     autoPlay: false,
+    //     autoInitialize: true,
+    //     // aspectRatio: 16 / 9,
+    //     aspectRatio: vpc.value.aspectRatio,
+    //     fullScreenByDefault: false,
 
-        //aspectRatio: 3 / 2,
-        //looping: false,
+    //     //aspectRatio: 3 / 2,
+    //     //looping: false,
 
-        showControls: true,
+    //     showControls: true,
 
-        // 占位图
-        placeholder: new Container(
-            //color: Colors.grey,
-            // color: Colors.black,
+    //     // 占位图
+    //     placeholder: new Container(
+    //         //color: Colors.grey,
+    //         // color: Colors.black,
 
-            ),
-      );
-      controllers[data.data] = controller;
-    }
-    var video = Chewie(
-      controller: controllers[data.data],
-      // child: CustomPlayerWithControls(),
-    );
+    //         ),
+    //   );
+    //   controllers[data.data] = controller;
+    // }
+
+    // var video = Chewie(
+    //   controller: controllers[data.data],
+    //   // child: CustomPlayerWithControls(),
+    //   //
+    // );
+    // //================================
+
+    // 缺点：不能全屏
+    // final FijkPlayer player = FijkPlayer();
+    // print(data.data);
+    // player.setDataSource(data.data.replaceAll(".jpg", ".mp4"), autoPlay: false);
+    // var video = Container(
+    //   height: 500,
+    //   width:
+    //   child: FijkView(
+    //     player: player,
+    //   ),
+    // );
+
+    // 版本不匹配
+    // final VideoViewerController controller = VideoViewerController();
+    // var video = VideoViewer(source: {
+    //   "": VideoPlayerController.network(data.data.replaceAll("jpg", "mp4"))
+    // });
+    //
+    //
+    //加入异步，还是使用chewie
+
+    // }
+    //   @override
+    // var video = controllers.containsKey(data.data)
+    //     ? Chewie(
+    //         controller: controllers[data.data],
+    //       )
+    //     : FutureBuilder<Chewie>(
+    //         future: getAspectRatioChewie(data.data),
+    //         builder: (context, snapshot) {
+    //           // controllers[data.data] = snapshot.data.controller;
+    //           // 请求已结束
+    //           if (snapshot.connectionState == ConnectionState.done) {
+    //             if (snapshot.hasError) {
+    //               // 请求失败，显示错误
+    //               return Text("Error: ${snapshot.error}");
+    //             } else {
+    //               // 请求成功，显示数据
+    //               if (!controllers.containsKey(data.data)) {
+    //                 controllers[data.data] = snapshot.data.controller;
+    //               }
+
+    //               return snapshot.data;
+    //             }
+    //           } else {
+    //             // 请求未结束，显示loading
+    //             return CircularProgressIndicator();
+    //           }
+    //         },
+    //       );
+    //
+    var video = ChewieDemo(data.data);
+
     return video;
+    // return null;
   }
 
   @override
@@ -515,5 +608,77 @@ class SimpleRichEditController extends RichEditController {
     if (image != null) {
       return image.path;
     }
+  }
+}
+
+class ChewieDemo extends StatefulWidget {
+  ChewieDemo(this.url, {Key key}) : super(key: key);
+  final String url;
+  @override
+  _ChewieDemoState createState() => _ChewieDemoState(this.url);
+}
+
+class _ChewieDemoState extends State<ChewieDemo> {
+  final String url;
+
+  _ChewieDemoState(this.url);
+
+  VideoPlayerController vpc;
+  ChewieController cc;
+  @override
+  //写的异步方法货的宽高
+  Future<Chewie> getAspectRatioChewie(String url) async {
+    vpc = VideoPlayerController.network(url);
+    await vpc.initialize();
+    cc = ChewieController(
+      videoPlayerController: vpc,
+      autoPlay: false,
+      autoInitialize: true,
+      fullScreenByDefault: false,
+      aspectRatio: vpc.value.aspectRatio,
+    );
+    return Chewie(
+      controller: cc,
+      // child: CustomPlayerWithControls(),
+    );
+  }
+
+  @override
+  void dispose() {
+    if (vpc != null) {
+      print("dispose$url vpc");
+      vpc.dispose();
+    }
+    if (cc != null) {
+      print("dispose$url cc");
+      cc.dispose();
+    }
+    print("dispose$url");
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    return Container(
+      child: FutureBuilder<Chewie>(
+        future: getAspectRatioChewie(url),
+        builder: (context, snapshot) {
+          // controllers[data.data] = snapshot.data.controller;
+          // 请求已结束
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              // 请求失败，显示错误
+              return Text("Error: ${snapshot.error}");
+            } else {
+              // 请求成功，显示数据
+
+              return snapshot.data;
+            }
+          } else {
+            // 请求未结束，显示loading
+            return CircularProgressIndicator();
+          }
+        },
+      ),
+    );
   }
 }

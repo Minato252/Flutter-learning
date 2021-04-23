@@ -87,6 +87,11 @@ dependencies:
   open_file:
   flutterfileselector: ^0.0.7
 
+  #不太好用 不能全屏
+  # fijkplayer: ^0.8.7
+  
+  #会报错，版本不兼容
+  # video_viewer: 
 dev_dependencies:
   flutter_test:
     sdk: flutter
