@@ -90,7 +90,7 @@ class SimpleRichEditController extends RichEditController {
         videoPlayerController: vpc,
         autoPlay: false,
         autoInitialize: true,
-        fullScreenByDefault: false,
+        fullScreenByDefault: true,
         aspectRatio: vpc.value.aspectRatio,
       ),
       // child: CustomPlayerWithControls(),

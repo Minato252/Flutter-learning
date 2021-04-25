@@ -91,6 +91,10 @@ class easyNotification {
       });
       locally.cancelAll();
       locally.show(title: "微通", message: "新消息");
+    } else {
+      locally.cancelAll();
+      locally.show(title: "微通", message: "新消息");
+      locally.cancelAll();
     }
   }
 
