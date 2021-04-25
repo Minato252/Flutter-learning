@@ -407,7 +407,7 @@ class _GroupPreState extends State<GroupPre> {
                     child: Text(
                       "遮蔽",
                       style: TextStyle(
-                          fontSize: ScreenAdapter.size(25),
+                          fontSize: ScreenAdapter.size(30),
                           // fontSize: 15.0,
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
@@ -423,7 +423,7 @@ class _GroupPreState extends State<GroupPre> {
                       "发送",
                       style: TextStyle(
                           //fontSize: 15.0,
-                          fontSize: ScreenAdapter.size(25),
+                          fontSize: ScreenAdapter.size(30),
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
                     )),
@@ -502,7 +502,7 @@ class _GroupPreState extends State<GroupPre> {
                   child: Text(
                     "编辑",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(25),
+                        fontSize: ScreenAdapter.size(30),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
@@ -524,7 +524,7 @@ class _GroupPreState extends State<GroupPre> {
                   child: Text(
                     "保存",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(25),
+                        fontSize: ScreenAdapter.size(30),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),

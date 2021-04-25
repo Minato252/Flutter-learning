@@ -99,7 +99,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                     color: Colors.white),
               )),*/
             SizedBox(
-              width: ScreenAdapter.width(110),
+              width: ScreenAdapter.width(130),
               child: FlatButton(
                   onPressed: () {
                     _sendMessage(controller);
@@ -107,14 +107,14 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                   child: Text(
                     "预览",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(25),
+                        fontSize: ScreenAdapter.size(30),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
                   )),
             ),
             SizedBox(
-              width: ScreenAdapter.width(110),
+              width: ScreenAdapter.width(130),
               child: FlatButton(
                   onPressed: () {
                     // _sendMessage(controller);
@@ -123,7 +123,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                   child: Text(
                     "发送",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(25),
+                        fontSize: ScreenAdapter.size(30),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
