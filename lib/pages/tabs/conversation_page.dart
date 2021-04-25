@@ -16,11 +16,13 @@ import 'package:weitong/pages/group/Grouptran.dart';
 import 'package:weitong/pages/tabs/NullResult.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:weitong/widget/mylocally.dart';
 import 'dart:developer' as developer;
 
 import 'package:weitong/widget/widget_util.dart';
@@ -175,6 +177,7 @@ class _ConversationPageState extends State<ConversationPage>
       _sendReadReceipt();
       // // 测试接收阅后即焚直接焚烧
       // RongIMClient.messageBeginDestruct(msg);
+      // easyNotification().show();
     });
 
     EventBus.instance.addListener(EventKeys.ReceiveReadReceipt, (map) {
@@ -790,11 +793,12 @@ class _ConversationPageState extends State<ConversationPage>
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
           SizedBox(
-            width: 60,
+            width: ScreenAdapter.width(110),
             child: FlatButton(
                 onPressed: () {
                   TextMessage mymessage = messageDataSource[0].content;
@@ -810,6 +814,7 @@ class _ConversationPageState extends State<ConversationPage>
                 child: Text(
                   "全阅",
                   style: TextStyle(
+                      fontSize: ScreenAdapter.size(25),
                       //fontSize: 15.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
@@ -831,7 +836,7 @@ class _ConversationPageState extends State<ConversationPage>
                     color: Colors.white),
               )),*/
           SizedBox(
-            width: 60,
+            width: ScreenAdapter.width(110),
             child: FlatButton(
                 onPressed: () async {
                   TextMessage mymessage = messageDataSource[0].content;
@@ -857,6 +862,7 @@ class _ConversationPageState extends State<ConversationPage>
                   //"普通回复",
                   "回复",
                   style: TextStyle(
+                      fontSize: ScreenAdapter.size(25),
                       //fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),

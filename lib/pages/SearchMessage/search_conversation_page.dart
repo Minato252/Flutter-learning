@@ -20,6 +20,7 @@ import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:weitong/widget/mylocally.dart';
 import 'dart:developer' as developer;
 
 import 'package:weitong/widget/widget_util.dart';
@@ -177,6 +178,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
       _sendReadReceipt();
       // // 测试接收阅后即焚直接焚烧
       // RongIMClient.messageBeginDestruct(msg);
+      // easyNotification().show();
     });
 
     EventBus.instance.addListener(EventKeys.ReceiveReadReceipt, (map) {

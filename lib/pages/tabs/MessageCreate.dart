@@ -73,7 +73,8 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "清空内容",
                   style: TextStyle(
-                      fontSize: 20.0,
+                      // fontSize: 20.0,
+                      fontSize: ScreenAdapter.size(30),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -84,7 +85,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "预览",
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: ScreenAdapter.size(30),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -95,7 +96,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "发送",
                   style: TextStyle(
-                      fontSize: 20.0,
+                      fontSize: ScreenAdapter.size(30),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -117,7 +118,12 @@ class _MessageCreateState extends State<MessageCreate>
                               children: <Widget>[
                                 Row(
                                   children: [
-                                    Text("关键词:"),
+                                    Text(
+                                      "关键词:",
+                                      style: TextStyle(
+                                        fontSize: ScreenAdapter.size(25),
+                                      ),
+                                    ),
                                     SizedBox(
                                       width: ScreenAdapter.width(20),
                                     ),
@@ -182,7 +188,7 @@ class _MessageCreateState extends State<MessageCreate>
                           Divider(),
                           SafeArea(
                             child: SizedBox(
-                              height: ScreenAdapter.height(650),
+                              height: ScreenAdapter.height(800),
                               child: MultiProvider(
                                 providers: [
                                   ChangeNotifierProvider(

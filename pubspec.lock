@@ -272,6 +272,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.10.3"
+  flutter_local_notifications:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.5.0+1"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
   flutter_page_indicator:
     dependency: transitive
     description:
@@ -473,6 +487,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.3-nullsafety.2"
+  locally:
+    dependency: "direct main"
+    description:
+      name: locally
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.6+9"
   logging:
     dependency: transitive
     description:

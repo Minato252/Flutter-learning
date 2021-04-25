@@ -393,7 +393,7 @@ class _GroupPreState extends State<GroupPre> {
             mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(
-                width: 60,
+                width: ScreenAdapter.width(85),
                 child: FlatButton(
                     onPressed: () {
                       //print(widget.targetGroupId);
@@ -407,13 +407,14 @@ class _GroupPreState extends State<GroupPre> {
                     child: Text(
                       "遮蔽",
                       style: TextStyle(
-                          fontSize: 15.0,
+                          fontSize: ScreenAdapter.size(25),
+                          // fontSize: 15.0,
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
                     )),
               ),
               SizedBox(
-                width: 60,
+                width: ScreenAdapter.width(85),
                 child: FlatButton(
                     onPressed: () {
                       _sendGroupMessage(targetGroupId);
@@ -421,7 +422,8 @@ class _GroupPreState extends State<GroupPre> {
                     child: Text(
                       "发送",
                       style: TextStyle(
-                          fontSize: 15.0,
+                          //fontSize: 15.0,
+                          fontSize: ScreenAdapter.size(25),
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
                     )),
@@ -495,12 +497,13 @@ class _GroupPreState extends State<GroupPre> {
               //  ),
               //  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               SizedBox(
-                width: 60,
+                width: ScreenAdapter.width(85),
                 child: FlatButton(
                   child: Text(
                     "编辑",
                     style: TextStyle(
-                        fontSize: 15.0,
+                        fontSize: ScreenAdapter.size(25),
+                        // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
                   ),
@@ -516,12 +519,13 @@ class _GroupPreState extends State<GroupPre> {
                 ),
               ),
               SizedBox(
-                width: 60,
+                width: ScreenAdapter.width(85),
                 child: FlatButton(
                   child: Text(
                     "保存",
                     style: TextStyle(
-                        fontSize: 15.0,
+                        fontSize: ScreenAdapter.size(25),
+                        // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
                   ),
@@ -550,17 +554,20 @@ class _GroupPreState extends State<GroupPre> {
                       height: 0,
                     ),*/
               Container(
-                height: 150.0,
+                // height: 150.0,
+                height: ScreenAdapter.height(100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: EdgeInsets.all(0),
                       padding: EdgeInsets.all(0),
-                      height: 25,
+                      // height: 25,
+                      height: ScreenAdapter.height(30),
                       child: IconButton(
                         tooltip: "字体放大",
-                        iconSize: 24.0,
+                        // iconSize: 24.0,
+                        iconSize: ScreenAdapter.size(35),
                         padding: EdgeInsets.all(0),
                         icon: Icon(
                           Icons.add,
@@ -585,10 +592,12 @@ class _GroupPreState extends State<GroupPre> {
                     Container(
                       margin: EdgeInsets.all(0),
                       padding: EdgeInsets.all(0),
-                      height: 25,
+                      height: ScreenAdapter.height(50),
+                      // height: 25,
                       child: IconButton(
                         tooltip: "字体放大",
-                        iconSize: 24.0,
+                        iconSize: ScreenAdapter.size(35),
+                        // iconSize: 24.0,
 
                         padding: EdgeInsets.all(0),
                         icon: Icon(

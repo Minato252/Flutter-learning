@@ -12,6 +12,7 @@ import 'package:weitong/pages/Login.dart';
 import 'package:weitong/services/event_bus.dart';
 import 'package:weitong/widget/conversation_list_item.dart';
 import 'package:weitong/widget/dialog_util.dart';
+import 'package:weitong/widget/mylocally.dart';
 
 class GropuMessagePage extends StatefulWidget {
   GropuMessagePage({Key key}) : super(key: key);
@@ -79,6 +80,7 @@ class _GropuMessagePageState extends State<GropuMessagePage>
       if (!hasPackage && left == 0 && isDisplayConversation) {
         updateConversationList();
       }
+      // easyNotification().show();
     });
 
     RongIMClient.onConnectionStatusChange = (int connectionStatus) {

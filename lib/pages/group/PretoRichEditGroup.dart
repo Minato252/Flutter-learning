@@ -78,12 +78,13 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   }
 
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        //title: Text("编辑页面"),
-        actions: [
-          /*  FlatButton(
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          //title: Text("编辑页面"),
+          actions: [
+            /*  FlatButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/',
@@ -97,38 +98,45 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),*/
-          FlatButton(
-              onPressed: () {
-                _sendMessage(controller);
-              },
-              child: Text(
-                "预览",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-          FlatButton(
-              onPressed: () {
-                // _sendMessage(controller);
-                _sendGroupMessage(controller, widget.groupId, widget.title);
-              },
-              child: Text(
-                "发送",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.all(5),
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Expanded(
+            SizedBox(
+              width: ScreenAdapter.width(110),
+              child: FlatButton(
+                  onPressed: () {
+                    _sendMessage(controller);
+                  },
+                  child: Text(
+                    "预览",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(25),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+            SizedBox(
+              width: ScreenAdapter.width(110),
+              child: FlatButton(
+                  onPressed: () {
+                    // _sendMessage(controller);
+                    _sendGroupMessage(controller, widget.groupId, widget.title);
+                  },
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(25),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+          ],
+        ),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Container(
+              padding: EdgeInsets.all(20),
               child:
-                  /*Column(
+                  /* Column(
                 children: [
                   Row(
                     children: [
@@ -163,9 +171,9 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                     ],
                   ),
                   Divider(),*/
-                  SafeArea(
-            child: SizedBox(
-              height: ScreenAdapter.height(900),
+                  /*SafeArea(
+                    child: SizedBox(
+              height: ScreenAdapter.height(1150),
               child: MultiProvider(
                 providers: [
                   ChangeNotifierProvider(
@@ -182,6 +190,52 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
         ]),
       ),
     );
+  }*/
+                  SafeArea(
+                child: SizedBox(
+                  height: ScreenAdapter.height(1150),
+                  // height: ScreenAdapter.height(1000),
+                  child: MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                        builder: (_) => VoiceRecordProvider(),
+                      )
+                    ],
+                    child: RichEdit(
+                        controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                  ),
+                  // Container(
+                  //   child: TextField(
+                  //     minLines: 18,
+                  //     keyboardType: TextInputType.multiline,
+                  //     maxLines: null,
+                  //     decoration: InputDecoration(
+                  //         border: OutlineInputBorder(), hintText: "输入内容"),
+                  //   ),
+                  // ),
+                  // Divider(),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     FlatButton(
+                  //         onPressed: () {}, child: Icon(Icons.note_add)),
+                  //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
+                  //     FlatButton(
+                  //         onPressed: () {}, child: Icon(Icons.video_call)),
+                  //   ],
+                  // ),
+                ),
+                /*JdButton(
+                text: "预览",
+                cb: () {
+                  _sendMessage(controller);
+                },
+              ),*/
+              )
+              // ]),
+              // ]
+              ),
+        )));
   }
 
   _sendMessage(SimpleRichEditController controller) async {
