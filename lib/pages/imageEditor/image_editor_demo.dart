@@ -37,8 +37,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       popupMenuKey =
       GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>();
   final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
-    AspectRatioItem(text: 'custom', value: CropAspectRatios.custom),
-    AspectRatioItem(text: 'original', value: CropAspectRatios.original),
+    AspectRatioItem(text: '自定义', value: CropAspectRatios.custom),
+    AspectRatioItem(text: '原始', value: CropAspectRatios.original),
     AspectRatioItem(text: '1*1', value: CropAspectRatios.ratio1_1),
     AspectRatioItem(text: '4*3', value: CropAspectRatios.ratio4_3),
     AspectRatioItem(text: '3*4', value: CropAspectRatios.ratio3_4),

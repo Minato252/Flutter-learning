@@ -312,19 +312,22 @@ class _MessageCreateState extends State<MessageCreate>
     }
   }
 
+//判断标题在该体系中是否唯一
   Future<bool> checktitleonly(String title) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
     var rel =
         await Dio().post("http://47.110.150.159:8080/group/select", data: {
-      "groupcreatorid": prefs.get("id"),
+      "groupname": title,
+      "grouptype": type.data,
     });
     List r = rel.data;
-    for (int i = 0; i < r.length; i++) {
-      if (title == r[i]["groupname"]) {
-        return false;
-      }
+    if (r.isEmpty) {
+      return true;
+    } else {
+      return false;
     }
-    return true;
   }
 
 //不需预览直接发送
@@ -437,6 +440,7 @@ class _MessageCreateState extends State<MessageCreate>
       "groupcreatorid": prefs.get("id"),
       "groupcreatorname": prefs.get("name"),
       "grouptime": new DateTime.now().toString().split('.')[0],
+      "grouptype": type.data,
     });
     //print("222222222222222222222222");
     //print(rel1);

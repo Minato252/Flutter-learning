@@ -799,9 +799,13 @@ class _ConversationPageState extends State<ConversationPage>
                 onPressed: () {
                   TextMessage mymessage = messageDataSource[0].content;
                   int time = messageDataSource[0].sentTime;
+                  String grouptargetid;
+                  grouptargetid = messageDataSource[0].targetId;
                   MessageModel messageModel =
                       MessageModel.fromJsonString(mymessage.content);
-                  readAll(messageModel.messageId, time);
+                  //  readAll(messageModel.messageId, time);
+                  // readAll(messageModel.messageId, time);
+                  readAll(grouptargetid, time);
                 },
                 child: Text(
                   "全阅",
@@ -1002,10 +1006,27 @@ class _ConversationPageState extends State<ConversationPage>
         //DateTime time1 = messageModel.strToTime(mm.time);
         int trantime = time1.millisecondsSinceEpoch;
         //print(trantime);
-        if (trantime <= time &&
-            mm.flag != "草稿" &&
-            mm.flag != '遮蔽' &&
-            mm.flag != "遮蔽的完整消息") {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String useid = prefs.get("id");
+        if (trantime <= time && mm.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = mm.keyWord;
+          List result = targetid.split(regex);
+          int i;
+          /* for (i = 0; i < result.length; i++) {
+            if (result[i] == useid) {
+              break;
+            }
+          }
+          if (i == result.length && result[result.length - 1] != useid) {
+            mm.htmlCode = "<p>遮蔽信息</p>";
+          }*/
+          if (!result.contains(useid)) {
+            mm.htmlCode = "<p>遮蔽信息</p>";
+          }
+          l.add(mm);
+        } else if // (trantime <= time && mm.flag == "普通") {
+            (trantime <= time && mm.flag != "草稿" && mm.flag != '遮蔽') {
           l.add(mm);
         }
       }

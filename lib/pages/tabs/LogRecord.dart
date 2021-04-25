@@ -279,8 +279,8 @@ class _LogRecordPageState extends State<LogRecordPage>
 
     await _getSubMessage(url, m); //把下级的群消息也加到m中
     print("2**********" + m.length.toString());
-    await _getShelterMessage(m); //获取遮蔽表的消息
-    print("3*******" + m.length.toString());
+    // await _getShelterMessage(m); //获取遮蔽表的消息
+    // print("3*******" + m.length.toString());
 
     if (m.isEmpty) {
       Navigator.push(context,
@@ -289,11 +289,20 @@ class _LogRecordPageState extends State<LogRecordPage>
       List<MessageModel> l = new List<MessageModel>();
       for (int i = 0; i < m.length; i++) {
         MessageModel mm = MessageModel.formServerJsonString(m[i]);
-        if (mm.flag != '遮蔽' && mm.flag != "遮蔽的完整消息") {
-          if (mm.flag == "草稿" && mm.fromuserid != useid) {
+        if (mm.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = mm.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            mm.htmlCode = "<p>遮蔽信息</p>";
+          }
+          l.add(mm);
+        } else if (mm.flag == "草稿") {
+          if (mm.fromuserid != useid) {
             mm.htmlCode = "<p>保存信息</p>";
           }
-          mm.modify = true;
+          l.add(mm);
+        } else {
           l.add(mm);
         }
         //mm.modify = true;

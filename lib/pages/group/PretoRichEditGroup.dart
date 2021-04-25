@@ -309,7 +309,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   _sendShelterMessage(List allIdInGroup, MessageModel messageModel) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //把遮蔽消息存入遮蔽表中
-    List allid = [];
+    /* List allid = [];
     for (int i = 0; i < allIdInGroup.length; i++) {
       allid.add(allIdInGroup[i]['id']);
     }
@@ -363,8 +363,14 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     if (!needSendShelterMessageList.contains(id)) {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
+    }*/
+    String totargetid = targetIdList[0];
+    for (int i = 1; i < targetIdList.length; i++) {
+      totargetid = totargetid + "+";
+      totargetid = totargetid + targetIdList[i];
     }
-    //发到普通表中一份，用来管理员查询
+    // totargetid += targetIdList[targetIdList.length - 1];
+
     String useid = prefs.get("id");
     var type = await Dio()
         .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
@@ -372,7 +378,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     //发送给服务器
     var rel1 = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-      "keywords": messageModel.keyWord,
+      "keywords": totargetid,
       "messages": messageModel.htmlCode,
       "touserid": messageModel.messageId,
       "fromuserid": prefs.get("id"),
@@ -382,11 +388,11 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
           new DateTime.now().toString().split('.')[0] +
           ")",
       "MesId": messageModel.messageId,
-      "Flag": "遮蔽的完整消息", //这里增加了flag
+      "Flag": "遮蔽消息", //这里增加了flag
       "type": type.data,
     });
 
-    for (int i = 0; i < needSendShelterMessageList.length; i++) {
+    /*for (int i = 0; i < needSendShelterMessageList.length; i++) {
       // if (allid.contains(needSendShelterMessageList)) {
       // if (needSendShelterMessageList.contains(allid[i])) {
       Dio dio = Dio();
@@ -431,7 +437,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
           // "type": type.data,
         });
       }
-    }
+    }*/
     sendMessageSuccess("发送成功");
     Navigator.pop(context);
   }

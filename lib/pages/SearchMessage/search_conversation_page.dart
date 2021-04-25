@@ -9,6 +9,7 @@ import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/SearchMessage/search_message_content_list.dart';
 import 'package:weitong/pages/SearchMessage/search_message_pre.dart';
 import 'package:weitong/pages/group/CreateGroupMessage.dart';
+import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/group/GroupPre.dart';
 import 'package:weitong/pages/group/GroupshelterCreateMessage.dart';
 import 'package:weitong/pages/group/Grouptran.dart';
@@ -796,27 +797,37 @@ class _SearchConversationPageState extends State<SearchConversationPage>
           FlatButton(
               onPressed: () async {
                 //TextMessage mymessage = messageDataSource[0].content;
+                SharedPreferences prefs = await SharedPreferences.getInstance();
                 TextMessage mymessage =
                     messageDataSource[0].latestMessageContent;
                 MessageModel messageModel =
                     MessageModel.fromJsonString(mymessage.content);
-                SharedPreferences prefs = await SharedPreferences.getInstance();
+                //根据群id茶找群成员
+                List member =
+                    await GroupMessageService.searchGruopMember(targetId);
+                for (int i = 0; i < member.length; i++) {
+                  member[i] = member[i]["id"];
+                }
+                String id = prefs.get("id");
+                if (member.contains(id)) {
+                  // _clearMessage(controller);
+                  Navigator.push(context, MaterialPageRoute(builder: (c) {
+                    // return Pre(
+                    //   messageModel: messageModel,
+                    // );
 
-                // _clearMessage(controller);
-                Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  // return Pre(
-                  //   messageModel: messageModel,
-                  // );
+                    return GroupMessageCreate(
+                      //targetGroupId: messageModel.messageId, //传群id
 
-                  return GroupMessageCreate(
-                    //targetGroupId: messageModel.messageId, //传群id
-
-                    targetGroupId: targetId,
-                    //title: messageModel.title,
-                    title: titleContent,
-                    // fromUserId: prefs.getString("id"),
-                  );
-                }));
+                      targetGroupId: targetId,
+                      //title: messageModel.title,
+                      title: titleContent,
+                      // fromUserId: prefs.getString("id"),
+                    );
+                  }));
+                } else {
+                  sendMessageSuccess("您不在当前聊天中，无法回复");
+                }
               },
               child: Text(
                 "回复",
@@ -1321,5 +1332,16 @@ class _SearchConversationPageState extends State<SearchConversationPage>
           conversationType, targetId, message.content);
       _insertOrReplaceMessage(msg);
     });
+  }
+
+  sendMessageSuccess(String alrt) {
+    Fluttertoast.showToast(
+        msg: alrt,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER, // 消息框弹出的位置
+        timeInSecForIos: 1, // 消息框持续的时间（目前的版本只有ios有效）
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 }

@@ -133,7 +133,12 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
 
   void _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.userId = prefs.getString("id");
+    if (prefs.getString("adminId") == null ||
+        prefs.getString("adminId") == "") {
+      this.userId = prefs.getString("id");
+    } else {
+      this.userId = "";
+    }
     setState(() {
       userId;
     });
