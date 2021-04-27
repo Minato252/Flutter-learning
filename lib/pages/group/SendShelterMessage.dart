@@ -799,14 +799,16 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       }
     }*/
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String totargetid = targetIdList[0];
-    for (int i = 1; i < targetIdList.length; i++) {
-      totargetid = totargetid + "+";
-      totargetid = totargetid + targetIdList[i];
+    String useid = prefs.get("id");
+    String totargetid = useid;
+    for (int i = 0; i < targetIdList.length; i++) {
+      if (targetIdList[i] != useid) {
+        totargetid = totargetid + "+";
+        totargetid = totargetid + targetIdList[i];
+      }
     }
     // totargetid += targetIdList[targetIdList.length - 1];
 
-    String useid = prefs.get("id");
     var type = await Dio()
         .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 

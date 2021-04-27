@@ -214,7 +214,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                           Divider(),*/
                       SafeArea(
                     child: SizedBox(
-                      height: ScreenAdapter.height(1150),
+                      height: ScreenAdapter.height(1100),
                       // height: ScreenAdapter.height(1000),
                       child: MultiProvider(
                         providers: [

@@ -193,7 +193,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   }*/
                   SafeArea(
                 child: SizedBox(
-                  height: ScreenAdapter.height(1150),
+                  height: ScreenAdapter.height(1100),
                   // height: ScreenAdapter.height(1000),
                   child: MultiProvider(
                     providers: [
@@ -418,14 +418,22 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
     }*/
-    String totargetid = targetIdList[0];
+    /*  String totargetid = targetIdList[0];
     for (int i = 1; i < targetIdList.length; i++) {
       totargetid = totargetid + "+";
       totargetid = totargetid + targetIdList[i];
+    }*/
+    String useid = prefs.get("id");
+    String totargetid = useid;
+    for (int i = 0; i < targetIdList.length; i++) {
+      if (targetIdList[i] != useid) {
+        totargetid = totargetid + "+";
+        totargetid = totargetid + targetIdList[i];
+      }
     }
     // totargetid += targetIdList[targetIdList.length - 1];
 
-    String useid = prefs.get("id");
+    // String useid = prefs.get("id");
     var type = await Dio()
         .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
