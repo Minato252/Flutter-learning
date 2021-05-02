@@ -543,7 +543,7 @@ class Tree {
       "job": reMap["uAuthority"],
       "right": reMap["uPower"],
     };
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     ps.upDatauserInfo(details);
     return details;
   }
@@ -776,7 +776,7 @@ class Tree {
       setTreeInSer(id, initTreeStr, context);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("tree", initTreeStr);
-      final ps = Provider.of<ProviderServices>(context);
+      final ps = Provider.of<ProviderServices>(context, listen: false);
       ps.upDataTree(initTreeStr);
 
       return;
@@ -813,7 +813,7 @@ class Tree {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("tree", contents);
 
-        final ps = Provider.of<ProviderServices>(context);
+        final ps = Provider.of<ProviderServices>(context, listen: false);
         ps.upDataTree(contents);
         return contents;
       } else {
@@ -849,7 +849,7 @@ class Tree {
       await Dio()
           .post("http://47.110.150.159:8080/tree/updateAdm?id=$id&url=$url");
 
-      final ps = Provider.of<ProviderServices>(context);
+      final ps = Provider.of<ProviderServices>(context, listen: false);
       ps.upDataTree(jsonStr);
     } catch (e) {
       print('服务器出错或网络连接失败！');

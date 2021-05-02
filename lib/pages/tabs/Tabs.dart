@@ -66,7 +66,6 @@ class _TabsState extends State<Tabs> {
     String id = prefs.getString("id");
     String password = prefs.getString("password");
     String jsonTree = await Tree.getTreeFormSer(id, false, context);
-
     var parsedJson = json.decode(jsonTree);
     Map userInfo =
         await Tree.getUserInfoAndSave(parsedJson, password, id, context);
@@ -191,7 +190,7 @@ class _TabsState extends State<Tabs> {
       keyWords = k.split(",");
     }
 
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     ps.upDataKeyWords(keyWords);
   }
 

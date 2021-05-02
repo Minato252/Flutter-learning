@@ -38,7 +38,7 @@ class _TagState extends State<TagChipDemo> {
           builder: (context) => new Input("新建关键词", "输入您要新建的关键词", 12, "关键词")),
     );
     if (newTag != null) {
-      final ps = Provider.of<ProviderServices>(context);
+      final ps = Provider.of<ProviderServices>(context, listen: false);
       // _tags = ps.keyWords;
       if (!_tags.contains(newTag)) {
         setState(() {
@@ -87,7 +87,7 @@ class _TagState extends State<TagChipDemo> {
     print("***********************${arguments['identify']}*******************");
     // _getTag();
     if (arguments['identify'] == "user") {
-      final ps = Provider.of<ProviderServices>(context);
+      final ps = Provider.of<ProviderServices>(context, listen: false);
       // _tags = ps.keyWords;
       List<String> s = ps.keyWords;
       for (int i = 0; i < s.length; i++) {
@@ -136,7 +136,8 @@ class _TagState extends State<TagChipDemo> {
                     return Chip(
                       label: Text(tag),
                       onDeleted: () {
-                        final ps = Provider.of<ProviderServices>(context);
+                        final ps = Provider.of<ProviderServices>(context,
+                            listen: false);
 
                         setState(() {
                           _tags.remove(tag);
@@ -187,7 +188,7 @@ class _TagState extends State<TagChipDemo> {
 
   Future<void> saveKeyWords() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     List<String> tags = ps.keyWords;
     prefs.setString("keyWords", listToString(tags));
   }

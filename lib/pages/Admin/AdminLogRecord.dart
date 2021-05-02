@@ -439,7 +439,8 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
   }
 
   _awaitReturnChooseStaff(BuildContext context) async {
-    final ps = Provider.of<ProviderServices>(context);
+    // final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     // Map userInfo = ps.userInfo;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
@@ -553,7 +554,8 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
   Future<List<Map>> _getSubs() async {
     //通过网络获取树
 
-    final ps = Provider.of<ProviderServices>(context);
+    // final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
 
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);

@@ -33,7 +33,8 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
   }
 
   Widget build(BuildContext context) {
-    final tree = Provider.of<ProviderServices>(context);
+    // final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
     //这里用了jsontree
     //在这里根据json提取所有人员
@@ -153,7 +154,8 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
 
       //这里需要利用jsonTree更新页面了======
       setState(() {
-        final tree = Provider.of<ProviderServices>(context);
+        // final tree = Provider.of<ProviderServices>(context);
+        final tree = Provider.of<ProviderServices>(context, listen: false);
         String jsonTree = tree.tree;
         //这里用了jsontree
         //在这里根据json提取所有人员

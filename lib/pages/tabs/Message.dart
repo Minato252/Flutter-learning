@@ -56,6 +56,7 @@ class _MessagePageState extends State<MessagePage>
 
   updateConversationList() async {
     List list = await RongIMClient.getConversationList(displayConversationType);
+    // List list = await RongIMClient.getConversationList();
     // Conversation
     // conList = [];
     if (list != null) {

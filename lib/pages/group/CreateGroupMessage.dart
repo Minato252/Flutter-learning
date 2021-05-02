@@ -365,7 +365,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       groupMember.add(rel[i]["id"]);
     }
     print(groupMember);
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);

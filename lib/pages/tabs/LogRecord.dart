@@ -277,10 +277,10 @@ class _LogRecordPageState extends State<LogRecordPage>
     List m = rel.data;
     print("1**********" + m.length.toString());
 
-    await _getSubMessage(url, m); //把下级的群消息也加到m中
-    print("2**********" + m.length.toString());
-    await _getShelterMessage(m); //获取遮蔽表的消息
-    print("3*******" + m.length.toString());
+    // await _getSubMessage(url, m); //把下级的群消息也加到m中
+    // print("2**********" + m.length.toString());
+    // await _getShelterMessage(m); //获取遮蔽表的消息
+    // print("3*******" + m.length.toString());
 
     if (m.isEmpty) {
       Navigator.push(context,
@@ -539,7 +539,7 @@ class _LogRecordPageState extends State<LogRecordPage>
   Future<List<Map>> _getSubs() async {
     //通过网络获取树
 
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
 
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);

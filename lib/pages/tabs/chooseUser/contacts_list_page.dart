@@ -274,7 +274,7 @@ class _ContactListPageState extends State<ContactListPage> {
   }
 
   void _addGroupUser() async {
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);

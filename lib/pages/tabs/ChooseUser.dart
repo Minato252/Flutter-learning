@@ -183,7 +183,7 @@ class _ChooseUserPageState extends State<ChooseUserPage> {
 
   Widget buildTree() {
     try {
-      final tree = Provider.of<ProviderServices>(context);
+      final tree = Provider.of<ProviderServices>(context, listen: false);
       String jsonTree = tree.tree;
 
       var parsedJson = json.decode(jsonTree);
@@ -325,7 +325,7 @@ class _RightButton2State extends State<RightButton2> {
 
   bool isContains(String rightName, BuildContext context) {
     friends.clear();
-    final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     getStaff(parsedJson, rightName, friends);

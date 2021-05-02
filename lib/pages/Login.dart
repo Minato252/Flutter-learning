@@ -281,7 +281,6 @@ class _LoginPageState extends State<LoginPage> {
       rel = await Dio().post("http://47.110.150.159:8080/login",
           data: {"id": id, "password": password, "type": "manager"});
     }
-
     // var rel;
 
     Map rel2 = json.decode(rel.data);
@@ -324,7 +323,6 @@ class _LoginPageState extends State<LoginPage> {
       // final tree = Provider.of<ProviderServices>(context);
       // String jsonTreeNet = await getTree();
       // tree.upDataTree(jsonTreeNet);
-
       Navigator.of(context).pushAndRemoveUntil(
           new MaterialPageRoute(builder: (context) => new AdminTabs()),
           (route) => route == null);

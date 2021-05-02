@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/pages/Admin/searchDemo.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/providerServices.dart';
@@ -28,6 +29,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // 1.初始化 im SDK
     RongIMClient.init(RongAppKey);
+    SharedPreferences.setMockInitialValues({});
   }
 
   @override

@@ -172,7 +172,7 @@ class _RightWidgetState extends State<RightWidget> {
   }
 
   onTapAdd() async {
-    final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     List<String> illegalText = [];
@@ -197,7 +197,7 @@ class _RightWidgetState extends State<RightWidget> {
   }
 
   onTapEdit() async {
-    final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
 
     var parsedJson = json.decode(jsonTree);
@@ -227,7 +227,7 @@ class _RightWidgetState extends State<RightWidget> {
   }
 
   onTapDelete() async {
-    final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
     var parsedJson = json.decode(jsonTree);
     var result = Tree.deleteNode(parsedJson, parentName, rightName);
@@ -386,7 +386,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
   /// Builds tree or error message out of the entered content.
   Widget buildTree() {
     try {
-      final tree = Provider.of<ProviderServices>(context);
+      final tree = Provider.of<ProviderServices>(context, listen: false);
       String jsonTree = tree.tree;
       var parsedJson = json.decode(jsonTree);
 

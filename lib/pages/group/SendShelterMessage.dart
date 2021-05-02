@@ -256,7 +256,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       groupMember.add(rel[i]["id"]);
     }
     print(groupMember);
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
@@ -345,7 +345,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                   //加载联系人列表
 
                   // await _sendGroupMessage();
-                  final ps = Provider.of<ProviderServices>(context);
+                  final ps =
+                      Provider.of<ProviderServices>(context, listen: false);
                   Map userInfo = ps.userInfo;
                   String jsonTree =
                       await Tree.getTreeFormSer(userInfo["id"], false, context);
@@ -672,7 +673,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
       allid.add(allIdInGroup[i]['id']);
     }
 
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
 
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);

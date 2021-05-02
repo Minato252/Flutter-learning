@@ -47,7 +47,7 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
   }
 
   Widget build(BuildContext context) {
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     List<String> s = ps.keyWords;
     for (int i = 0; i < s.length; i++) {
       if (!_tags.contains(s[i])) {

@@ -19,6 +19,7 @@ import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
 import 'package:crypto/crypto.dart';
+import 'package:locally/locally.dart';
 
 class SettingPage extends StatefulWidget {
   SettingPage({Key key}) : super(key: key);

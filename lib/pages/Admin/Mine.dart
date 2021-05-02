@@ -115,7 +115,7 @@ class _MineState extends State<Mine> {
 
   saveTree() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final tree = Provider.of<ProviderServices>(context);
+    final tree = Provider.of<ProviderServices>(context, listen: false);
     String jsonTree = tree.tree;
     prefs.setString("tree", jsonTree);
   }

@@ -267,7 +267,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       groupMember.add(rel[i]["id"]);
     }
     print(groupMember);
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
@@ -684,7 +684,7 @@ class _GroupShelterPreState extends State<GroupShelterPre> {
       allid.add(allIdInGroup[i]['id']);
     }
 
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     Map userInfo = ps.userInfo;
 
     String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);

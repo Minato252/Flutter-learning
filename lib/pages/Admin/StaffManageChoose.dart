@@ -221,7 +221,7 @@ class _StaffManageChooseState extends State<StaffManageChoose> {
   /// Builds tree or error message out of the entered content.
   Widget buildTree() {
     try {
-      final tree = Provider.of<ProviderServices>(context);
+      final tree = Provider.of<ProviderServices>(context, listen: false);
       String jsonTree = tree.tree;
 
       var parsedJson = json.decode(jsonTree);

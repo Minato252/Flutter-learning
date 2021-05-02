@@ -190,7 +190,7 @@ class _UserPageState extends State<UserPage> {
 
   Future<void> saveKeyWords() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final ps = Provider.of<ProviderServices>(context);
+    final ps = Provider.of<ProviderServices>(context, listen: false);
     List<String> tags = ps.keyWords;
     prefs.setString("keyWords", listToString(tags));
   }
