@@ -96,7 +96,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                       color: Colors.white),
                 )),*/
             SizedBox(
-              width: ScreenAdapter.width(130),
+              width: ScreenAdapter.width(140),
               child: FlatButton(
                   onPressed: () {
                     //print(widget.targetGroupId);
@@ -106,14 +106,14 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                   child: Text(
                     "预览",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(30),
+                        fontSize: ScreenAdapter.size(35),
                         //fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
                   )),
             ),
             SizedBox(
-              width: ScreenAdapter.width(130),
+              width: ScreenAdapter.width(140),
               child: FlatButton(
                   onPressed: () {
                     //print(widget.targetGroupId);
@@ -124,7 +124,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                   child: Text(
                     "发送",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(30),
+                        fontSize: ScreenAdapter.size(35),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),

@@ -17,6 +17,7 @@ import 'package:weitong/pages/group/Grouptran.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 // import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_bus.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -793,6 +794,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
@@ -835,7 +837,7 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                 "回复",
                 // "普通回复",
                 style: TextStyle(
-                    fontSize: 15.0,
+                    fontSize: ScreenAdapter.size(35),
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),

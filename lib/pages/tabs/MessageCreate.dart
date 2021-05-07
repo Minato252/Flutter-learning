@@ -74,7 +74,7 @@ class _MessageCreateState extends State<MessageCreate>
                   "清空内容",
                   style: TextStyle(
                       // fontSize: 20.0,
-                      fontSize: ScreenAdapter.size(30),
+                      fontSize: ScreenAdapter.size(40),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -85,7 +85,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "预览",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(30),
+                      fontSize: ScreenAdapter.size(40),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -96,7 +96,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "发送",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(30),
+                      fontSize: ScreenAdapter.size(40),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -121,7 +121,7 @@ class _MessageCreateState extends State<MessageCreate>
                                     Text(
                                       "关键词:",
                                       style: TextStyle(
-                                        fontSize: ScreenAdapter.size(25),
+                                        fontSize: ScreenAdapter.size(30),
                                       ),
                                     ),
                                     SizedBox(

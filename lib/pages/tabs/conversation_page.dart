@@ -798,7 +798,7 @@ class _ConversationPageState extends State<ConversationPage>
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
           SizedBox(
-            width: ScreenAdapter.width(130),
+            width: ScreenAdapter.width(140),
             child: FlatButton(
                 onPressed: () {
                   TextMessage mymessage = messageDataSource[0].content;
@@ -814,7 +814,7 @@ class _ConversationPageState extends State<ConversationPage>
                 child: Text(
                   "全阅",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(30),
+                      fontSize: ScreenAdapter.size(35),
                       //fontSize: 15.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
@@ -836,7 +836,7 @@ class _ConversationPageState extends State<ConversationPage>
                     color: Colors.white),
               )),*/
           SizedBox(
-            width: ScreenAdapter.width(130),
+            width: ScreenAdapter.width(140),
             child: FlatButton(
                 onPressed: () async {
                   TextMessage mymessage = messageDataSource[0].content;
@@ -862,7 +862,7 @@ class _ConversationPageState extends State<ConversationPage>
                   //"普通回复",
                   "回复",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(30),
+                      fontSize: ScreenAdapter.size(35),
                       //fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),

@@ -393,7 +393,7 @@ class _GroupPreState extends State<GroupPre> {
             mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(
-                width: ScreenAdapter.width(85),
+                width: ScreenAdapter.width(90),
                 child: FlatButton(
                     onPressed: () {
                       //print(widget.targetGroupId);
@@ -407,14 +407,14 @@ class _GroupPreState extends State<GroupPre> {
                     child: Text(
                       "遮蔽",
                       style: TextStyle(
-                          fontSize: ScreenAdapter.size(30),
+                          fontSize: ScreenAdapter.size(35),
                           // fontSize: 15.0,
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
                     )),
               ),
               SizedBox(
-                width: ScreenAdapter.width(85),
+                width: ScreenAdapter.width(90),
                 child: FlatButton(
                     onPressed: () {
                       _sendGroupMessage(targetGroupId);
@@ -423,7 +423,7 @@ class _GroupPreState extends State<GroupPre> {
                       "发送",
                       style: TextStyle(
                           //fontSize: 15.0,
-                          fontSize: ScreenAdapter.size(30),
+                          fontSize: ScreenAdapter.size(35),
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
                     )),
@@ -497,12 +497,12 @@ class _GroupPreState extends State<GroupPre> {
               //  ),
               //  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               SizedBox(
-                width: ScreenAdapter.width(85),
+                width: ScreenAdapter.width(90),
                 child: FlatButton(
                   child: Text(
                     "编辑",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(30),
+                        fontSize: ScreenAdapter.size(35),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
@@ -519,12 +519,12 @@ class _GroupPreState extends State<GroupPre> {
                 ),
               ),
               SizedBox(
-                width: ScreenAdapter.width(85),
+                width: ScreenAdapter.width(90),
                 child: FlatButton(
                   child: Text(
                     "保存",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.size(30),
+                        fontSize: ScreenAdapter.size(35),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),

@@ -364,7 +364,7 @@ class _ContactListPageState extends State<ContactListPage> {
                 "全选/反选",
                 style: TextStyle(
                     //fontSize: 20.0,
-                    fontSize: ScreenAdapter.size(25),
+                    fontSize: ScreenAdapter.size(30),
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),
@@ -376,7 +376,7 @@ class _ContactListPageState extends State<ContactListPage> {
               child: Text(
                 "新增",
                 style: TextStyle(
-                    fontSize: ScreenAdapter.size(25),
+                    fontSize: ScreenAdapter.size(30),
                     //fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),

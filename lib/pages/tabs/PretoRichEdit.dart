@@ -116,7 +116,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
                 child: Text(
                   "保存",
                   style: TextStyle(
-                      fontSize: 15.0,
+                      fontSize: ScreenAdapter.size(35),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -128,7 +128,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
                 child: Text(
                   "发送",
                   style: TextStyle(
-                      fontSize: 15.0,
+                      fontSize: ScreenAdapter.size(35),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),

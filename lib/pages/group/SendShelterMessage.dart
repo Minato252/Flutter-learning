@@ -309,12 +309,12 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
             mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(
-                width: ScreenAdapter.width(130),
+                width: ScreenAdapter.width(140),
                 child: FlatButton(
                     child: Text(
                       "编辑",
                       style: TextStyle(
-                          fontSize: ScreenAdapter.width(30),
+                          fontSize: ScreenAdapter.width(35),
                           // fontSize: 15.0,
                           //fontWeight: FontWeight.w400,
                           color: Colors.white),
@@ -332,12 +332,12 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,*/
               SizedBox(
-                width: ScreenAdapter.width(130),
+                width: ScreenAdapter.width(140),
                 child: FlatButton(
                   child: Text(
                     "发送",
                     style: TextStyle(
-                        fontSize: ScreenAdapter.width(30),
+                        fontSize: ScreenAdapter.width(35),
                         // fontSize: 15.0,
                         //fontWeight: FontWeight.w400,
                         color: Colors.white),
