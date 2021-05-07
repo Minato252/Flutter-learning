@@ -36,8 +36,8 @@ dependencies:
   event_bus: ^2.0.0
   fluttertoast: ^8.0.5
   dio: ^3.0.10
-  # rongcloud_im_plugin: ^5.1.0
-  rongcloud_im_plugin: ^5.1.1
+  rongcloud_im_plugin: ^5.1.0
+  # rongcloud_im_plugin: ^5.1.1
   flutter_simple_treeview: ^2.0.2
   rich_edit: ^0.1.1
   chewie: ^0.12.0
