@@ -30,6 +30,7 @@ class Tabs extends StatefulWidget {
 
 class _TabsState extends State<Tabs> {
   int _currentIndex = 0;
+  // EasyNotification easyNotification = EasyNotification();
   List<Widget> _pagelist = [
     MessagePage(),
     // GropuMessagePage(),
@@ -141,7 +142,7 @@ class _TabsState extends State<Tabs> {
 //绑定接收消息
 // minato
     RongIMClient.onMessageReceivedWrapper =
-        (Message msg, int left, bool hasPackage, bool offline) {
+        (Message msg, int left, bool hasPackage, bool offline) async {
       String hasP = hasPackage ? "true" : "false";
       String off = offline ? "true" : "false";
       if (msg.content != null) {
@@ -163,7 +164,7 @@ class _TabsState extends State<Tabs> {
         );
       }
 
-      easyNotification().show();
+      EasyNotification().show(id: msg.senderUserId);
       // if (currentState == AppLifecycleState.paused // 应用程序当前对用户不可见，不响应用户输入，并在后台运行。
       //     // && !checkNoficationQuietStatus()   //检查通知静止时间？
       //     ) {
