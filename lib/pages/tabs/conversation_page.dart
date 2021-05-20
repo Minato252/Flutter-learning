@@ -16,6 +16,7 @@ import 'package:weitong/pages/group/Grouptran.dart';
 import 'package:weitong/pages/tabs/NullResult.dart';
 // import 'package:weitong/pages/group/item/bottom_input_bar.dart';
 import 'package:weitong/services/DB/db_helper.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
 import 'package:weitong/services/event_bus.dart';
@@ -792,22 +793,28 @@ class _ConversationPageState extends State<ConversationPage>
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
           // _buildRightButtons(),
           SizedBox(
-            width: 60,
+            width: ScreenAdapter.width(140),
             child: FlatButton(
                 onPressed: () {
                   TextMessage mymessage = messageDataSource[0].content;
                   int time = messageDataSource[0].sentTime;
+                  String grouptargetid;
+                  grouptargetid = messageDataSource[0].targetId;
                   MessageModel messageModel =
                       MessageModel.fromJsonString(mymessage.content);
-                  readAll(messageModel.messageId, time);
+                  //  readAll(messageModel.messageId, time);
+                  // readAll(messageModel.messageId, time);
+                  readAll(grouptargetid, time);
                 },
                 child: Text(
                   "全阅",
                   style: TextStyle(
+                      fontSize: ScreenAdapter.size(35),
                       //fontSize: 15.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
@@ -829,7 +836,7 @@ class _ConversationPageState extends State<ConversationPage>
                     color: Colors.white),
               )),*/
           SizedBox(
-            width: 60,
+            width: ScreenAdapter.width(140),
             child: FlatButton(
                 onPressed: () async {
                   TextMessage mymessage = messageDataSource[0].content;
@@ -855,6 +862,7 @@ class _ConversationPageState extends State<ConversationPage>
                   //"普通回复",
                   "回复",
                   style: TextStyle(
+                      fontSize: ScreenAdapter.size(35),
                       //fontSize: 20.0,
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
@@ -989,8 +997,8 @@ class _ConversationPageState extends State<ConversationPage>
 
     List m = rel.data;
 
-    await _getShelterMessage(m, groupId); //获取遮蔽表的消息
-    print("3*******" + m.length.toString());
+    // await _getShelterMessage(m, groupId); //获取遮蔽表的消息
+    // print("3*******" + m.length.toString());
 
     if (m.isEmpty) {
       Navigator.push(context,
@@ -1004,15 +1012,32 @@ class _ConversationPageState extends State<ConversationPage>
         //DateTime time1 = messageModel.strToTime(mm.time);
         int trantime = time1.millisecondsSinceEpoch;
         //print(trantime);
-        if (trantime <= time &&
-            mm.flag != "草稿" &&
-            mm.flag != '遮蔽' &&
-            mm.flag != "遮蔽的完整消息") {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String useid = prefs.get("id");
+        if (trantime <= time && mm.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = mm.keyWord;
+          List result = targetid.split(regex);
+          int i;
+          /* for (i = 0; i < result.length; i++) {
+            if (result[i] == useid) {
+              break;
+            }
+          }
+          if (i == result.length && result[result.length - 1] != useid) {
+            mm.htmlCode = "<p>遮蔽信息</p>";
+          }*/
+          if (!result.contains(useid)) {
+            mm.htmlCode = "<p>遮蔽信息</p>";
+          }
+          l.add(mm);
+        } else if // (trantime <= time && mm.flag == "普通") {
+            (trantime <= time && mm.flag != "草稿" && mm.flag != '遮蔽') {
           l.add(mm);
         }
       }
 
-      for (int i = 0; i < l.length; i++) {
+      /*  for (int i = 0; i < l.length; i++) {
         int min = i;
         for (int j = i + 1; j < l.length; j++) {
           if (l[j].time.millisecondsSinceEpoch <
@@ -1025,7 +1050,7 @@ class _ConversationPageState extends State<ConversationPage>
           l[i] = l[min];
           l[min] = t;
         }
-      }
+      }*/
 
       // Navigator.push(
       //     context,
@@ -1163,7 +1188,26 @@ class _ConversationPageState extends State<ConversationPage>
       //按标题去展示消息
     }*/
       List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-      _showMessageByTitle(r);
+
+      // _showMessageByTitle(r);
+      // List conversation = new List();
+      List conversation = [];
+      for (int i = 0; i < r.length; i++) {
+        Conversation item = MessageModelToConversation.transation(r[i]);
+        conversation.add(item);
+      }
+
+      Conversation conversation1 = conversation[0];
+      TextMessage mymessage = conversation1.latestMessageContent;
+      MessageModel messageModel =
+          MessageModel.fromJsonString(mymessage.content);
+      Map arg = {
+        "coversationType": conversation1.conversationType,
+        "targetId": conversation1.targetId,
+        "conversation": conversation,
+        "title": messageModel.title
+      };
+      Navigator.pushNamed(context, '/allread', arguments: arg);
     }
   }
 

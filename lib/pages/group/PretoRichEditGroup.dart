@@ -78,12 +78,13 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   }
 
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        //title: Text("编辑页面"),
-        actions: [
-          /*  FlatButton(
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          //title: Text("编辑页面"),
+          actions: [
+            /*  FlatButton(
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/',
@@ -97,38 +98,45 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),*/
-          FlatButton(
-              onPressed: () {
-                _sendMessage(controller);
-              },
-              child: Text(
-                "预览",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-          FlatButton(
-              onPressed: () {
-                // _sendMessage(controller);
-                _sendGroupMessage(controller, widget.groupId, widget.title);
-              },
-              child: Text(
-                "发送",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.all(5),
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Expanded(
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: FlatButton(
+                  onPressed: () {
+                    _sendMessage(controller);
+                  },
+                  child: Text(
+                    "预览",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(35),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: FlatButton(
+                  onPressed: () {
+                    // _sendMessage(controller);
+                    _sendGroupMessage(controller, widget.groupId, widget.title);
+                  },
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(35),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+          ],
+        ),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Container(
+              padding: EdgeInsets.all(20),
               child:
-                  /*Column(
+                  /* Column(
                 children: [
                   Row(
                     children: [
@@ -163,9 +171,9 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                     ],
                   ),
                   Divider(),*/
-                  SafeArea(
-            child: SizedBox(
-              height: ScreenAdapter.height(900),
+                  /*SafeArea(
+                    child: SizedBox(
+              height: ScreenAdapter.height(1150),
               child: MultiProvider(
                 providers: [
                   ChangeNotifierProvider(
@@ -182,6 +190,52 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
         ]),
       ),
     );
+  }*/
+                  SafeArea(
+                child: SizedBox(
+                  height: ScreenAdapter.height(1100),
+                  // height: ScreenAdapter.height(1000),
+                  child: MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                        builder: (_) => VoiceRecordProvider(),
+                      )
+                    ],
+                    child: RichEdit(
+                        controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                  ),
+                  // Container(
+                  //   child: TextField(
+                  //     minLines: 18,
+                  //     keyboardType: TextInputType.multiline,
+                  //     maxLines: null,
+                  //     decoration: InputDecoration(
+                  //         border: OutlineInputBorder(), hintText: "输入内容"),
+                  //   ),
+                  // ),
+                  // Divider(),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     FlatButton(
+                  //         onPressed: () {}, child: Icon(Icons.note_add)),
+                  //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
+                  //     FlatButton(
+                  //         onPressed: () {}, child: Icon(Icons.video_call)),
+                  //   ],
+                  // ),
+                ),
+                /*JdButton(
+                text: "预览",
+                cb: () {
+                  _sendMessage(controller);
+                },
+              ),*/
+              )
+              // ]),
+              // ]
+              ),
+        )));
   }
 
   _sendMessage(SimpleRichEditController controller) async {
@@ -309,7 +363,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
   _sendShelterMessage(List allIdInGroup, MessageModel messageModel) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //把遮蔽消息存入遮蔽表中
-    List allid = [];
+    /* List allid = [];
     for (int i = 0; i < allIdInGroup.length; i++) {
       allid.add(allIdInGroup[i]['id']);
     }
@@ -363,16 +417,30 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     if (!needSendShelterMessageList.contains(id)) {
       //把自己也加上，后期查询要用
       needSendShelterMessageList.add(id);
-    }
-    //发到普通表中一份，用来管理员查询
+    }*/
+    /*  String totargetid = targetIdList[0];
+    for (int i = 1; i < targetIdList.length; i++) {
+      totargetid = totargetid + "+";
+      totargetid = totargetid + targetIdList[i];
+    }*/
     String useid = prefs.get("id");
+    String totargetid = useid;
+    for (int i = 0; i < targetIdList.length; i++) {
+      if (targetIdList[i] != useid) {
+        totargetid = totargetid + "+";
+        totargetid = totargetid + targetIdList[i];
+      }
+    }
+    // totargetid += targetIdList[targetIdList.length - 1];
+
+    // String useid = prefs.get("id");
     var type = await Dio()
         .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发送给服务器
     var rel1 = await Dio()
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-      "keywords": messageModel.keyWord,
+      "keywords": totargetid,
       "messages": messageModel.htmlCode,
       "touserid": messageModel.messageId,
       "fromuserid": prefs.get("id"),
@@ -382,11 +450,11 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
           new DateTime.now().toString().split('.')[0] +
           ")",
       "MesId": messageModel.messageId,
-      "Flag": "遮蔽的完整消息", //这里增加了flag
+      "Flag": "遮蔽消息", //这里增加了flag
       "type": type.data,
     });
 
-    for (int i = 0; i < needSendShelterMessageList.length; i++) {
+    /*for (int i = 0; i < needSendShelterMessageList.length; i++) {
       // if (allid.contains(needSendShelterMessageList)) {
       // if (needSendShelterMessageList.contains(allid[i])) {
       Dio dio = Dio();
@@ -431,7 +499,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
           // "type": type.data,
         });
       }
-    }
+    }*/
     sendMessageSuccess("发送成功");
     Navigator.pop(context);
   }

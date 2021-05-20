@@ -101,7 +101,8 @@ class MessageModel {
       time = strToTime(json["mTime"]);
       fromuserid = json["mFromuserid"];
       // messageId = json['messageId'];
-      messageId = json['mMesId'];
+      //messageId = json['mMesId'];
+      messageId = json['mTouserid'];
       flag = json["mFlag"];
       // content = jsonEncode(json);
     } catch (e) {

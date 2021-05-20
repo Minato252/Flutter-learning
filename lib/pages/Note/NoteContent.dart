@@ -1,4 +1,7 @@
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
 import 'package:flutter_html/flutter_html.dart';
 //import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
@@ -8,6 +11,7 @@ import 'package:weitong/pages/Note/CategoryPage.dart';
 //import 'package:weitong/pages/Note/PreEdit.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart' as dom;
+import 'package:url_launcher/url_launcher.dart';
 
 Scrollbar getPre(htmlCode, ntitle, myFontSize) {
   return Scrollbar(
@@ -28,9 +32,15 @@ Scrollbar getPre(htmlCode, ntitle, myFontSize) {
           Divider(),
           Html(
             data: htmlCode,
-            /*onLinkTap: (String url) {
-                print(url);
-              },
+            onLinkTap: (String url) async {
+              //open URL in webview, or launch URL in browser, or any other logic here
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                throw '不能打开该链接';
+              }
+            },
+            /*
               onImageTap: (String url) {
                 print("image" + url);
                 //open image in webview, or launch image in browser, or any other logic here

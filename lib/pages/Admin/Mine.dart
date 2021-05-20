@@ -107,7 +107,7 @@ class _MineState extends State<Mine> {
 
   void _logout() async {
     saveTree();
-    clean();
+    await clean();
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(builder: (context) => new LoginPage()),
         (route) => route == null);

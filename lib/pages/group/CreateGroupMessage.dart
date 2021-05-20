@@ -95,32 +95,41 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),*/
-            FlatButton(
-                onPressed: () {
-                  //print(widget.targetGroupId);
-                  _sendMessage(controller, widget.targetGroupId, widget.title);
-                },
-                child: Text(
-                  "预览",
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                )),
-            FlatButton(
-                onPressed: () {
-                  //print(widget.targetGroupId);
-                  //  _sendMessage(controller, widget.targetGroupId, widget.title);
-                  _sendGroupMessage(
-                      controller, widget.targetGroupId, widget.title);
-                },
-                child: Text(
-                  "发送",
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                )),
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: FlatButton(
+                  onPressed: () {
+                    //print(widget.targetGroupId);
+                    _sendMessage(
+                        controller, widget.targetGroupId, widget.title);
+                  },
+                  child: Text(
+                    "预览",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(35),
+                        //fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: FlatButton(
+                  onPressed: () {
+                    //print(widget.targetGroupId);
+                    //  _sendMessage(controller, widget.targetGroupId, widget.title);
+                    _sendGroupMessage(
+                        controller, widget.targetGroupId, widget.title);
+                  },
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.size(35),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  )),
+            ),
           ],
         ),
         body: SafeArea(
@@ -205,7 +214,8 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                           Divider(),*/
                       SafeArea(
                     child: SizedBox(
-                      height: ScreenAdapter.height(1000),
+                      height: ScreenAdapter.height(1100),
+                      // height: ScreenAdapter.height(1000),
                       child: MultiProvider(
                         providers: [
                           ChangeNotifierProvider(

@@ -9,6 +9,7 @@ import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/chooseUser/search_contacts_list.dart';
 import 'package:weitong/pages/tree/tree.dart';
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/providerServices.dart';
 
 import 'common/models.dart';
@@ -321,12 +322,14 @@ class _ContactListPageState extends State<ContactListPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: [
           IconButton(
               icon: Icon(Icons.search),
+              iconSize: ScreenAdapter.size(35),
               onPressed: () async {
                 List<Map> users2 = List<Map>.from(users);
                 String rel = await showSearch(
@@ -360,7 +363,8 @@ class _ContactListPageState extends State<ContactListPage> {
               child: Text(
                 "全选/反选",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    //fontSize: 20.0,
+                    fontSize: ScreenAdapter.size(30),
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),
@@ -372,7 +376,8 @@ class _ContactListPageState extends State<ContactListPage> {
               child: Text(
                 "新增",
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: ScreenAdapter.size(30),
+                    //fontSize: 20.0,
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),

@@ -79,125 +79,153 @@ class _PretoRichEditState extends State<PretoRichEdit> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        //title: Text("编辑页面"),
-        actions: [
-          // FlatButton(
-          //     onPressed: () {
-          //       Navigator.of(context).pushNamedAndRemoveUntil(
-          //         '/',
-          //         (route) => route == null,
-          //       );
-          //     },
-          //     child: Text(
-          //       "返回首页",
-          //       style: TextStyle(
-          //           fontSize: 15.0,
-          //           //fontWeight: FontWeight.w400,
-          //           color: Colors.white),
-          //     )),
-          // FlatButton(
-          //     onPressed: () {
-          //       _sendMessage(controller);
-          //     },
-          //     child: Text(
-          //       "预览",
-          //       style: TextStyle(
-          //           fontSize: 15.0,
-          //           //fontWeight: FontWeight.w400,
-          //           color: Colors.white),
-          //     )),
-          FlatButton(
-              onPressed: () {
-                // _sendMessage(controller);
-                postRequestFunction(controller, title, groupid);
-              },
-              child: Text(
-                "保存",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-          FlatButton(
-              onPressed: () {
-                // _sendMessage(controller);
-                _sendGroupMessage(controller, groupid, title);
-              },
-              child: Text(
-                "发送",
-                style: TextStyle(
-                    fontSize: 15.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.all(5),
-        child: Column(
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          //title: Text("编辑页面"),
+          actions: [
+            // FlatButton(
+            //     onPressed: () {
+            //       Navigator.of(context).pushNamedAndRemoveUntil(
+            //         '/',
+            //         (route) => route == null,
+            //       );
+            //     },
+            //     child: Text(
+            //       "返回首页",
+            //       style: TextStyle(
+            //           fontSize: 15.0,
+            //           //fontWeight: FontWeight.w400,
+            //           color: Colors.white),
+            //     )),
+            // FlatButton(
+            //     onPressed: () {
+            //       _sendMessage(controller);
+            //     },
+            //     child: Text(
+            //       "预览",
+            //       style: TextStyle(
+            //           fontSize: 15.0,
+            //           //fontWeight: FontWeight.w400,
+            //           color: Colors.white),
+            //     )),
+            FlatButton(
+                onPressed: () {
+                  // _sendMessage(controller);
+                  postRequestFunction(controller, title, groupid);
+                },
+                child: Text(
+                  "保存",
+                  style: TextStyle(
+                      fontSize: ScreenAdapter.size(35),
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+            FlatButton(
+                onPressed: () {
+                  // _sendMessage(controller);
+                  _sendGroupMessage(controller, groupid, title);
+                },
+                child: Text(
+                  "发送",
+                  style: TextStyle(
+                      fontSize: ScreenAdapter.size(35),
+                      //fontWeight: FontWeight.w400,
+                      color: Colors.white),
+                )),
+          ],
+        ),
+        body: Container(
+            padding: EdgeInsets.all(5),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                  child: Container(
+                      padding: EdgeInsets.all(20),
+                      child:
+                          /*  Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Expanded(
-              child: Column(
-                children: [
-                  // Row(
-                  //   children: [
-                  // Icon(Icons.title),
-                  // Expanded(
-                  //   child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: Text(
-                  //         "标题",
-                  //         style: TextStyle(
-                  //           color: Theme.of(context).accentColor,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     Chip(label: Text(keyWords)),
-                  //   ],
-                  // ),
-                  //           Align(
-                  //             alignment: new FractionalOffset(0.0, 0.0),
-                  //             child: Text(
-                  //               title,
-                  //               style: TextStyle(fontSize: 20),
-                  //             ),
-                  //           )
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  Divider(),
-                  SafeArea(
-                    child: SizedBox(
-                      height: ScreenAdapter.height(900),
-                      child: MultiProvider(
-                        providers: [
-                          ChangeNotifierProvider(
-                            builder: (_) => VoiceRecordProvider(),
-                          )
-                        ],
-                        child: RichEdit(
-                            controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
-                      ),
-                      /*RichEdit(
-                        controller), */ //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+              child:*/
+                          //  Column(
+                          // children: [
+                          // Row(
+                          //   children: [
+                          // Icon(Icons.title),
+                          // Expanded(
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          // Row(
+                          //   children: [
+                          //     Expanded(
+                          //       child: Text(
+                          //         "标题",
+                          //         style: TextStyle(
+                          //           color: Theme.of(context).accentColor,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     Chip(label: Text(keyWords)),
+                          //   ],
+                          // ),
+                          //           Align(
+                          //             alignment: new FractionalOffset(0.0, 0.0),
+                          //             child: Text(
+                          //               title,
+                          //               style: TextStyle(fontSize: 20),
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          //Divider(),
+                          SafeArea(
+                        child: SizedBox(
+                          height: ScreenAdapter.height(1100),
+                          // height: ScreenAdapter.height(1000),
+                          child: MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                builder: (_) => VoiceRecordProvider(),
+                              )
+                            ],
+                            child: RichEdit(
+                                controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
+                          ),
+                          // Container(
+                          //   child: TextField(
+                          //     minLines: 18,
+                          //     keyboardType: TextInputType.multiline,
+                          //     maxLines: null,
+                          //     decoration: InputDecoration(
+                          //         border: OutlineInputBorder(), hintText: "输入内容"),
+                          //   ),
+                          // ),
+                          // Divider(),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //   children: [
+                          //     FlatButton(
+                          //         onPressed: () {}, child: Icon(Icons.note_add)),
+                          //     FlatButton(onPressed: () {}, child: Icon(Icons.mic)),
+                          //     FlatButton(
+                          //         onPressed: () {}, child: Icon(Icons.video_call)),
+                          //   ],
+                          // ),
+                        ),
+                        /*JdButton(
+                text: "预览",
+                cb: () {
+                  _sendMessage(controller);
+                },
+              ),*/
+                      )
+                      // ]),
+                      // ]
+                      )),
+            )));
   }
 
   _sendMessage(SimpleRichEditController controller) async {

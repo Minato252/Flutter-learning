@@ -133,7 +133,12 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
 
   void _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.userId = prefs.getString("id");
+    if (prefs.getString("adminId") == null ||
+        prefs.getString("adminId") == "") {
+      this.userId = prefs.getString("id");
+    } else {
+      this.userId = "";
+    }
     setState(() {
       userId;
     });
@@ -312,16 +317,22 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                         children: [
                           Container(
                             padding: EdgeInsets.all(25),
-                            child: Text(DateTime.fromMillisecondsSinceEpoch(
-                                    message.sentTime)
-                                .toString()
-                                .split('.')[0]),
+                            child: Text(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                      message.sentTime)
+                                  .toString()
+                                  .split('.')[0],
+                              style:
+                                  TextStyle(fontSize: ScreenAdapter.size(30)),
+                            ),
                           ),
                           Text(
                             nameUrlMap[message.senderUserId] == null
                                 ? ""
                                 : nameUrlMap[message.senderUserId],
-                            style: TextStyle(color: Colors.black, fontSize: 20),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: ScreenAdapter.size(40)),
                           ),
                           Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -459,14 +470,20 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                                 ? ""
                                 : nameUrlMap[message.senderUserId],
                             // SharedPreferences prefs = await SharedPreferences.getInstance();
-                            style: TextStyle(color: Colors.black, fontSize: 20),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: ScreenAdapter.size(40)),
                           ),
                           Container(
                             padding: EdgeInsets.all(25),
-                            child: Text(DateTime.fromMillisecondsSinceEpoch(
-                                    message.sentTime)
-                                .toString()
-                                .split('.')[0]),
+                            child: Text(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                      message.sentTime)
+                                  .toString()
+                                  .split('.')[0],
+                              style:
+                                  TextStyle(fontSize: ScreenAdapter.size(30)),
+                            ),
                           ),
                         ],
                       )),

@@ -202,12 +202,17 @@ class _EditCreateState extends State<EditCreate> {
     StringBuffer sb = StringBuffer();
     String url;
     url = await UploadFile.fileUplod(path);
-    sb.write("<p>");
-    sb.write("<span style=\"font-size:15px;\">");
+    // sb.write("<p>");
+    //  sb.write("<span style=\"font-size:15px;\">");
     //sb.write(element.data);
-    sb.write("${url}");
-    sb.write("<\/span>");
-    sb.write("<\/p>");
+    sb.write("<p>点击");
+    sb.write("<a href='");
+    sb.write("$url".replaceAll(";", ""));
+    sb.write("'>文件</a>");
+    sb.write("进行下载</p>");
+    print(sb.toString());
+    // sb.write("<\/span>");
+    //sb.write("<\/p>");
     return sb.toString();
   }
 

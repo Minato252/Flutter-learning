@@ -308,17 +308,21 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              FlatButton(
-                  child: Text(
-                    "编辑",
-                    style: TextStyle(
-                        fontSize: 15.0,
-                        //fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
+              SizedBox(
+                width: ScreenAdapter.width(140),
+                child: FlatButton(
+                    child: Text(
+                      "编辑",
+                      style: TextStyle(
+                          fontSize: ScreenAdapter.width(35),
+                          // fontSize: 15.0,
+                          //fontWeight: FontWeight.w400,
+                          color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ),
               /* FlatButtonWithIcon(
                 label: Text(
                   "发送",
@@ -327,77 +331,81 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                   Icons.send,
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,*/
-              FlatButton(
-                child: Text(
-                  "发送",
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      //fontWeight: FontWeight.w400,
-                      color: Colors.white),
-                ),
-                onPressed: () async {
-                  // if (targetIdList == null) {
-                  //   sendMessageSuccess("请选择您要发送的联系人！");
-                  // } else {
-                  //   _sendMessage();
-                  //   // Navigator.pop(context);
-                  // }
-                  //加载联系人列表
+              SizedBox(
+                width: ScreenAdapter.width(140),
+                child: FlatButton(
+                  child: Text(
+                    "发送",
+                    style: TextStyle(
+                        fontSize: ScreenAdapter.width(35),
+                        // fontSize: 15.0,
+                        //fontWeight: FontWeight.w400,
+                        color: Colors.white),
+                  ),
+                  onPressed: () async {
+                    // if (targetIdList == null) {
+                    //   sendMessageSuccess("请选择您要发送的联系人！");
+                    // } else {
+                    //   _sendMessage();
+                    //   // Navigator.pop(context);
+                    // }
+                    //加载联系人列表
 
-                  // await _sendGroupMessage();
-                  final ps = Provider.of<ProviderServices>(context);
-                  Map userInfo = ps.userInfo;
-                  String jsonTree =
-                      await Tree.getTreeFormSer(userInfo["id"], false, context);
-                  var parsedJson = json.decode(jsonTree);
-                  List users = [];
-                  Tree.getAllPeople(parsedJson, users);
-                  //从群中获取群成员
-                  List users2 = await GroupMessageService.searchGruopMember(
-                      messageModel.messageId);
-                  List users3 = new List();
-                  for (int i = 0; i < users.length; i++) {
-                    for (int j = 0; j < users2.length; j++) {
-                      if (users2[j]["id"] == users[i]["id"]) {
-                        users3.add(users[i]);
+                    // await _sendGroupMessage();
+                    final ps = Provider.of<ProviderServices>(context);
+                    Map userInfo = ps.userInfo;
+                    String jsonTree = await Tree.getTreeFormSer(
+                        userInfo["id"], false, context);
+                    var parsedJson = json.decode(jsonTree);
+                    List users = [];
+                    Tree.getAllPeople(parsedJson, users);
+                    //从群中获取群成员
+                    List users2 = await GroupMessageService.searchGruopMember(
+                        messageModel.messageId);
+                    List users3 = new List();
+                    for (int i = 0; i < users.length; i++) {
+                      for (int j = 0; j < users2.length; j++) {
+                        if (users2[j]["id"] == users[i]["id"]) {
+                          users3.add(users[i]);
+                        }
                       }
                     }
-                  }
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String id = prefs.getString("id");
-                  for (int i = 0; i < users.length; i++) {
-                    if (users[i]["id"] == id) {
-                      users.removeAt(i);
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String id = prefs.getString("id");
+                    for (int i = 0; i < users.length; i++) {
+                      if (users[i]["id"] == id) {
+                        users.removeAt(i);
+                      }
                     }
-                  }
-                  List targetAllList =
-                      await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) => ContactListPage(
-                                users3,
-                                groupid: messageModel.messageId,
-                                grouptitle: messageModel.title,
-                              )));
+                    List targetAllList =
+                        await Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) => ContactListPage(
+                                  users3,
+                                  groupid: messageModel.messageId,
+                                  grouptitle: messageModel.title,
+                                )));
 
-                  targetIdList = [];
-                  if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-                    targetAllList[0].forEach((element) {
-                      targetIdList.add(element["id"]);
-                    });
-                    await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
-                    await _sendMessage();
-                  }
+                    targetIdList = [];
+                    if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+                      targetAllList[0].forEach((element) {
+                        targetIdList.add(element["id"]);
+                      });
+                      await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
+                      await _sendMessage();
+                    }
 
-                  if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-                    targetAllList[1].forEach((element) {
-                      noteIdList.add(element["id"]);
-                      noteNameList.add(element["name"]);
-                    });
-                    _sendNoteMessage();
-                  }
+                    if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+                      targetAllList[1].forEach((element) {
+                        noteIdList.add(element["id"]);
+                        noteNameList.add(element["name"]);
+                      });
+                      _sendNoteMessage();
+                    }
 
-                  // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
-                },
+                    // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
+                  },
+                ),
               ),
 
               /* FlatButtonWithIcon(
@@ -667,7 +675,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
 
   _sendShelterMessage(List allIdInGroup) async {
     //把遮蔽消息存入遮蔽表中
-    List allid = [];
+    /*List allid = [];
     for (int i = 0; i < allIdInGroup.length; i++) {
       allid.add(allIdInGroup[i]['id']);
     }
@@ -789,7 +797,38 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           // "type": type.data,
         });
       }
+    }*/
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    String totargetid = useid;
+    for (int i = 0; i < targetIdList.length; i++) {
+      if (targetIdList[i] != useid) {
+        totargetid = totargetid + "+";
+        totargetid = totargetid + targetIdList[i];
+      }
     }
+    // totargetid += targetIdList[targetIdList.length - 1];
+
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
+    //发送给服务器
+    var rel1 = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": totargetid,
+      "messages": messageModel.htmlCode,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId,
+      "Flag": "遮蔽消息", //这里增加了flag
+      "type": type.data,
+    });
+
     // sendMessageSuccess("发送成功");
     Navigator.pop(context);
     Navigator.pop(context);
