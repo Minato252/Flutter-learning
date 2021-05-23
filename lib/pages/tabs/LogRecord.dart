@@ -455,7 +455,8 @@ class _LogRecordPageState extends State<LogRecordPage>
   }
 
   _awaitReturnChooseStaff(BuildContext context) async {
-    List<Map> users = await _getSubs();
+    // List<Map> users = await _getSubs();
+    List<Map> users = await _getAllPeople();
 
     List result = await Navigator.push(
         context,
@@ -579,6 +580,21 @@ class _LogRecordPageState extends State<LogRecordPage>
     users = List<Map>.from(users);
 
     List<Map> result = List<Map>.from(Tree.setPeoplelistUnique(users));
+    return result;
+  }
+
+  Future<List<Map>> _getAllPeople() async {
+    //通过网络获取树
+
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    List allUsers = [];
+    Tree.getAllPeople(parsedJson, allUsers);
+    List<Map> result = List<Map>.from(allUsers);
     return result;
   }
 }
