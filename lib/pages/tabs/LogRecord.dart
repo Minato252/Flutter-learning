@@ -277,7 +277,8 @@ class _LogRecordPageState extends State<LogRecordPage>
     List m = rel.data;
     print("1**********" + m.length.toString());
 
-    await _getSubMessage(url, m); //把下级的群消息也加到m中
+    //根据甲方要求 改成获取所有的人
+    // await _getSubMessage(url, m); //把下级的群消息也加到m中
     print("2**********" + m.length.toString());
     // await _getShelterMessage(m); //获取遮蔽表的消息
     // print("3*******" + m.length.toString());
