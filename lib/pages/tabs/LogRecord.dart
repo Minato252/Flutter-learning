@@ -456,6 +456,7 @@ class _LogRecordPageState extends State<LogRecordPage>
 
   _awaitReturnChooseStaff(BuildContext context) async {
     // List<Map> users = await _getSubs();
+    //根据甲方要求 改成获取所有的人
     List<Map> users = await _getAllPeople();
 
     List result = await Navigator.push(
