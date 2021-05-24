@@ -355,6 +355,7 @@ class Tree {
       });
     } else if (parsedJson is List) {
       print("11");
+      print(parsedJson);
       result.addAll(parsedJson);
     }
   }

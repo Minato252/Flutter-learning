@@ -824,19 +824,19 @@ class _ChewieDemoState extends State<ChewieDemo> {
     );
   }
 
-  @override
-  void dispose() {
-    if (vpc != null) {
-      print("dispose$url vpc");
-      vpc.dispose();
-    }
-    if (cc != null) {
-      print("dispose$url cc");
-      cc.dispose();
-    }
-    print("dispose$url");
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   if (vpc != null) {
+  //     print("dispose$url vpc");
+  //     vpc.dispose();
+  //   }
+  //   if (cc != null) {
+  //     print("dispose$url cc");
+  //     cc.dispose();
+  //   }
+  //   print("dispose$url");
+  //   super.dispose();
+  // }
 
   Widget build(BuildContext context) {
     return Container(

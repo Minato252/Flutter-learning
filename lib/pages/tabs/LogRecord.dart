@@ -277,7 +277,8 @@ class _LogRecordPageState extends State<LogRecordPage>
     List m = rel.data;
     print("1**********" + m.length.toString());
 
-    await _getSubMessage(url, m); //把下级的群消息也加到m中
+    //根据甲方要求 改成获取所有的人
+    // await _getSubMessage(url, m); //把下级的群消息也加到m中
     print("2**********" + m.length.toString());
     // await _getShelterMessage(m); //获取遮蔽表的消息
     // print("3*******" + m.length.toString());
@@ -455,7 +456,9 @@ class _LogRecordPageState extends State<LogRecordPage>
   }
 
   _awaitReturnChooseStaff(BuildContext context) async {
-    List<Map> users = await _getSubs();
+    // List<Map> users = await _getSubs();
+    //根据甲方要求 改成获取所有的人
+    List<Map> users = await _getAllPeople();
 
     List result = await Navigator.push(
         context,
@@ -579,6 +582,21 @@ class _LogRecordPageState extends State<LogRecordPage>
     users = List<Map>.from(users);
 
     List<Map> result = List<Map>.from(Tree.setPeoplelistUnique(users));
+    return result;
+  }
+
+  Future<List<Map>> _getAllPeople() async {
+    //通过网络获取树
+
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+
+    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+
+    var parsedJson = json.decode(jsonTree);
+    List allUsers = [];
+    Tree.getAllPeople(parsedJson, allUsers);
+    List<Map> result = List<Map>.from(allUsers);
     return result;
   }
 }
