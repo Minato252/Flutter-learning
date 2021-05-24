@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 import 'package:rich_edit/rich_edit.dart';
 import 'package:video_player/video_player.dart';
 import 'package:weitong/widget/CustomPlayerWithControls.dart';
@@ -195,7 +196,9 @@ class SimpleRichEditController extends RichEditController {
     //         },
     //       );
     //
-    var video = ChewieDemo(data.data);
+    /*var video = ChewieDemo(data.data);*/
+    //var video = Videoplayer(data.data);
+    var video = _ButterFlyAssetVideo(data.data);
 
     return video;
     // return null;
@@ -608,6 +611,184 @@ class SimpleRichEditController extends RichEditController {
     if (image != null) {
       return image.path;
     }
+  }
+}
+/*
+class Videoplayer extends StatefulWidget {
+  final String streamkey;
+
+  Videoplayer(this.url, {this.streamkey, Key key}) : super(key: key);
+  final String url;
+
+  @override
+  _VideoplayerState createState() => _VideoplayerState();
+}
+
+class _VideoplayerState extends State<Videoplayer> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlayer.file(
+        "${widget.url}",
+        betterPlayerConfiguration: BetterPlayerConfiguration(
+          aspectRatio: 4 / 3,
+          fit: BoxFit.fill,
+          autoPlay: true,
+          autoDispose: true,
+          fullScreenByDefault: false,
+          autoDetectFullscreenDeviceOrientation: true,
+        ),
+      ),
+    );
+  }
+}*/
+
+class _ButterFlyAssetVideo extends StatefulWidget {
+  _ButterFlyAssetVideo(this.url, {Key key}) : super(key: key);
+  final String url;
+  @override
+  _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
+}
+
+class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
+  VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    //_controller = VideoPlayerController.asset('assets/Butterfly-209.mp4');
+    // _controller = VideoPlayerController.network(
+    //     "http://47.110.150.159:8080/videos/20210203/261dd8b860724843894b44fe57e3150b.mp4");
+    if (widget.url.startsWith("http")) {
+      _controller = VideoPlayerController.network(widget.url);
+    } else {
+      _controller = VideoPlayerController.file(
+        File(widget.url),
+      );
+    }
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(top: 20.0),
+          ),
+          //const Text('With assets mp4'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ControlsOverlay extends StatelessWidget {
+  const _ControlsOverlay({Key key, this.controller}) : super(key: key);
+
+  static const _examplePlaybackRates = [
+    0.25,
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    5.0,
+    10.0,
+  ];
+
+  final VideoPlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 50),
+          reverseDuration: Duration(milliseconds: 200),
+          child: controller.value.isPlaying
+              ? SizedBox.shrink()
+              : Container(
+                  color: Colors.black26,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 100.0,
+                    ),
+                  ),
+                ),
+        ),
+        GestureDetector(
+          onTap: () {
+            controller.value.isPlaying ? controller.pause() : controller.play();
+          },
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: PopupMenuButton<double>(
+            initialValue: controller.value.playbackSpeed,
+            tooltip: 'Playback speed',
+            onSelected: (speed) {
+              controller.setPlaybackSpeed(speed);
+            },
+            itemBuilder: (context) {
+              return [
+                for (final speed in _examplePlaybackRates)
+                  PopupMenuItem(
+                    value: speed,
+                    child: Text('${speed}x'),
+                  )
+              ];
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                // Using less vertical padding as the text is also longer
+                // horizontally, so it feels like it would need more spacing
+                // horizontally (matching the aspect ratio of the video).
+                vertical: 12,
+                horizontal: 16,
+              ),
+              child: Text('${controller.value.playbackSpeed}x'),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

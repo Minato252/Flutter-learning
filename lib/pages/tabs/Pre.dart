@@ -17,6 +17,7 @@ import 'package:weitong/Model/messageHistoryModel.dart';
 import 'package:weitong/Model/messageModel.dart';
 import 'package:weitong/Model/style.dart';
 import 'package:weitong/pages/group/GroupMessageService.dart';
+import 'package:weitong/pages/group/PretoRichEditGroup.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/PretoRichEdit.dart';
 import 'package:weitong/pages/tree/tree.dart';
@@ -327,40 +328,45 @@ class _PreAndSendState extends State<PreAndSend> {
                   //加载联系人列表
 
                   // await _sendGroupMessage();
-                  final ps = Provider.of<ProviderServices>(context);
-                  Map userInfo = ps.userInfo;
-                  String jsonTree =
-                      await Tree.getTreeFormSer(userInfo["id"], false, context);
-                  var parsedJson = json.decode(jsonTree);
-                  List users = [];
-                  Tree.getAllPeople(parsedJson, users);
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String id = prefs.getString("id");
-                  for (int i = 0; i < users.length; i++) {
-                    if (users[i]["id"] == id) {
-                      users.removeAt(i);
+                  bool b = await checktitleonly(messageModel.title);
+                  if (b) {
+                    final ps = Provider.of<ProviderServices>(context);
+                    Map userInfo = ps.userInfo;
+                    String jsonTree = await Tree.getTreeFormSer(
+                        userInfo["id"], false, context);
+                    var parsedJson = json.decode(jsonTree);
+                    List users = [];
+                    Tree.getAllPeople(parsedJson, users);
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String id = prefs.getString("id");
+                    for (int i = 0; i < users.length; i++) {
+                      if (users[i]["id"] == id) {
+                        users.removeAt(i);
+                      }
                     }
-                  }
-                  List targetAllList = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              ContactListPage(users)));
+                    List targetAllList = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ContactListPage(users)));
 
-                  targetIdList = [];
-                  if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-                    targetAllList[0].forEach((element) {
-                      targetIdList.add(element["id"]);
-                    });
-                    await _sendMessage();
-                  }
+                    targetIdList = [];
+                    if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+                      targetAllList[0].forEach((element) {
+                        targetIdList.add(element["id"]);
+                      });
+                      await _sendMessage();
+                    }
 
-                  if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-                    targetAllList[1].forEach((element) {
-                      noteIdList.add(element["id"]);
-                      noteNameList.add(element["name"]);
-                    });
-                    _sendNoteMessage();
+                    if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+                      targetAllList[1].forEach((element) {
+                        noteIdList.add(element["id"]);
+                        noteNameList.add(element["name"]);
+                      });
+                      _sendNoteMessage();
+                    }
+                  } else {
+                    sendMessageSuccess("该标题已创建");
                   }
                 },
               ),
@@ -375,19 +381,30 @@ class _PreAndSendState extends State<PreAndSend> {
                 },
               ),*/
               // editable
-              //     ? FlatButtonWithIcon(
-              //         label: Text("遮蔽"),
-              //         icon: Icon(Icons.edit),
-              //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              //         onPressed: () {
-              //           Navigator.of(context).push(new MaterialPageRoute(
-              //               builder: (context) => new PretoRichEdit(data,
-              //                   messageModel.title, messageModel.keyWord)));
-              //         })
-              //     : SizedBox(
-              //         width: 0,
-              //         height: 0,
-              //       ),
+              //    ?
+              FlatButtonWithIcon(
+                  label: Text("遮蔽"),
+                  icon: Icon(Icons.edit),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onPressed: () {
+                    // Navigator.of(context).push(new MaterialPageRoute(
+                    //     builder: (context) => new PretoRichEdit(
+                    //         data,
+                    //         messageModel.title,
+                    //         messageModel.keyWord,
+                    //         messageModel.messageId)));
+                    if (messageModel.messageId == null ||
+                        messageModel.messageId == "") {
+                      sendMessageSuccess("请先发送再进行遮蔽");
+                    } else {
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (context) => new PretoRichEditGroup(
+                              data,
+                              messageModel.title,
+                              /*, messageModel.keyWord*/
+                              messageModel.messageId)));
+                    }
+                  }),
               Container(
                 height: 150.0,
                 child: Column(
@@ -587,6 +604,7 @@ class _PreAndSendState extends State<PreAndSend> {
       "groupcreatorid": prefs.get("id"),
       "groupcreatorname": prefs.get("name"),
       "grouptime": new DateTime.now().toString().split('.')[0],
+      "grouptype": type.data,
     });
     //print("222222222222222222222222");
     //print(rel1);
@@ -623,6 +641,24 @@ class _PreAndSendState extends State<PreAndSend> {
     // }
     print(messageId);
     sendMessageSuccess("发送成功");
+  }
+
+  //判断标题在该体系中是否唯一
+  Future<bool> checktitleonly(String title) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    var rel =
+        await Dio().post("http://47.110.150.159:8080/group/select", data: {
+      "groupname": title,
+      "grouptype": type.data,
+    });
+    List r = rel.data;
+    if (r.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   _sendNoteMessage() async {
