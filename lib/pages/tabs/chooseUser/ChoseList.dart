@@ -217,6 +217,14 @@ class _ChoseListPageState extends State<ChoseListPage> {
             icon: Icon(Icons.done),
             color: Colors.white,
           ),
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
         ],
       ),
       body: AzListView(

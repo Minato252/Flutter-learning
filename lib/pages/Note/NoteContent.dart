@@ -337,6 +337,14 @@ class _NoteState extends State<Note> {
                   (route) => route == null,
                 );
               })*/
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
         ],
       ),
       body: getPre(pctohtml, widget.ntitle, myFontSize),

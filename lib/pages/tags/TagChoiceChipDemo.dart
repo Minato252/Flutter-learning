@@ -60,14 +60,22 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
             "关键词",
             style: TextStyle(fontSize: 26.0),
           ),
-          // actions: <Widget>[
-          //   FlatButton(
-          //       onPressed: null,
-          //       child: Text(
-          //         "完成",
-          //         style: TextStyle(fontSize: 20),
-          //       ))
-          // ],
+          actions: <Widget>[
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => route == null,
+                  );
+                },
+                icon: Icon(Icons.account_balance)),
+            //   FlatButton(
+            //       onPressed: null,
+            //       child: Text(
+            //         "完成",
+            //         style: TextStyle(fontSize: 20),
+            //       ))
+          ],
         ),
         body: Scrollbar(
             child: SingleChildScrollView(

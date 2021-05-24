@@ -18,6 +18,7 @@ import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 // import 'package:weitong/widget/message_content_list.dart';
 import 'package:path/path.dart' as path;
+import 'package:weitong/services/ScreenAdapter.dart';
 import 'package:weitong/services/event_bus.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -797,8 +798,20 @@ class _ALLReadSearchConversationPageState
 
   @override
   Widget build(BuildContext context) {
+    ScreenAdapter.init(context);
     return Scaffold(
         appBar: AppBar(title: Text(titleContent), actions: <Widget>[
+          SizedBox(
+            width: ScreenAdapter.width(140),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => route == null,
+                  );
+                },
+                icon: Icon(Icons.account_balance)),
+          ),
           // _buildRightButtons(),
           /*FlatButton(
               onPressed: () async {

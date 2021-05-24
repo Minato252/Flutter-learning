@@ -190,6 +190,16 @@ class _SearchMessagePageState extends State<SearchMessagePage>
     return new Scaffold(
       appBar: AppBar(
         title: Text("消息列表"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
+        ],
       ),
       key: UniqueKey(),
       body: _buildConversationListView(),

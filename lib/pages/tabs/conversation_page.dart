@@ -868,6 +868,18 @@ class _ConversationPageState extends State<ConversationPage>
                       color: Colors.white),
                 )),
           ),
+          SizedBox(
+            width: ScreenAdapter.width(140),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => route == null,
+                  );
+                },
+                icon: Icon(Icons.account_balance)),
+          ),
+
           /*SizedBox(
             width: 60,
             child: FlatButton(

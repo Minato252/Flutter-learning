@@ -292,10 +292,15 @@ class _ContactListPageState extends State<ContactListPage> {
         users2.add(users1[i]);
       }
     }
-    List addtargetList = await Navigator.of(context).push(MaterialPageRoute(
+    // List addtargetList = await Navigator.of(context).push(MaterialPageRoute(
+    var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
               users2,
             )));
+    if (result == null) {
+      return;
+    }
+    List addtargetList = result;
     List<String> targetIdList = [];
     if (addtargetList[0] != null && !addtargetList[0].isEmpty) {
       addtargetList[0].forEach((element) {
@@ -406,6 +411,14 @@ class _ContactListPageState extends State<ContactListPage> {
             icon: Icon(Icons.done),
             color: Colors.white,
           ),
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
         ],
       ),
       body: AzListView(

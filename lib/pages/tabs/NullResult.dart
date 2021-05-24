@@ -8,6 +8,16 @@ class NullResult extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("查询结果"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
+        ],
       ),
       body: Container(
         child:

@@ -61,17 +61,19 @@ class _EditCreateState extends State<EditCreate> {
   }
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-        home: new Scaffold(
+    return
+        // new MaterialApp(
+        //     home:
+        new Scaffold(
             resizeToAvoidBottomPadding: false,
             appBar: AppBar(
-              leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context, null);
-                  }),
+              // leading: IconButton(
+              //     icon: Icon(Icons.arrow_back),
+              //     onPressed: () {
+              //       Navigator.pop(context, null);
+              //     }),
               title: Text("编辑页面"),
-              centerTitle: true,
+              // centerTitle: true,
               //backgroundColor: Colors.deepOrangeAccent,
               //backgroundColor: Colors.yellow,
               actions: <Widget>[
@@ -117,7 +119,15 @@ class _EditCreateState extends State<EditCreate> {
                       _sendMessage(controller, '${widget.id}', context);
                     }
                   },
-                )
+                ),
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/',
+                        (route) => route == null,
+                      );
+                    },
+                    icon: Icon(Icons.account_balance)),
               ],
             ),
             body: Column(
@@ -165,7 +175,9 @@ class _EditCreateState extends State<EditCreate> {
                               controller), //需要指定height，才不会报错，之后可以用ScreenUtil包适配屏幕
                         )),
                   )
-                ])));
+                ]))
+        // )
+        ;
   }
 
   @override

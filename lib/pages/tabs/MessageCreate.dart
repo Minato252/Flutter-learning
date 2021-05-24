@@ -64,7 +64,7 @@ class _MessageCreateState extends State<MessageCreate>
 
     return Scaffold(
         appBar: AppBar(
-          //title: Text("创建消息"),
+          // title: Text("创建消息"),
           actions: <Widget>[
             FlatButton(
                 onPressed: () {
@@ -74,7 +74,7 @@ class _MessageCreateState extends State<MessageCreate>
                   "清空内容",
                   style: TextStyle(
                       // fontSize: 20.0,
-                      fontSize: ScreenAdapter.size(40),
+                      fontSize: ScreenAdapter.size(35),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -85,7 +85,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "预览",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(40),
+                      fontSize: ScreenAdapter.size(35),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -96,7 +96,7 @@ class _MessageCreateState extends State<MessageCreate>
                 child: Text(
                   "发送",
                   style: TextStyle(
-                      fontSize: ScreenAdapter.size(40),
+                      fontSize: ScreenAdapter.size(35),
                       //fontWeight: FontWeight.w400,
                       color: Colors.white),
                 )),
@@ -371,9 +371,13 @@ class _MessageCreateState extends State<MessageCreate>
             users.removeAt(i);
           }
         }
-        List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+        // List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+        var result = await Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => ContactListPage(users)));
-
+        if (result == null) {
+          return;
+        }
+        List targetAllList = result;
         targetIdList = [];
         if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
           targetAllList[0].forEach((element) {
