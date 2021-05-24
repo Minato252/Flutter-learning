@@ -111,7 +111,11 @@ class _PretoRichEditState extends State<PretoRichEdit> {
             FlatButton(
                 onPressed: () {
                   // _sendMessage(controller);
-                  postRequestFunction(controller, title, groupid);
+                  if (groupid == null || groupid == "") {
+                    sendMessageSuccess("请先发送再进行保存");
+                  } else {
+                    postRequestFunction(controller, title, groupid);
+                  }
                 },
                 child: Text(
                   "保存",
@@ -123,7 +127,11 @@ class _PretoRichEditState extends State<PretoRichEdit> {
             FlatButton(
                 onPressed: () {
                   // _sendMessage(controller);
-                  _sendGroupMessage(controller, groupid, title);
+                  if (groupid == null || groupid == "") {
+                    sendMessageSuccess("请先发送再进行遮蔽");
+                  } else {
+                    _sendGroupMessage(controller, groupid, title);
+                  }
                 },
                 child: Text(
                   "发送",

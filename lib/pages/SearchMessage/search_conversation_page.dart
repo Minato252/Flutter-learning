@@ -813,25 +813,25 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                   member[i] = member[i]["id"];
                 }
                 String id = prefs.get("id");
-                if (member.contains(id)) {
-                  // _clearMessage(controller);
-                  Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    // return Pre(
-                    //   messageModel: messageModel,
-                    // );
-
-                    return GroupMessageCreate(
-                      //targetGroupId: messageModel.messageId, //传群id
-
-                      targetGroupId: targetId,
-                      //title: messageModel.title,
-                      title: titleContent,
-                      // fromUserId: prefs.getString("id"),
-                    );
-                  }));
-                } else {
-                  sendMessageSuccess("您不在当前聊天中，无法回复");
+                if (!member.contains(id)) {
+                  await GroupMessageService.joinGroup(
+                      targetId, titleContent, id);
                 }
+                // _clearMessage(controller);
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  // return Pre(
+                  //   messageModel: messageModel,
+                  // );
+
+                  return GroupMessageCreate(
+                    //targetGroupId: messageModel.messageId, //传群id
+
+                    targetGroupId: targetId,
+                    //title: messageModel.title,
+                    title: titleContent,
+                    // fromUserId: prefs.getString("id"),
+                  );
+                }));
               },
               child: Text(
                 "回复",
