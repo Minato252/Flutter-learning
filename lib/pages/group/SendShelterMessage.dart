@@ -366,7 +366,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     for (int i = 0; i < users.length; i++) {
                       for (int j = 0; j < users2.length; j++) {
                         if (users2[j]["id"] == users[i]["id"]) {
-                          users3.add(users[i]);
+                          //  users3.add(users[i]);
+                          users3.add(users[i]["id"]); //存放的是群成员的id
                         }
                       }
                     }
@@ -381,7 +382,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     List targetAllList =
                         await Navigator.of(context).push(MaterialPageRoute(
                             builder: (BuildContext context) => ContactListPage(
-                                  users3,
+                                  //users3,
+                                  users,
                                   groupid: messageModel.messageId,
                                   grouptitle: messageModel.title,
                                 )));
@@ -391,6 +393,14 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                       targetAllList[0].forEach((element) {
                         targetIdList.add(element["id"]);
                       });
+                      for (int i = 0; i < targetIdList.length; i++) {
+                        if (!users3.contains(targetIdList[i])) {
+                          await GroupMessageService.joinGroup(
+                              messageModel.messageId,
+                              messageModel.title,
+                              targetIdList[i]);
+                        }
+                      }
                       await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                       await _sendMessage();
                     }

@@ -111,11 +111,8 @@ class _PretoRichEditState extends State<PretoRichEdit> {
             FlatButton(
                 onPressed: () {
                   // _sendMessage(controller);
-                  if (groupid == null || groupid == "") {
-                    sendMessageSuccess("请先发送再进行保存");
-                  } else {
-                    postRequestFunction(controller, title, groupid);
-                  }
+
+                  postRequestFunction(controller, title, groupid);
                 },
                 child: Text(
                   "保存",
@@ -127,11 +124,8 @@ class _PretoRichEditState extends State<PretoRichEdit> {
             FlatButton(
                 onPressed: () {
                   // _sendMessage(controller);
-                  if (groupid == null || groupid == "") {
-                    sendMessageSuccess("请先发送再进行遮蔽");
-                  } else {
-                    _sendGroupMessage(controller, groupid, title);
-                  }
+
+                  _sendGroupMessage(controller, groupid, title);
                 },
                 child: Text(
                   "发送",
@@ -296,7 +290,7 @@ class _PretoRichEditState extends State<PretoRichEdit> {
     Tree.getAllPeople(parsedJson, users);
     for (int i = 0; i < users.length; i++) {
       if (groupMember.contains(users[i]["id"])) {
-        users2.add(users[i]);
+        users2.add(users[i]["id"]);
       }
     }
     // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -306,20 +300,28 @@ class _PretoRichEditState extends State<PretoRichEdit> {
     //     users2.removeAt(i);
     //   }
     // }
+    //要发送的人
     List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
-              users2,
+              //users2,
+              //这里改成拉出该体系的所有人
+              users,
               groupid: groupId,
               grouptitle: title,
             )));
 
-    targetIdList = [];
+    targetIdList = []; //要发送的人的id
     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);
       });
       if (!targetIdList.contains(id)) {
         targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
+      }
+      for (int i = 0; i < targetIdList.length; i++) {
+        if (!users2.contains(targetIdList[i])) {
+          await GroupMessageService.joinGroup(groupId, title, targetIdList[i]);
+        }
       }
       // await _sendMessage();
       bool isDirctionMessage = false;
