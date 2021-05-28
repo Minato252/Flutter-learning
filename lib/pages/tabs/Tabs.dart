@@ -67,7 +67,7 @@ class _TabsState extends State<Tabs> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String id = prefs.getString("id");
     String password = prefs.getString("password");
-    String jsonTree = await Tree.getTreeFormSer(id, false, context);
+    String jsonTree = await Tree.getTreeFromSer(id, false, context);
 
     var parsedJson = json.decode(jsonTree);
     Map userInfo =

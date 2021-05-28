@@ -317,7 +317,7 @@ class _LoginPageState extends State<LoginPage> {
     } else if (this.role == "admin" && rel2["管理员登录成功"] == "successful") {
       _saveAdminInfo(id, password);
 
-      await Tree.getTreeFormSer(id, true, context);
+      await Tree.getTreeFromSer(id, true, context);
 
       // //把内存里的树存到provider
       // final tree = Provider.of<ProviderServices>(context);

@@ -294,7 +294,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     print(groupMember);
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
-    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+    String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
     List users = []; //树的总人数
     List users2 = []; //群成员

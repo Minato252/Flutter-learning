@@ -71,7 +71,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String id = prefs.getString("adminId");
-                await Tree.getTreeFormSer(id, true, context);
+                await Tree.getTreeFromSer(id, true, context);
 
                 EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
               },
@@ -81,7 +81,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 String id = prefs.getString("adminId");
-                String jsonTree = await Tree.getTreeFormSer(id, true, context);
+                String jsonTree = await Tree.getTreeFromSer(id, true, context);
 //修改jsonTree字符串
                 var parsedJson = json.decode(jsonTree);
                 List ll = Tree.getFathersRights(parsedJson, [], "开发");
@@ -121,7 +121,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
     String id = prefs.getString("adminId");
 
     //从服务器获得最新的树
-    String jsonTree = await Tree.getTreeFormSer(id, true, context);
+    String jsonTree = await Tree.getTreeFromSer(id, true, context);
 
     var parsedJson = json.decode(jsonTree);
     List<String> idList = [];
@@ -177,7 +177,7 @@ class _DepartmentManagePageState extends State<DepartmentManagePage> {
         "http://47.110.150.159:8080/deleteMember?type=${type.data}&id=${staff["id"]}");
 
 // 从远程拉取最新的树放进provider里
-    String jsonTree = await Tree.getTreeFormSer(adminId, true, context);
+    String jsonTree = await Tree.getTreeFromSer(adminId, true, context);
 
 //修改jsonTree字符串
     var parsedJson = json.decode(jsonTree);

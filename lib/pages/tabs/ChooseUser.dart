@@ -121,7 +121,7 @@ class _ChooseUserPageState extends State<ChooseUserPage> {
             onPressed: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String id = prefs.getString("id");
-              await Tree.getTreeFormSer(id, false, context);
+              await Tree.getTreeFromSer(id, false, context);
 
               if (mounted) {
                 setState(() {});

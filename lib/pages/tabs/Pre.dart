@@ -29,6 +29,7 @@ import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
 
 import 'SimpleRichEditController.dart';
@@ -260,7 +261,7 @@ class _PreAndSendState extends State<PreAndSend> {
     print(groupMember);
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
-    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+    String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
     List users = [];
     List users2 = [];
@@ -338,20 +339,59 @@ class _PreAndSendState extends State<PreAndSend> {
                   if (b) {
                     final ps = Provider.of<ProviderServices>(context);
                     Map userInfo = ps.userInfo;
-                    String jsonTree = await Tree.getTreeFormSer(
-                        userInfo["id"], false, context);
-                    var parsedJson = json.decode(jsonTree);
+
+                    ///===========获取list=========
+                    var isSingle = await Tree.isInSingleCom(userInfo["id"]);
                     List users = [];
-                    Tree.getAllPeople(parsedJson, users);
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String id = prefs.getString("id");
+                    List mulUserIds =
+                        []; //这个是将体系分开的idlist 形如[[1,2],[3,4]],只会在多体系用户用到
+                    if (isSingle == true) {
+                      //获取单体系user
+                      String jsonTree = await Tree.getTreeFromSer(
+                          userInfo["id"], false, context);
+                      var parsedJson = json.decode(jsonTree);
+                      Tree.getAllPeople(parsedJson, users);
+                    } else {
+                      List treeList = await Tree.getMulTreeFromSer(isSingle);
+
+                      treeList.forEach((element) {
+                        List l = [];
+                        var parsedJson = json.decode(element);
+                        Tree.getAllPeople(parsedJson, l);
+                        List idList = [];
+                        l.forEach((element) {
+                          idList.add(element["id"]);
+                        });
+                        mulUserIds.add(idList);
+                        users.addAll(l);
+                      });
+                    }
+                    // 处理users列表，消除重复的，且将多体系的人名字后添加“（多体系用户）”
+                    Set userIds = {};
+                    for (int i = 0; i < users.length; i++) {
+                      if (userIds.contains(users[i]["id"])) {
+                        //消除重复
+                        users.removeAt(i);
+                        i--;
+                      } else {
+                        userIds.add(users[i]["id"]);
+                        var isSingle = await Tree.isInSingleCom(
+                            users[i]["id"]); //多体系=》名字后面加
+                        if (isSingle != true) {
+                          users[i]["name"] += "(多体系用户)";
+                        }
+                      }
+                    }
+                    String id = userInfo["id"];
                     for (int i = 0; i < users.length; i++) {
                       if (users[i]["id"] == id) {
                         users.removeAt(i);
                       }
                     }
-                    // List targetAllList = await Navigator.of(context).push(
+
+                    //=================================进行选择=========
+
+                    // List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
                     var result = await Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (BuildContext context) =>
@@ -360,18 +400,75 @@ class _PreAndSendState extends State<PreAndSend> {
                       return;
                     }
                     List targetAllList = result;
+
                     targetIdList = [];
+                    List alltargetIdList = [];
                     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
                       targetAllList[0].forEach((element) {
-                        targetIdList.add(element["id"]);
+                        alltargetIdList.add(element["id"]);
                       });
-                      await _sendMessage();
+                      //====开始发送===
+                      if (isSingle == true) {
+                        //如果当前创建人是单体系用户
+                        var temp = await Tree.getTypeFromUsers(alltargetIdList,
+                            maxNum: 1); //获取列表情况
+                        if (temp == null) {
+                          //列表为空
+                          return;
+                        } else if (temp is List) {
+                          //列表中存在了2个及以上的多体系用户
+                          await DialogUtil.showAlertDiaLog(
+                            context,
+                            "最多允许选择1个多体系用户。",
+                            title: "发送失败",
+                          );
+                        } else {
+                          //发送消息
+                          targetIdList = List.from(alltargetIdList);
+                          await _sendMessage();
+                        }
+                      } else {
+                        //如果是多体系用户
+                        var temp = await Tree.getTypeFromUsers(
+                            alltargetIdList); //获取列表情况
+                        if (temp == null) {
+                          //列表为空
+                          return;
+                        } else if (temp is List) {
+                          //列表中存在了1个及以上的多体系用户
+                          await DialogUtil.showAlertDiaLog(
+                            context,
+                            "不允许选择多体系用户。",
+                            title: "发送失败",
+                          );
+                        } else {
+                          //发送消息
+
+//首先要用muluserids和targetIdList将各个体系的人分开
+                          for (int i = 0; i < mulUserIds.length; i++) {
+                            //对于每个体系的id
+                            targetIdList = List<String>.from(
+                                Set.from(mulUserIds[i])
+                                    .intersection(Set.from(alltargetIdList))
+                                    .toList());
+                            if (targetIdList != null) {
+                              String subtype =
+                                  await Tree.getTypeFromUsers(targetIdList);
+                              await _sendMessageMul(subtype);
+                            }
+                          }
+                        }
+                      }
                     }
 
+                    noteIdList = [];
+                    noteNameList = [];
+                    List allnoteIdList = [];
+                    List allnoteNameList = [];
                     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
                       targetAllList[1].forEach((element) {
-                        noteIdList.add(element["id"]);
-                        noteNameList.add(element["name"]);
+                        allnoteIdList.add(element["id"]);
+                        allnoteNameList.add(element["name"]);
                       });
                       _sendNoteMessage();
                     }
@@ -571,7 +668,8 @@ class _PreAndSendState extends State<PreAndSend> {
     return content;
   }
 
-  _sendMessage() async {
+  _sendMessageMul(String type) async {
+    //多体系用户建群调用，需要传入type，且要求targetIdList中不存在多体系用户
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var db = DatabaseHelper();
     // db.initDb();
@@ -582,10 +680,103 @@ class _PreAndSendState extends State<PreAndSend> {
     var messageId = uuid.v1();
     messageModel.messageId = messageId;
     messageModel.fromuserid = prefs.getString("id");
+    String content;
+    content = messageModel.toJsonString();
+    // String useid = prefs.get("id");
+    // var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+
+    //发给服务器
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": messageModel.keyWord,
+      "messages": messageModel.htmlCode,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId,
+      "Flag": "普通", //这里增加了flag
+      // "type": type.data,
+      "type": type,
+    });
+
+    print(targetIdList.join(',').toString());
+    print("title:" + messageModel.title);
+    print("**************在创建群之前的messageId是：" + messageModel.messageId);
+    await GroupMessageService.creatGruop(messageModel.messageId,
+        messageModel.title, targetIdList.join(',').toString(), content);
+
+    //print("1111111111111111111111");
+    //print(rel);
+
+    //存储群组关系
+
+    var rel1 =
+        await Dio().post("http://47.110.150.159:8080/group/insert", data: {
+      "groupid": messageModel.messageId,
+      "groupname": messageModel.title,
+      "groupcreatorid": prefs.get("id"),
+      "groupcreatorname": prefs.get("name"),
+      "grouptime": new DateTime.now().toString().split('.')[0],
+      // "grouptype": type.data,
+      "grouptype": type,
+    });
+    //print("222222222222222222222222");
+    //print(rel1);
+    // print("*********");
+    // Future.delayed(Duration(seconds: 3), () {
+    // GroupMessageService.sendGroupMessage("11", content);
+    // });
+    // var rel = await GroupMessageService.creatGruop(
+    //     messageId, messageModel.title, targetIdList.join(',').toString());
+    // print("****建群*****");
+    // print(rel["code"]);
+
+    // while (rel["code"] != 200) {
+    //   print("*********");
+    // }
+    // print("****发信息*****");
+    // GroupMessageService.sendGroupMessage(messageId, content);
+    // print("最后了");
+
+    // var lock = prefix.Lock();
+    // bool _bCounting = false;
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
+
+    //   GroupMessageService.creatGruop(
+    //       messageId, messageModel.title, targetIdList.join(',').toString());
+    //   print("****建群*****");
+    // });
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
+    //   GroupMessageService.sendGroupMessage(messageId, content);
+    //   print("****发信息*****");
+    // });
+    // }
+    print(messageId);
+    sendMessageSuccess("发送成功");
+  }
+
+  _sendMessage() async {
+    //单体系用户调用，需要满足targetIdList中仅存在最多1个多体系用户
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var db = DatabaseHelper();
+    // db.initDb();
+    //在这里写选择联系人，并将targetId改为联系人id
+    print("****************这里打印targetIdList****");
+    print(targetIdList.join(',').toString());
+    var uuid = Uuid();
+    var messageId = uuid.v1();
+    messageModel.messageId = messageId;
+    messageModel.fromuserid = prefs.getString("id");
+    String content;
     content = messageModel.toJsonString();
     String useid = prefs.get("id");
-    var type = await Dio()
-        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
 
     //发给服务器
     var rel = await Dio()
