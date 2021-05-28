@@ -225,134 +225,628 @@ class _LogRecordPageState extends State<LogRecordPage>
     var type2 = type.data;
     bool isEmpty = true;
     String url = "http://47.110.150.159:8080/messages/fuzzyselect?type=$type2&";
-    if (_searchTag != "" && _searchTag != null) {
-      //有关键词
-      isEmpty = false;
-      url += "mTitle=$_searchTag&";
-      // url += "keyWords=1群&";
-    }
-
-    if (_searchTime != null) {
-      //有时间
-
-      isEmpty = false;
-      url += "time=${_searchTime.toString().split(" ")[0]}&";
-      print("time=${_searchTime.toString().split(" ")[0]}");
-    }
-
-    if (_searchStaffId != "" && _searchStaffId != null) {
-      //有id
-      isEmpty = false;
-      url += "fromuserid=$_searchStaffId&";
-    } else if (!isEmpty) {
-      // // 没id,且别的不为空，需要查找
-      // List<Map> subStaff = await _getSubs();
-      // for (int i = 0; i < subStaff.length; i++) {
-      //   url += "fromuserid=${subStaff[i]["id"]}&";
-      // }
-    } else {
-      //没id，别的也没，就不用查找
+    if ((_searchTag == "" || _searchTag == null) &&
+        (_searchTime == null || _searchTime == "") &&
+        (_searchStaffId == "" || _searchStaffId == null)) {
       MyToast.AlertMesaage("请至少选择一项");
-      print("请至少选择一项");
-      return;
+      //   print("请至少选择一项");
     }
-    print(url);
-    var rel = await Dio().post(url);
-    // Map m = rel.data;
+    //只有关键字
+    if (_searchTag != "" &&
+        _searchTag != null &&
+        (_searchTime == null || _searchTime == "") &&
+        (_searchStaffId == "" || _searchStaffId == null)) {
+      _searchtag(_searchTag);
+    }
+    //只有创建人
+    if ((_searchTag == "" || _searchTag == null) &&
+        (_searchTime == null || _searchTime == "") &&
+        (_searchStaffId != "" && _searchStaffId != null)) {
+      _searchStaffid(_searchStaffId);
+    }
+    //只有创建时间
+    if ((_searchTag == "" || _searchTag == null) &&
+        (_searchTime != null && _searchTime != "") &&
+        (_searchStaffId == "" || _searchStaffId == null)) {
+      _searchtime(_searchTime.toString().split(" ")[0]);
+    }
+    //关键字和时间
+    if ((_searchTag != "" && _searchTag != null) &&
+        (_searchTime != null && _searchTime != "") &&
+        (_searchStaffId == "" || _searchStaffId == null)) {
+      _searchtagandtime(_searchTag, _searchTime.toString().split(" ")[0]);
+    }
+    //关键字和创建人
+    if ((_searchTag != "" && _searchTag != null) &&
+        (_searchTime == null || _searchTime == "") &&
+        (_searchStaffId != "" && _searchStaffId != null)) {
+      _searchtagandstaff(_searchTag, _searchStaffId);
+    }
+
+    //创建人和时间
+    if ((_searchTag == "" || _searchTag == null) &&
+        (_searchTime != null && _searchTime != "") &&
+        (_searchStaffId != "" && _searchStaffId != null)) {
+      _searchstaffandtime(_searchStaffId, _searchTime.toString().split(" ")[0]);
+    }
+
+    //关键字创建人和创建时间
+    if ((_searchTag != "" && _searchTag != null) &&
+        (_searchTime != null && _searchTime != "") &&
+        (_searchStaffId != "" && _searchStaffId != null)) {
+      _searchtagandstaffandtime(
+          _searchTag, _searchStaffId, _searchTime.toString().split(" ")[0]);
+    }
+
+    // if (_searchTag != "" && _searchTag != null) {
+    //   //有关键词
+    //   isEmpty = false;
+    //   url += "mTitle=$_searchTag&";
+    //   // url += "keyWords=1群&";
+    // }
+
+    // if (_searchTime != null) {
+    //   //有时间
+
+    //   isEmpty = false;
+    //   url += "time=${_searchTime.toString().split(" ")[0]}&";
+    //   print("time=${_searchTime.toString().split(" ")[0]}");
+    // }
+
+    // if (_searchStaffId != "" && _searchStaffId != null) {
+    //   //有id
+    //   isEmpty = false;
+    //   url += "fromuserid=$_searchStaffId&";
+    // } else if (!isEmpty) {
+    //   // // 没id,且别的不为空，需要查找
+    //   // List<Map> subStaff = await _getSubs();
+    //   // for (int i = 0; i < subStaff.length; i++) {
+    //   //   url += "fromuserid=${subStaff[i]["id"]}&";
+    //   // }
+    // } else {
+    //   //没id，别的也没，就不用查找
+    //   MyToast.AlertMesaage("请至少选择一项");
+    //   print("请至少选择一项");
+    //   return;
+    // }
+    // print(url);
+    // var rel = await Dio().post(url);
+    // // Map m = rel.data;
+    // // if (m.isEmpty) {
+    // //   Navigator.push(context,
+    // //       new MaterialPageRoute(builder: (context) => new NullResult()));
+    // // } else {
+    // //   List<MessageModel> l = new List<MessageModel>();
+    // //   m.forEach((key, value) {
+    // //     if (value is List) {
+    // //       for (int i = 0; i < value.length; i++) {
+    // //         MessageModel mm = MessageModel.formServerJsonString(value[i]);
+    // //         mm.modify = true;
+    // //         l.add(mm);
+    // //       }
+    // //     }
+    // //   });
+
+    // List m = rel.data;
+    // print("1**********" + m.length.toString());
+
+    // //根据甲方要求 改成获取所有的人
+    // // await _getSubMessage(url, m); //把下级的群消息也加到m中
+    // print("2**********" + m.length.toString());
+    // // await _getShelterMessage(m); //获取遮蔽表的消息
+    // // print("3*******" + m.length.toString());
+
     // if (m.isEmpty) {
     //   Navigator.push(context,
     //       new MaterialPageRoute(builder: (context) => new NullResult()));
     // } else {
     //   List<MessageModel> l = new List<MessageModel>();
-    //   m.forEach((key, value) {
-    //     if (value is List) {
-    //       for (int i = 0; i < value.length; i++) {
-    //         MessageModel mm = MessageModel.formServerJsonString(value[i]);
-    //         mm.modify = true;
-    //         l.add(mm);
+    //   for (int i = 0; i < m.length; i++) {
+    //     MessageModel mm = MessageModel.formServerJsonString(m[i]);
+    //     if (mm.flag == "遮蔽消息") {
+    //       String regex = "+";
+    //       String targetid = mm.keyWord;
+    //       List result = targetid.split(regex);
+    //       if (!result.contains(useid)) {
+    //         mm.htmlCode = "<p>遮蔽信息</p>";
+    //       }
+    //       l.add(mm);
+    //     } else if (mm.flag == "草稿") {
+    //       if (mm.fromuserid != useid) {
+    //         mm.htmlCode = "<p>保存信息</p>";
+    //       }
+    //       l.add(mm);
+    //     } else {
+    //       l.add(mm);
+    //     }
+    //     //mm.modify = true;
+    //     // l.add(mm);
+    //   }
+
+    //   for (int i = 0; i < l.length; i++) {
+    //     int min = i;
+    //     for (int j = i + 1; j < l.length; j++) {
+    //       if (l[j].time.millisecondsSinceEpoch <
+    //           l[min].time.millisecondsSinceEpoch) {
+    //         min = j;
     //       }
     //     }
-    //   });
+    //     if (min != i) {
+    //       MessageModel t = l[i];
+    //       l[i] = l[min];
+    //       l[min] = t;
+    //     }
+    //   }
 
-    List m = rel.data;
-    print("1**********" + m.length.toString());
-
-    //根据甲方要求 改成获取所有的人
-    // await _getSubMessage(url, m); //把下级的群消息也加到m中
-    print("2**********" + m.length.toString());
-    // await _getShelterMessage(m); //获取遮蔽表的消息
-    // print("3*******" + m.length.toString());
-
-    if (m.isEmpty) {
-      Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new NullResult()));
-    } else {
-      List<MessageModel> l = new List<MessageModel>();
-      for (int i = 0; i < m.length; i++) {
-        MessageModel mm = MessageModel.formServerJsonString(m[i]);
-        if (mm.flag == "遮蔽消息") {
-          String regex = "+";
-          String targetid = mm.keyWord;
-          List result = targetid.split(regex);
-          if (!result.contains(useid)) {
-            mm.htmlCode = "<p>遮蔽信息</p>";
-          }
-          l.add(mm);
-        } else if (mm.flag == "草稿") {
-          if (mm.fromuserid != useid) {
-            mm.htmlCode = "<p>保存信息</p>";
-          }
-          l.add(mm);
-        } else {
-          l.add(mm);
-        }
-        //mm.modify = true;
-        // l.add(mm);
-      }
-
-      for (int i = 0; i < l.length; i++) {
-        int min = i;
-        for (int j = i + 1; j < l.length; j++) {
-          if (l[j].time.millisecondsSinceEpoch <
-              l[min].time.millisecondsSinceEpoch) {
-            min = j;
-          }
-        }
-        if (min != i) {
-          MessageModel t = l[i];
-          l[i] = l[min];
-          l[min] = t;
-        }
-      }
-
-      // Navigator.push(
-      //     context,
-      //     new MaterialPageRoute(
-      //         builder: (context) =>
-      //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
-      List<MessageModel> r = new List<MessageModel>.from(l.reversed);
-      _showMessageByTitle(r); //按标题去展示消息
-    }
+    //   // Navigator.push(
+    //   //     context,
+    //   //     new MaterialPageRoute(
+    //   //         builder: (context) =>
+    //   //             new SearchedResult(new List<MessageModel>.from(l.reversed))));
+    //   List<MessageModel> r = new List<MessageModel>.from(l.reversed);
+    //   _showMessageByTitle(r); //按标题去展示消息
+    // }
   }
 
-  _getShelterMessage(List m) async {
+  _searchtag(String tag) async {
+    String url = "http://47.110.150.159:8080/group/select";
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString("id");
-    List groupId = new List();
-    for (int i = 0; i < m.length; i++) {
-      if (!groupId.contains(m[i]["mMesId"])) {
-        groupId.add(m[i]["mMesId"]);
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    //获取到所有的群
+    Map m = {
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      if (n[i]["groupname"].contains(tag)) {
+        groupidlist.add(n[i]["groupid"]);
       }
     }
-    for (int j = 0; j < groupId.length; j++) {
-      var rel = await Dio().post("http://47.110.150.159:8080/shelter/select",
-          data: {"touserid": id, "MesId": groupId[j]});
-      List shelterMessage = rel.data;
-      for (int i = 0; i < shelterMessage.length; i++) {
-        m.add(shelterMessage[i]);
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
       }
     }
-    return m;
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchStaffid(String staffid) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    //获取到所有的群
+    Map m = {
+      "groupcreatorid": staffid,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      groupidlist.add(n[i]["groupid"]);
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchtime(String time) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    String regex = "-";
+    List result = time.split(regex);
+    String time1 = "";
+    for (int i = 0; i < result.length; i++) {
+      time1 += result[i];
+    }
+
+    //获取到所有的群
+    Map m = {
+      "grouptime": time1,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      groupidlist.add(n[i]["groupid"]);
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchtagandtime(String tag, String time) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    String regex = "-";
+    List result = time.split(regex);
+    String time1 = "";
+    for (int i = 0; i < result.length; i++) {
+      time1 += result[i];
+    }
+    //获取到所有的群
+    Map m = {
+      "grouptime": time1,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      if (n[i]["groupname"].contains(tag)) {
+        groupidlist.add(n[i]["groupid"]);
+      }
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchtagandstaff(String tag, String staffid) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    //获取到所有的群
+    Map m = {
+      "groupcreatorid": staffid,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      if (n[i]["groupname"].contains(tag)) {
+        groupidlist.add(n[i]["groupid"]);
+      }
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchstaffandtime(String staffid, String time) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    String regex = "-";
+    List result = time.split(regex);
+    String time1 = "";
+    for (int i = 0; i < result.length; i++) {
+      time1 += result[i];
+    }
+    //获取到所有的群
+    Map m = {
+      "groupcreatorid": staffid,
+      "grouptime": time1,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      groupidlist.add(n[i]["groupid"]);
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
+  }
+
+  _searchtagandstaffandtime(String tag, String staffid, String time) async {
+    String url = "http://47.110.150.159:8080/group/select";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String useid = prefs.get("id");
+    var type = await Dio().post("http://47.110.150.159:8080/gettype?id=$useid");
+    String regex = "-";
+    List result = time.split(regex);
+    String time1 = "";
+    for (int i = 0; i < result.length; i++) {
+      time1 += result[i];
+    }
+    //获取到所有的群
+    Map m = {
+      "groupcreatorid": staffid,
+      "grouptime": time1,
+      "grouptype": type.data,
+    };
+    var rel = await Dio().post(url, data: m);
+    List n = rel.data;
+    List groupidlist = []; //存放群id
+    List conversation = new List(); //conversation类型二维数组
+    for (int i = 0; i < n.length; i++) {
+      if (n[i]["groupname"].contains(tag)) {
+        groupidlist.add(n[i]["groupid"]);
+      }
+    }
+
+    for (int j = 0; j < groupidlist.length; j++) {
+      String url2 = "http://47.110.150.159:8080/messages/select?";
+      //url += "time=${msgTime.toString().split(" ")[0]}&touserid=$groupId";
+      url2 += "touserid=${groupidlist[j]}";
+      var rel = await Dio().post(url2);
+      List p = rel.data;
+      List conList = new List();
+      for (int k = 0; k < p.length; k++) {
+        MessageModel pp = MessageModel.formServerJsonString(p[k]);
+        if (pp.flag == "遮蔽消息") {
+          String regex = "+";
+          String targetid = pp.keyWord;
+          List result = targetid.split(regex);
+          if (!result.contains(useid)) {
+            pp.htmlCode = "<p>遮蔽信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else if (pp.flag == "草稿") {
+          if (pp.fromuserid != useid) {
+            pp.htmlCode = "<p>保存信息</p>";
+          }
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        } else {
+          Conversation item = MessageModelToConversation.transation(pp);
+          conList.add(item);
+        }
+      }
+      List<Conversation> conList1 =
+          new List<Conversation>.from(conList.reversed);
+      if (conList.length != 0) {
+        conversation.add(conList1);
+      }
+    }
+    List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SearchMessagePage(conList: r
+          // title:title,
+          );
+    }));
   }
 
   _getSubMessage(String url, List m) async {
