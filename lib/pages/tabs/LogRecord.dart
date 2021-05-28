@@ -453,16 +453,16 @@ class _LogRecordPageState extends State<LogRecordPage>
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
     for (int i = 0; i < r.length; i++) {
-      int min = i;
+      int max = i;
       for (int j = i + 1; j < r.length; j++) {
-        if (r[j][0].sentTime < r[min][0].sentTime) {
-          min = j;
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
         }
       }
-      if (min != i) {
+      if (max != i) {
         List t = r[i];
-        r[i] = r[min];
-        r[min] = t;
+        r[i] = r[max];
+        r[max] = t;
       }
     }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
@@ -519,13 +519,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
@@ -588,13 +600,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        List<Conversation> r = new List<Conversation>.from(conList.reversed);
         conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
 
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
@@ -658,13 +682,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
@@ -721,13 +757,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
@@ -789,13 +837,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
@@ -859,13 +919,25 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int max = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime > r[max][0].sentTime) {
+          max = j;
+        }
+      }
+      if (max != i) {
+        List t = r[i];
+        r[i] = r[max];
+        r[max] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
