@@ -187,7 +187,7 @@ class _MessagePageState extends State<MessagePage>
     _addScroolListener();
     return new Scaffold(
       appBar: AppBar(
-        title: Text("消息列表"),
+        title: Text("信息列表"),
       ),
       key: UniqueKey(),
       body: _buildConversationListView(),

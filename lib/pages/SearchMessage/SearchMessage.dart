@@ -189,17 +189,7 @@ class _SearchMessagePageState extends State<SearchMessagePage>
     _addScroolListener();
     return new Scaffold(
       appBar: AppBar(
-        title: Text("消息列表"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/',
-                  (route) => route == null,
-                );
-              },
-              icon: Icon(Icons.account_balance)),
-        ],
+        title: Text("信息列表"),
       ),
       key: UniqueKey(),
       body: _buildConversationListView(),

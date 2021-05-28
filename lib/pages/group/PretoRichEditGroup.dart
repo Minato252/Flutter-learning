@@ -301,7 +301,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
     Tree.getAllPeople(parsedJson, users);
     for (int i = 0; i < users.length; i++) {
       if (groupMember.contains(users[i]["id"])) {
-        users2.add(users[i]);
+        users2.add(users[i]["id"]);
       }
     }
     //SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -327,6 +327,11 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
       });
       if (!targetIdList.contains(id)) {
         targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
+      }
+      for (int i = 0; i < targetIdList.length; i++) {
+        if (!users2.contains(targetIdList[i])) {
+          await GroupMessageService.joinGroup(groupId, title, targetIdList[i]);
+        }
       }
       // await _sendMessage();
       bool isDirctionMessage = false;

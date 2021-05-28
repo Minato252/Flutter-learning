@@ -373,19 +373,19 @@ class _ContactListPageState extends State<ContactListPage> {
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),
-          FlatButton(
-              onPressed: () {
-                //_addAllorRemoveAll();
-                _addGroupUser();
-              },
-              child: Text(
-                "新增",
-                style: TextStyle(
-                    fontSize: ScreenAdapter.size(30),
-                    //fontSize: 20.0,
-                    //fontWeight: FontWeight.w400,
-                    color: Colors.white),
-              )),
+          // FlatButton(
+          //     onPressed: () {
+          //       //_addAllorRemoveAll();
+          //  _addGroupUser();
+          //     },
+          //     child: Text(
+          //       "新增",
+          //       style: TextStyle(
+          //           fontSize: ScreenAdapter.size(30),
+          //           //fontSize: 20.0,
+          //           //fontWeight: FontWeight.w400,
+          //           color: Colors.white),
+          //     )),
           IconButton(
             onPressed: () {
               List targetAllList = [];

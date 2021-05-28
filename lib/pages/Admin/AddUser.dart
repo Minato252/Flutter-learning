@@ -4,7 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/Admin/StaffManage.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
+import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
@@ -234,17 +236,21 @@ class _AddUserState extends State<AddUser> {
 //获取自己的id
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
-    var type =
-        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");
+    /*var type =
+        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");*/
+    var rel1 = await Dio()
+        .post("http://47.110.150.159:8080/getMInformation?id=$adminId");
+    Map n = rel1.data;
     Map m = {
       "id": id,
       "uPower": right,
       "name": name,
       "password": password,
-      "type": type.data,
+      "type": n['mType'],
       "creator": adminId,
       "authority": job,
-      "who": "member"
+      "who": "member",
+      "company": n['mLocation'],
     };
     Response rel =
         await Dio().post("http://47.110.150.159:8080/register", data: m);
@@ -257,23 +263,29 @@ class _AddUserState extends State<AddUser> {
 // "password":"okkk",
 // "token":"+N6PSEp6cPDMad7e68GxGrTxq47Jn+UhuuSKJ1cFdRA=@9s7f.cn.rongnav.com;9s7f.cn.rongcfg.com"}
 
-    Map j = json.decode(rel.data);
-    if (j.containsKey("fail")) {
-      print("超出购买限额");
-
-      // MyToast.AlertMesaage("超出可创建最大人数");
-    } else if (j.containsKey("code")) {
-      if (j["code"] == "202") {
-        print("id已注册");
-        MyToast.AlertMesaage(j["Msg"]);
-      }
-    } else if (j.containsKey("uToken")) {
-      print("注册成功");
-
-      MyToast.AlertMesaage(j["注册成功"]);
+    if (rel.data == "注册成功") {
+      MyToast.AlertMesaage("注册成功");
       return true;
+    } else {
+      Map j = json.decode(rel.data);
+
+      if (j.containsKey("fail")) {
+        print("超出购买限额");
+
+        // MyToast.AlertMesaage("超出可创建最大人数");
+      } else if (j.containsKey("code")) {
+        if (j["code"] == "202") {
+          print("id已注册");
+          MyToast.AlertMesaage(j["Msg"]);
+        }
+      } else if (j.containsKey("uToken")) {
+        print("注册成功");
+
+        MyToast.AlertMesaage("注册成功");
+        return true;
+      }
+      return false;
     }
-    return false;
   }
 
   Future<void> _sendDataBack(BuildContext context) async {
@@ -295,6 +307,7 @@ class _AddUserState extends State<AddUser> {
           "right": rightList,
         };
         Navigator.pop(context, mapToSendBack);
+        Navigator.pushNamed(context, '/admin');
       }
     }
   }
