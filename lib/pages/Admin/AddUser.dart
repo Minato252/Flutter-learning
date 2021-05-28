@@ -4,7 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/Admin/StaffManage.dart';
 import 'package:weitong/pages/Admin/StaffManageChoose.dart';
+import 'package:weitong/pages/tabs/Tabs.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/widget/dialog_util.dart';
@@ -305,6 +307,7 @@ class _AddUserState extends State<AddUser> {
           "right": rightList,
         };
         Navigator.pop(context, mapToSendBack);
+        Navigator.pushNamed(context, '/admin');
       }
     }
   }
