@@ -32,6 +32,7 @@ import 'package:provider/provider.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:synchronized/synchronized.dart' as prefix;
+import 'package:weitong/widget/dialog_util.dart';
 
 import 'GroupMessageService.dart';
 
@@ -386,7 +387,35 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     print(groupMember);
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
-    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+
+    String id = prefs.getString("id");
+    // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+    //===*更改，上面的获取树改为===
+    var isSingle = Tree.isInSingleCom(userInfo["id"]);
+
+    String jsonTree;
+    String subType;
+    if (isSingle == true) {
+      jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+      var r = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$id"); //获取用户所在的体系
+      subType = r.data;
+    } else {
+      String singleUserId;
+      for (int i = 0; i < groupMember.length; i++) {
+        var temp = await Tree.isInSingleCom(groupMember[i]);
+        if (temp == true) {
+          singleUserId = groupMember[i];
+          break;
+        }
+      }
+      jsonTree = await Tree.getTreeFromSer(singleUserId, false, context);
+      var r = await Dio().post(
+          "http://47.110.150.159:8080/gettype?id=${singleUserId}"); //获取用户所在的体系
+      subType = r.data;
+    }
+    //===========
+
     var parsedJson = json.decode(jsonTree);
     List users = []; //树的总人数
     List users2 = []; //群成员
@@ -397,12 +426,38 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       }
     }
     // SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString("id");
+
     // for (int i = 0; i < users.length; i++) {
     //   if (users[i]["id"] == id) {
     //     users2.removeAt(i);
     //   }
     // }
+
+    //=========*更改（添加），给即将传进去的users加上括号====================
+    // 处理users列表，消除重复的，且将多体系的人名字后添加“（多体系用户），并且去掉自己”
+    Set userIds = {};
+    for (int i = 0; i < users.length; i++) {
+      if (userIds.contains(users[i]["id"])) {
+        //消除重复
+        users.removeAt(i);
+        i--;
+      } else {
+        userIds.add(users[i]["id"]);
+        var isSingle = await Tree.isInSingleCom(users[i]["id"]); //多体系=》名字后面加
+        if (isSingle != true) {
+          users[i]["name"] += "(多体系用户)";
+        }
+      }
+    }
+
+    // String id = userInfo["id"];
+    for (int i = 0; i < users.length; i++) {
+      if (users[i]["id"] == id) {
+        users.removeAt(i);
+      }
+    }
+
+    //=============================
     var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
               //users2,
@@ -420,6 +475,33 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);
       });
+
+      //=========*更改（添加），对users2判断，然后对targetIdList判断====
+      List oldUsers = List.from(users2); //users变为老群成员
+      if (!oldUsers.contains(id)) {
+        oldUsers.add(id);
+      }
+      var tempOld = await Tree.getTypeFromUsers(oldUsers); //老群（有自己）
+      var tempNew = await Tree.getTypeFromUsers(targetIdList); //发送列表（没有自己）
+      if (tempNew is List) {
+        if (tempOld is List) {
+          await DialogUtil.showAlertDiaLog(
+            context,
+            "此群已包含多体系用户，无法再加入新的多体系用户。",
+            title: "发送失败",
+          );
+          return;
+        } else if (tempNew.length > 1) {
+          await DialogUtil.showAlertDiaLog(
+            context,
+            "最多允许选择1个多体系用户。",
+            title: "发送失败",
+          );
+          return;
+        }
+        //如果已经有了多体系用户，targetIdList中就
+      }
+      //================================
       if (!targetIdList.contains(id)) {
         targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
       }
@@ -442,8 +524,11 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       messageModel.fromuserid = prefs.getString("id");
       content = messageModel.toJsonString();
       String useid = prefs.get("id");
-      var type = await Dio()
-          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
+      ///=======这里注释掉了==================
+      // var type = await Dio()
+      //     .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+      ///==============================
 
       //发送给服务器
       var rel1 = await Dio()
@@ -459,7 +544,11 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
             ")",
         "MesId": messageModel.messageId,
         "Flag": "普通", //这里增加了flag
-        "type": type.data,
+
+        // "type": type.data,
+        //===========这里更改了========
+        "type": subType,
+        //==========================
       });
 
       if (isDirctionMessage) {

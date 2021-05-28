@@ -277,7 +277,7 @@ class _ContactListPageState extends State<ContactListPage> {
   void _addGroupUser() async {
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
-    String jsonTree = await Tree.getTreeFormSer(userInfo["id"], false, context);
+    String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
     var parsedJson = json.decode(jsonTree);
     List users1 = []; //树的总人数
 

@@ -308,7 +308,7 @@ class _EdituserdetailsState extends State<Edituserdetails> {
         "right": details["right"],
       };
       //从服务器获得最新的树
-      String jsonTree = await Tree.getTreeFormSer(adminId, true, context);
+      String jsonTree = await Tree.getTreeFromSer(adminId, true, context);
 
       var parsedJson = json.decode(jsonTree);
 

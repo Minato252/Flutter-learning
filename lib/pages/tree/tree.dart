@@ -666,6 +666,47 @@ class Tree {
     return my;
   }
 
+  static getTypeFromUsers(List users, {int maxNum = 0}) async {
+    //输入用户id列表，获取该列表中单系统用户的type
+    //*如果列表为空，返回null
+    //*列表中只允许有maxNum个多体系用户，若超过，则返回"多体系用户的id列表"
+    //*否则返回type
+    if (users == null || users.isEmpty) {
+      return null;
+    }
+    // int mulNum = 0;
+    List mulUsers = [];
+    String type = "";
+    for (int i = 0; i < users.length; i++) {
+      var isSingle = await Tree.isInSingleCom(users[i]);
+      if (isSingle != true) {
+        mulUsers.add(users[i]);
+      } else if (type == "") {
+        var r = await Dio()
+            .post("http://47.110.150.159:8080/gettype?id=${users[0]}");
+        type = r.data;
+      }
+    }
+    if (mulUsers.length > maxNum) return mulUsers;
+
+    return type; //应该满足users.length>mulusers.length，否则type应该都是有值的 //
+    //也就是说多体系用户只能发给单用户（max=0）
+  }
+
+  static Future<dynamic> isInSingleCom(String id) async {
+//用户调用，判断用户是否在单体系内。若是单体系用户，则返回true
+    var r = await Dio()
+        .post("http://47.110.150.159:8080/getinformation?id=$id"); //获取用户所在的体系
+    Map m = r.data;
+    var s = m["uCompany"];
+    if (s == null) {
+      return true;
+    } else if (s.contains(",")) {
+      return s;
+    }
+    return true;
+  }
+
   static String modifyTree(String jsonTree) {
     var parsedJson = json.decode(jsonTree);
     Map myMap = {
@@ -681,7 +722,122 @@ class Tree {
     return json.encode(myMap);
   }
 
-  static getTreeFormSer(String id, bool isAdmin, BuildContext context) async {
+  static getMulTreeFromSer(String comName) async {
+    //1、权限检查
+    bool status = await Permission.storage.isGranted;
+    //判断如果还没拥有读写权限就申请获取权限q
+    // if (!status) {
+    //   return await Permission.storage.request().isGranted;
+    // }
+    int i = 0;
+    if (!status) {
+      // i++;
+      // if (i > 10) {
+      //   break;
+      // }
+//第一次没有权限，首先弹出获取权限对话框
+      await Permission.storage.request().isGranted;
+      status = await Permission.storage.isGranted;
+      if (!status) {
+        //如果第二次没有权限。弹出提示框
+        await DialogUtil.showAlertDiaLog(
+          navigatorKey.currentState.overlay.context,
+          "需要获取到存储权限，否则无法运行此应用。请允许应用获取存储权限。",
+          title: "获取权限失败",
+          confirmButton: FlatButton(
+            child: Text("确定"),
+            onPressed: () async {
+              await Permission.storage.request();
+
+              /// 跳转到登录界面   全局context
+              Future.delayed(const Duration(microseconds: 0), () {
+                Navigator.pop(navigatorKey.currentState.overlay.context);
+              });
+            },
+          ),
+        );
+
+        status = await Permission.storage.isGranted;
+        if (!status) {
+          //
+          await DialogUtil.showAlertDiaLog(
+            navigatorKey.currentState.overlay.context,
+            "需要获取到存储权限，否则无法运行此应用。请在设置中允许应用获取存储权限。",
+            title: "获取权限失败",
+            confirmButton: FlatButton(
+              child: Text("退出应用"),
+              onPressed: () async {
+                Future.delayed(const Duration(microseconds: 0), () {
+                  Navigator.pop(navigatorKey.currentState.overlay.context);
+                });
+                await SystemChannels.platform
+                    .invokeMethod('SystemNavigator.pop');
+              },
+            ),
+          );
+        }
+      }
+    }
+
+    // MyToast.AlertMesaage("您未通过微通获取您的存储权限，app即将退出.....");
+    // if (!status) {
+    //   await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    // }
+    // // 调用下载方法 --------做该做的事
+
+    //从网络获取树的url
+
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/MutliGetTree?company=$comName");
+    Map m = rel.data;
+    List treeUrlList = [];
+    m.forEach((key, value) {
+      treeUrlList.addAll(value);
+    });
+    List treeList = [];
+    for (int i = 0; i < treeUrlList.length; i++) {
+      //从url读取文件
+      try {
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        var response =
+            await Dio().download(treeUrlList[i], "$tempPath/tree.json");
+
+        if (response.statusCode == 200) {
+          print('下载请求成功');
+          var contents = await File('$tempPath/tree.json').readAsString();
+          print("从服务器拉取的树：" + contents);
+          //contents就是树的字符串
+
+//         //以下是测试=====
+
+          // bool re = isMyModel("{}");
+          // print("ismyModel: $re");
+
+          // String demoswitchString = modifyTree(demoTree);
+          // print(demoswitchString);
+// //===测试结束
+
+//==尝试更改pc端的树==
+          if (!isMyModel(contents)) {
+            //如果是pc端的树
+            contents = modifyTree(demoTree);
+          }
+
+//更改完成==
+          treeList.add(contents);
+        } else {
+          throw Exception('接口出错');
+        }
+      } catch (e) {
+        print('服务器出错或网络连接失败！');
+        return print('ERROR:======>$e');
+      }
+    }
+    return treeList;
+  }
+
+  static getTreeFromSer(String id, bool isAdmin, BuildContext context) async {
 //管理员调用，远程获取树写入provider中
 
     //1、权限检查

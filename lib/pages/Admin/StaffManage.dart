@@ -323,7 +323,7 @@ class _StaffManagePageState extends State<StaffManagePage> {
             onPressed: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String id = prefs.getString("adminId");
-              await Tree.getTreeFormSer(id, true, context);
+              await Tree.getTreeFromSer(id, true, context);
 
               EventBusUtil.getInstance().fire(UpdataNode("updataNode"));
             },
