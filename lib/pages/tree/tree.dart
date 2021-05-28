@@ -740,7 +740,7 @@ class Tree {
       }
     }
 
-    // MyToast.AlertMesaage("您未通过微通获取您的存储权限，app即将退出.....");
+    // MyToast.AlertMesaage("您未通过亘管获取您的存储权限，app即将退出.....");
     // if (!status) {
     //   await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     // }

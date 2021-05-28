@@ -132,9 +132,9 @@ class EasyNotification {
   // }
 
   Future<void> show(
-      {String title = "微通", String message = "新消息", String id = ""}) async {
+      {String title = "亘管", String message = "新消息", String id = ""}) async {
     //如果不在前台就通知
-    // locally.show(title: "微通", message: "您有$num条新消息");
+    // locally.show(title: "亘管", message: "您有$num条新消息");
     String unreadString = "";
     RongIMClient.getTotalUnreadCount((int count, int code) {
       if (0 == code) {
@@ -153,7 +153,7 @@ class EasyNotification {
 
     // locally.cancelAll();
     if (currentState != AppLifecycleState.resumed) {
-      // locally.show(title: "微通", message: "新消息");
+      // locally.show(title: "亘管", message: "新消息");
       locally.show(title: title, message: message);
       // locally2.show(title: "weitong", message: "weitong");
     } else {

@@ -182,7 +182,7 @@ class _ALLReadSearchConversationPageState
       // // 测试接收阅后即焚直接焚烧
       // RongIMClient.messageBeginDestruct(msg);
 
-      // locally.show(title: "微通", message: "收到一条新消息");
+      // locally.show(title: "亘管", message: "收到一条新消息");
       // easyNotification().show();
     });
 
