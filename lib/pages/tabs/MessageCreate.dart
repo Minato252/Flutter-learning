@@ -361,6 +361,7 @@ class _MessageCreateState extends State<MessageCreate>
         final ps = Provider.of<ProviderServices>(context);
         Map userInfo = ps.userInfo;
 
+//====从这里开始是多体系的更改===========
         ///===========获取list=========
         var isSingle = await Tree.isInSingleCom(userInfo["id"]);
         List users = [];
@@ -477,6 +478,8 @@ class _MessageCreateState extends State<MessageCreate>
             }
           }
         }
+
+        ///===这里是短信的 基本没改，改了个小bug====
         noteIdList = [];
         noteNameList = [];
         List allnoteIdList = [];

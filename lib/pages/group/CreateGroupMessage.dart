@@ -32,6 +32,7 @@ import 'package:provider/provider.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:synchronized/synchronized.dart' as prefix;
+import 'package:weitong/widget/dialog_util.dart';
 
 import 'GroupMessageService.dart';
 
@@ -386,7 +387,18 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     print(groupMember);
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
-    String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+
+    // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+    //===*更改，上面的获取树改为===
+    var isSingle = Tree.isInSingleCom(userInfo["id"]);
+    String jsonTree;
+    if (isSingle == true) {
+      jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+    } else {
+      jsonTree = await Tree.getTreeFromSer(groupMember[0], false, context);
+    }
+    //===========
+
     var parsedJson = json.decode(jsonTree);
     List users = []; //树的总人数
     List users2 = []; //群成员
@@ -403,6 +415,33 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     //     users2.removeAt(i);
     //   }
     // }
+
+    //=========*更改（添加），给即将传进去的users加上括号====================
+    // 处理users列表，消除重复的，且将多体系的人名字后添加“（多体系用户），并且去掉自己”
+    Set userIds = {};
+    for (int i = 0; i < users.length; i++) {
+      if (userIds.contains(users[i]["id"])) {
+        //消除重复
+        users.removeAt(i);
+        i--;
+      } else {
+        userIds.add(users[i]["id"]);
+        var isSingle = await Tree.isInSingleCom(users[i]["id"]); //多体系=》名字后面加
+        if (isSingle != true) {
+          users[i]["name"] += "(多体系用户)";
+        }
+      }
+    }
+
+    // String id = userInfo["id"];
+    for (int i = 0; i < users.length; i++) {
+      if (users[i]["id"] == id) {
+        users.removeAt(i);
+      }
+    }
+
+    //=============================
+
     var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
               //users2,
@@ -420,9 +459,34 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);
       });
+
       if (!targetIdList.contains(id)) {
         targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
       }
+
+      //=========*更改（添加），对users2判断，然后对targetIdList判断====
+      var tempOld = await Tree.getTypeFromUsers(users2);
+      var tempNew = await Tree.getTypeFromUsers(targetIdList);
+      if (tempNew is List) {
+        if (tempOld is List) {
+          await DialogUtil.showAlertDiaLog(
+            context,
+            "此群已包含多体系用户，无法再加入新的多体系用户。",
+            title: "发送失败",
+          );
+          return;
+        } else if (tempNew.length > 1) {
+          await DialogUtil.showAlertDiaLog(
+            context,
+            "最多允许选择1个多体系用户。",
+            title: "发送失败",
+          );
+          return;
+        }
+        //如果已经有了多体系用户，targetIdList中就
+      }
+      //================================
+
       // await _sendMessage();
       for (int i = 0; i < targetIdList.length; i++) {
         if (!users2.contains(targetIdList[i])) {
