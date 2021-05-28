@@ -387,6 +387,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     print(groupMember);
     final ps = Provider.of<ProviderServices>(context);
     Map userInfo = ps.userInfo;
+
     String id = prefs.getString("id");
     // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
     //===*更改，上面的获取树改为===

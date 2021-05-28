@@ -30,6 +30,7 @@ import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
 
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -356,38 +357,96 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                     //加载联系人列表
 
                     // await _sendGroupMessage();
+                    List rel = await GroupMessageService.searchGruopMember(
+                        messageModel.messageId);
+                    List<String> groupMember = [];
+                    for (int i = 0; i < rel.length; i++) {
+                      groupMember.add(rel[i]["id"]);
+                    }
+                    print(groupMember);
                     final ps = Provider.of<ProviderServices>(context);
                     Map userInfo = ps.userInfo;
-                    String jsonTree = await Tree.getTreeFromSer(
-                        userInfo["id"], false, context);
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+
+                    String id = prefs.getString("id");
+                    // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+                    //===*更改，上面的获取树改为===
+                    var isSingle = Tree.isInSingleCom(userInfo["id"]);
+
+                    String jsonTree;
+                    String subType;
+                    if (isSingle == true) {
+                      jsonTree = await Tree.getTreeFromSer(
+                          userInfo["id"], false, context);
+                      var r = await Dio().post(
+                          "http://47.110.150.159:8080/gettype?id=$id"); //获取用户所在的体系
+                      subType = r.data;
+                    } else {
+                      String singleUserId;
+                      for (int i = 0; i < groupMember.length; i++) {
+                        var temp = await Tree.isInSingleCom(groupMember[i]);
+                        if (temp == true) {
+                          singleUserId = groupMember[i];
+                          break;
+                        }
+                      }
+                      jsonTree = await Tree.getTreeFromSer(
+                          singleUserId, false, context);
+                      var r = await Dio().post(
+                          "http://47.110.150.159:8080/gettype?id=${singleUserId}"); //获取用户所在的体系
+                      subType = r.data;
+                    }
+                    //===========
+
                     var parsedJson = json.decode(jsonTree);
-                    List users = [];
+                    List users = []; //树的总人数
+                    List users2 = []; //群成员
                     Tree.getAllPeople(parsedJson, users);
-                    //从群中获取群成员
-                    List users2 = await GroupMessageService.searchGruopMember(
-                        messageModel.messageId);
-                    List users3 = new List();
                     for (int i = 0; i < users.length; i++) {
-                      for (int j = 0; j < users2.length; j++) {
-                        if (users2[j]["id"] == users[i]["id"]) {
-                          //  users3.add(users[i]);
-                          users3.add(users[i]["id"]); //存放的是群成员的id
+                      if (groupMember.contains(users[i]["id"])) {
+                        users2.add(users[i]["id"]);
+                      }
+                    }
+                    // SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                    // for (int i = 0; i < users.length; i++) {
+                    //   if (users[i]["id"] == id) {
+                    //     users2.removeAt(i);
+                    //   }
+                    // }
+
+                    //=========*更改（添加），给即将传进去的users加上括号====================
+                    // 处理users列表，消除重复的，且将多体系的人名字后添加“（多体系用户），并且去掉自己”
+                    Set userIds = {};
+                    for (int i = 0; i < users.length; i++) {
+                      if (userIds.contains(users[i]["id"])) {
+                        //消除重复
+                        users.removeAt(i);
+                        i--;
+                      } else {
+                        userIds.add(users[i]["id"]);
+                        var isSingle = await Tree.isInSingleCom(
+                            users[i]["id"]); //多体系=》名字后面加
+                        if (isSingle != true) {
+                          users[i]["name"] += "(多体系用户)";
                         }
                       }
                     }
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String id = prefs.getString("id");
+
+                    // String id = userInfo["id"];
                     for (int i = 0; i < users.length; i++) {
                       if (users[i]["id"] == id) {
                         users.removeAt(i);
                       }
                     }
-                    // List targetAllList =
+
+                    //=============================
                     var result =
                         await Navigator.of(context).push(MaterialPageRoute(
                             builder: (BuildContext context) => ContactListPage(
-                                  //users3,
+                                  //users2,
+                                  //这里改成拉出该体系的所有人
                                   users,
                                   groupid: messageModel.messageId,
                                   grouptitle: messageModel.title,
@@ -396,22 +455,81 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                       return;
                     }
                     List targetAllList = result;
-
                     targetIdList = [];
                     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
                       targetAllList[0].forEach((element) {
                         targetIdList.add(element["id"]);
                       });
+
+                      //=========*更改（添加），对users2判断，然后对targetIdList判断====
+                      List oldUsers = List.from(users2); //users变为老群成员
+                      if (!oldUsers.contains(id)) {
+                        oldUsers.add(id);
+                      }
+                      var tempOld =
+                          await Tree.getTypeFromUsers(oldUsers); //老群（有自己）
+                      var tempNew = await Tree.getTypeFromUsers(
+                          targetIdList); //发送列表（没有自己）
+                      if (tempNew is List) {
+                        if (tempOld is List) {
+                          await DialogUtil.showAlertDiaLog(
+                            context,
+                            "此群已包含多体系用户，无法再加入新的多体系用户。",
+                            title: "发送失败",
+                          );
+                          return;
+                        } else if (tempNew.length > 1) {
+                          await DialogUtil.showAlertDiaLog(
+                            context,
+                            "最多允许选择1个多体系用户。",
+                            title: "发送失败",
+                          );
+                          return;
+                        }
+                        //如果已经有了多体系用户，targetIdList中就
+                      }
+                      //================================
+                      if (!targetIdList.contains(id)) {
+                        targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
+                      }
+                      // await _sendMessage();
                       for (int i = 0; i < targetIdList.length; i++) {
-                        if (!users3.contains(targetIdList[i])) {
+                        if (!users2.contains(targetIdList[i])) {
                           await GroupMessageService.joinGroup(
                               messageModel.messageId,
                               messageModel.title,
                               targetIdList[i]);
                         }
                       }
-                      await _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
-                      await _sendMessage();
+                      bool isDirctionMessage = false;
+                      for (int i = 0; i < groupMember.length; i++) {
+                        if (!targetIdList.contains(groupMember[i])) {
+                          isDirctionMessage = true;
+                        }
+                      }
+                      await _sendShelterMessage(users2, subType); //往遮蔽表插入遮蔽消息
+
+                      // var uuid = Uuid();
+                      // var messageId = uuid.v1();
+                      // messageModel.messageId = messageId;
+                      messageModel.messageId = messageModel.messageId;
+                      messageModel.fromuserid = prefs.getString("id");
+                      content = messageModel.toJsonString();
+
+                      ///=======这里注释掉了==================
+                      // var type = await Dio()
+                      //     .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+                      ///==============================
+
+                      if (isDirctionMessage) {
+                        //未全选群成员，即对部分人隐藏内容
+                        await GroupMessageService.sendDirectionMessage(
+                            targetIdList, messageModel.messageId, content);
+                      } else {
+                        //全选群成员，发送群消息
+                        await GroupMessageService.sendGroupMessage(
+                            messageModel.messageId, content);
+                      }
                     }
 
                     if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
@@ -421,6 +539,70 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
                       });
                       _sendNoteMessage();
                     }
+                    sendMessageSuccess("发送成功");
+
+                    // String jsonTree = await Tree.getTreeFromSer(
+                    //     userInfo["id"], false, context);
+                    // var parsedJson = json.decode(jsonTree);
+                    // List users = [];
+                    // Tree.getAllPeople(parsedJson, users);
+                    // //从群中获取群成员
+                    // List rel = await GroupMessageService.searchGruopMember(
+                    //     messageModel.messageId);
+                    // List users3 = new List();
+                    // for (int i = 0; i < users.length; i++) {
+                    //   for (int j = 0; j < rel.length; j++) {
+                    //     if (rel[j]["id"] == users[i]["id"]) {
+                    //       //  users3.add(users[i]);
+                    //       users3.add(users[i]["id"]); //存放的是群成员的id
+                    //     }
+                    //   }
+                    // }
+                    // SharedPreferences prefs =
+                    //     await SharedPreferences.getInstance();
+                    // String id = prefs.getString("id");
+                    // for (int i = 0; i < users.length; i++) {
+                    //   if (users[i]["id"] == id) {
+                    //     users.removeAt(i);
+                    //   }
+                    // }
+                    // // List targetAllList =
+                    // var result =
+                    //     await Navigator.of(context).push(MaterialPageRoute(
+                    //         builder: (BuildContext context) => ContactListPage(
+                    //               //users3,
+                    //               users,
+                    //               groupid: messageModel.messageId,
+                    //               grouptitle: messageModel.title,
+                    //             )));
+                    // if (result == null) {
+                    //   return;
+                    // }
+                    // List targetAllList = result;
+
+                    // targetIdList = [];
+                    // if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+                    //   targetAllList[0].forEach((element) {
+                    //     targetIdList.add(element["id"]);
+                    //   });
+                    //   for (int i = 0; i < targetIdList.length; i++) {
+                    //     if (!users3.contains(targetIdList[i])) {
+                    //       await GroupMessageService.joinGroup(
+                    //           messageModel.messageId,
+                    //           messageModel.title,
+                    //           targetIdList[i]);
+                    //     }
+                    //   }
+                    // await _sendMessage();
+                    // }
+
+                    // if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+                    //   targetAllList[1].forEach((element) {
+                    //     noteIdList.add(element["id"]);
+                    //     noteNameList.add(element["name"]);
+                    //   });
+                    // _sendNoteMessage();
+                    // }
 
                     // _sendShelterMessage(users2); //往遮蔽表插入遮蔽消息
                   },
@@ -692,7 +874,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     }
   }*/
 
-  _sendShelterMessage(List allIdInGroup) async {
+  _sendShelterMessage(List allIdInGroup, String type) async {
     //把遮蔽消息存入遮蔽表中
     /*List allid = [];
     for (int i = 0; i < allIdInGroup.length; i++) {
@@ -828,8 +1010,8 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
     }
     // totargetid += targetIdList[targetIdList.length - 1];
 
-    var type = await Dio()
-        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+    // var type = await Dio()
+    //     .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
     //发送给服务器
     var rel1 = await Dio()
@@ -845,7 +1027,7 @@ class _SendShelterMessagePageState extends State<SendShelterMessagePage> {
           ")",
       "MesId": messageModel.messageId,
       "Flag": "遮蔽消息", //这里增加了flag
-      "type": type.data,
+      "type": type,
     });
 
     // sendMessageSuccess("发送成功");
