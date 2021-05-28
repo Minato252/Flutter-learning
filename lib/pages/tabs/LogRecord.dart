@@ -406,6 +406,7 @@ class _LogRecordPageState extends State<LogRecordPage>
         groupidlist.add(n[i]["groupid"]);
       }
     }
+    List nearcon = [];
 
     for (int j = 0; j < groupidlist.length; j++) {
       String url2 = "http://47.110.150.159:8080/messages/select?";
@@ -414,6 +415,7 @@ class _LogRecordPageState extends State<LogRecordPage>
       var rel = await Dio().post(url2);
       List p = rel.data;
       List conList = new List();
+
       for (int k = 0; k < p.length; k++) {
         MessageModel pp = MessageModel.formServerJsonString(p[k]);
         if (pp.flag == "遮蔽消息") {
@@ -436,13 +438,33 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+      //   List<Conversation> conList1 =
+      //       new List<Conversation>.from(conList.reversed);
+      //   if (conList.length != 0) {
+      //     conversation.add(conList1);
+      //   }
+      // }
+      // List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+
+      List<Conversation> r = new List<Conversation>.from(conList.reversed);
       if (conList.length != 0) {
-        conversation.add(conList1);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+    for (int i = 0; i < r.length; i++) {
+      int min = i;
+      for (int j = i + 1; j < r.length; j++) {
+        if (r[j][0].sentTime < r[min][0].sentTime) {
+          min = j;
+        }
+      }
+      if (min != i) {
+        List t = r[i];
+        r[i] = r[min];
+        r[min] = t;
+      }
+    }
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,
@@ -532,6 +554,7 @@ class _LogRecordPageState extends State<LogRecordPage>
     List n = rel.data;
     List groupidlist = []; //存放群id
     List conversation = new List(); //conversation类型二维数组
+    List nearcon = [];
     for (int i = 0; i < n.length; i++) {
       groupidlist.add(n[i]["groupid"]);
     }
@@ -565,13 +588,14 @@ class _LogRecordPageState extends State<LogRecordPage>
           conList.add(item);
         }
       }
-      List<Conversation> conList1 =
-          new List<Conversation>.from(conList.reversed);
+
       if (conList.length != 0) {
-        conversation.add(conList1);
+        List<Conversation> r = new List<Conversation>.from(conList.reversed);
+        conversation.add(r);
       }
     }
     List<dynamic> r = new List<dynamic>.from(conversation.reversed);
+
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SearchMessagePage(conList: r
           // title:title,

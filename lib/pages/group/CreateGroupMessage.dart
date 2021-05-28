@@ -131,6 +131,17 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
                         color: Colors.white),
                   )),
             ),
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => route == null,
+                    );
+                  },
+                  icon: Icon(Icons.account_balance)),
+            ),
           ],
         ),
         body: SafeArea(
@@ -392,8 +403,7 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
     //     users2.removeAt(i);
     //   }
     // }
-    //要发送的人
-    List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+    var result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ContactListPage(
               //users2,
               //这里改成拉出该体系的所有人
@@ -401,8 +411,11 @@ class _GroupMessageCreateState extends State<GroupMessageCreate>
               groupid: groupId,
               grouptitle: title,
             )));
-
-    targetIdList = []; //要发送的人的id
+    if (result == null) {
+      return;
+    }
+    List targetAllList = result;
+    targetIdList = [];
     if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
       targetAllList[0].forEach((element) {
         targetIdList.add(element["id"]);

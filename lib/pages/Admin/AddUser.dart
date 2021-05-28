@@ -234,8 +234,8 @@ class _AddUserState extends State<AddUser> {
 //获取自己的id
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.get("adminId");
-    var type =
-        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");
+    /*var type =
+        await Dio().post("http://47.110.150.159:8080/gettype?id=$adminId");*/
     var rel1 = await Dio()
         .post("http://47.110.150.159:8080/getMInformation?id=$adminId");
     Map n = rel1.data;
@@ -244,7 +244,7 @@ class _AddUserState extends State<AddUser> {
       "uPower": right,
       "name": name,
       "password": password,
-      "type": type.data,
+      "type": n['mType'],
       "creator": adminId,
       "authority": job,
       "who": "member",

@@ -186,7 +186,15 @@ class _PreEditState extends State<PreEdit> {
                 );
               }));*/
               },
-            )
+            ),
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => route == null,
+                  );
+                },
+                icon: Icon(Icons.account_balance)),
           ],
         ),
         body: //RichEdit(controller),

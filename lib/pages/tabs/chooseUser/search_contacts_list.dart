@@ -7,8 +7,10 @@ import 'package:weitong/pages/tabs/chooseUser/contacts_list_page.dart';
 class SearchContactList extends SearchDelegate<String> {
   // 搜索条右侧的按钮执行方法，我们在这里方法里放入一个clear图标。 当点击图片时，清空搜索的内容。
   List<Map> users;
-  SearchContactList(List<Map> users) {
+  // String searchFiledLabel = "查询";
+  SearchContactList(List<Map> users) : super(searchFieldLabel: "查询") {
     this.users = users;
+    // this.searchFieldLabel = "查询";
   }
 
   @override

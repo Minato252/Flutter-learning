@@ -24,7 +24,7 @@ import 'package:weitong/pages/Admin/UsersList.dart';
 class SearchBarDelegate extends SearchDelegate<String> {
   // 搜索条右侧的按钮执行方法，我们在这里方法里放入一个clear图标。 当点击图片时，清空搜索的内容。
   List<Map> users;
-  SearchBarDelegate(List<Map> users) {
+  SearchBarDelegate(List<Map> users) : super(searchFieldLabel: "查询") {
     this.users = users;
   }
 

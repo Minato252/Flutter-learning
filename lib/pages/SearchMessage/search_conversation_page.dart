@@ -870,6 +870,15 @@ class _SearchConversationPageState extends State<SearchConversationPage>
                     //fontWeight: FontWeight.w400,
                     color: Colors.white),
               )),*/
+
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/',
+                  (route) => route == null,
+                );
+              },
+              icon: Icon(Icons.account_balance)),
         ]),
         body: Container(
           child: Stack(
