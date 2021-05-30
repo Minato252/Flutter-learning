@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/style.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/Input.dart';
 import 'package:weitong/widget/JdButton.dart';
@@ -64,22 +65,34 @@ class _TagState extends State<TagChipDemo> {
   _getTag() async {
     // print("***********************${arguments['identify']}*******************");
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String adminid;
     String id;
     if (arguments['identify'] == "admin") {
-      id = prefs.get("adminId");
+      adminid = prefs.get("adminId");
+      var rel = await Dio()
+          .post("http://47.110.150.159:8080/selectWord?id=${adminid}");
+      List<String> s = rel.data.toString().split(',');
+      for (int i = 0; i < s.length; i++) {
+        if (!_tags.contains(s[i])) {
+          _tags.add(s[i]);
+        }
+      }
     } else {
+      //用户
       id = prefs.get("id");
-    }
-
-    var rel =
-        await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
-    List<String> s = rel.data.toString().split(',');
-
-    for (int i = 0; i < s.length; i++) {
-      if (!_tags.contains(s[i])) {
-        _tags.add(s[i]);
+      var rel =
+          await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
+      // List<String> s = rel.data.toString().split(',');
+      for (int i = 0; i < rel.data.length; i++) {
+        if (!_tags.contains(rel.data[i])) {
+          _tags.add(rel.data[i]);
+        }
       }
     }
+
+    // var rel =
+    //     await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
+
     setState(() {});
   }
 

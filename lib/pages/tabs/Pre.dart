@@ -20,6 +20,7 @@ import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/pages/group/PretoRichEditGroup.dart';
 import 'package:weitong/pages/imageEditor/common_widget.dart';
 import 'package:weitong/pages/tabs/PretoRichEdit.dart';
+import 'package:weitong/pages/tabs/Sheltersend.dart';
 import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/DB/db_helper.dart';
 import 'package:weitong/services/IM.dart';
@@ -500,12 +501,12 @@ class _PreAndSendState extends State<PreAndSend> {
                     //         messageModel.title,
                     //         messageModel.keyWord,
                     //         messageModel.messageId)));
-                    if (messageModel.messageId == null ||
-                        messageModel.messageId == "") {
-                      sendMessageSuccess("请先发送再进行遮蔽");
+                    if (messageModel.messageId != null &&
+                        messageModel.messageId != "") {
+                      sendMessageSuccess("已经发送不能进行遮蔽发送");
                     } else {
                       Navigator.of(context).push(new MaterialPageRoute(
-                          builder: (context) => new PretoRichEditGroup(
+                          builder: (context) => new ShelterSend(
                               data,
                               messageModel.title,
                               /*, messageModel.keyWord*/

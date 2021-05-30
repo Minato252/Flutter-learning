@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
@@ -30,19 +31,53 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
   _getTag() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print("***********************${arguments['identify']}*******************");
+    String adminid;
     String id = prefs.get("id");
     if (id == '' || id == null) {
       id = prefs.get("adminId");
-    }
-    var rel =
-        await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
-    List<String> s = rel.data.toString().split(',');
-
-    for (int i = 0; i < s.length; i++) {
-      if (!_tags.contains(s[i])) {
-        _tags.add(s[i]);
+      var rel = await Dio()
+          .post("http://47.110.150.159:8080/selectWord?id=${adminid}");
+      List<String> s = rel.data.toString().split(',');
+      for (int i = 0; i < s.length; i++) {
+        if (!_tags.contains(s[i])) {
+          _tags.add(s[i]);
+        }
+      }
+    } else {
+      //用户
+      var rel =
+          await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
+      // List<String> s = rel.data.toString().split(',');
+      for (int i = 0; i < rel.data.length; i++) {
+        if (!_tags.contains(rel.data[i])) {
+          _tags.add(rel.data[i]);
+        }
       }
     }
+
+    // var rel =
+    //     await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
+    // var rel =
+    //     await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
+    // //  List<String> s = rel.data.toString().split(',');
+    // // List s = rel.data;
+
+    // for (int i = 0; i < rel.data.length; i++) {
+    //   if (!_tags.contains(rel.data[i])) {
+    //     _tags.add(rel.data[i]);
+    //   }
+    // }
+
+    // var rel =
+    //     await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
+    // // List<String> s = rel.data.toString().split(',');
+
+    // for (int i = 0; i < rel.data.length; i++) {
+    //   if (!_tags.contains(rel.data[i])) {
+    //     _tags.add(rel.data[i]);
+    //   }
+    // }
+
     setState(() {});
   }
 
