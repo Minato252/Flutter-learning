@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:weitong/pages/Admin/AddUser.dart';
+import 'package:weitong/pages/Admin/AdminSearch/admin_search_conversation_page.dart';
 
 import 'package:weitong/pages/Note/file.dart';
 import 'package:weitong/pages/SearchMessage/search_conversation_page.dart';
@@ -10,6 +11,8 @@ import 'package:weitong/pages/tabs/Message.dart';
 import 'package:weitong/pages/tabs/Setting.dart';
 import 'package:weitong/pages/tabs/conversation_page.dart';
 import 'package:weitong/pages/tags/TagChoiceChipDemo.dart';
+import 'package:weitong/pages/tags/TagChoiceChipUser.dart';
+import 'package:weitong/pages/tags/UserCompany.dart';
 import '../pages/tabs/Tabs.dart';
 import '../pages/tags/TagChipDemo.dart';
 import '../pages/tags/TagTextFieldDemo.dart';
@@ -41,6 +44,8 @@ final routes = {
       ConversationPage(arguments: arguments),
   '/searchConversation': (context, {arguments}) =>
       SearchConversationPage(arguments: arguments),
+  '/adminsearchConversation': (context, {arguments}) =>
+      AdminSearchConversationPage(arguments: arguments),
   // '/form': (context, {arguments}) => FormPage(arguments: arguments),
   // '/readMessage': (context) => ReadMessage(),
   '/category': (BuildContext context) => new CategoryPage(),
@@ -52,6 +57,8 @@ final routes = {
   '/allread': (context, {arguments}) =>
       ALLReadSearchConversationPage(arguments: arguments),
   '/fileselect': (context) => file(),
+  '/userchooseTags': (context) => TagChoiceChipUser(),
+  '/companychoose': (context) => CompanyChoiceChipUser(), //多用户选择公司
 };
 
 //固定写法

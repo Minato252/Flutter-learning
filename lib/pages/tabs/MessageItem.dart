@@ -32,7 +32,7 @@ class _MessageItemPageState extends State<MessageItemPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("消息"),
+        title: Text("信息"),
         // leading: FlatButton(
         //   onPressed: () {
         //     Navigator.pop(context);

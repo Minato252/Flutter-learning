@@ -245,7 +245,7 @@ class _MessageCreateState extends State<MessageCreate>
 
   _awaitReturnChooseTag(BuildContext context) async {
     print("open choose Tags");
-    final chosedTag = await Navigator.pushNamed(context, '/chooseTags');
+    final chosedTag = await Navigator.pushNamed(context, '/userchooseTags');
     if (chosedTag != null) {
       _curchosedTag = chosedTag;
       _updateChooseTagButton();
@@ -447,6 +447,7 @@ class _MessageCreateState extends State<MessageCreate>
               //发送消息
               targetIdList = List.from(alltargetIdList);
               await _sendMessage2(messageModel);
+              sendMessageSuccess("发送成功");
             }
           } else {
             //如果是多体系用户
@@ -463,17 +464,40 @@ class _MessageCreateState extends State<MessageCreate>
               );
             } else {
               //发送消息
-
-//首先要用muluserids和targetIdList将各个体系的人分开
+              //判断跨体系用户的标题是否唯一
+              //判断标题是否唯一
+              List typelist = [];
               for (int i = 0; i < mulUserIds.length; i++) {
                 //对于每个体系的id
-                targetIdList = List<String>.from(Set.from(mulUserIds[i])
+                List idList = List<String>.from(Set.from(mulUserIds[i])
                     .intersection(Set.from(alltargetIdList))
                     .toList());
-                if (targetIdList != null) {
-                  String subtype = await Tree.getTypeFromUsers(targetIdList);
-                  await _sendMessageMul(messageModel, subtype);
+                if (idList != null) {
+                  String type = await Tree.getTypeFromUsers(targetIdList);
+                  typelist.add(type);
                 }
+              }
+              bool multitleonly =
+                  await checkmultitleonly(messageModel.title, typelist);
+              if (!multitleonly) {
+                await DialogUtil.showAlertDiaLog(
+                  context,
+                  "标题已创建",
+                  title: "发送失败",
+                );
+              } else {
+//首先要用muluserids和targetIdList将各个体系的人分开
+                for (int i = 0; i < mulUserIds.length; i++) {
+                  //对于每个体系的id
+                  targetIdList = List<String>.from(Set.from(mulUserIds[i])
+                      .intersection(Set.from(alltargetIdList))
+                      .toList());
+                  if (targetIdList != null && targetIdList.length != 0) {
+                    String subtype = await Tree.getTypeFromUsers(targetIdList);
+                    await _sendMessageMul(messageModel, subtype);
+                  }
+                }
+                sendMessageSuccess("发送成功");
               }
             }
           }
@@ -587,7 +611,7 @@ class _MessageCreateState extends State<MessageCreate>
     // });
     // }
     print(messageId);
-    sendMessageSuccess("发送成功");
+    //sendMessageSuccess("发送成功");
   }
 
   _sendMessageMul(MessageModel messageModel, String type) async {
@@ -680,7 +704,7 @@ class _MessageCreateState extends State<MessageCreate>
     // });
     // }
     print(messageId);
-    sendMessageSuccess("发送成功");
+    // sendMessageSuccess("发送成功");
   }
 
   _sendNoteMessage() async {
@@ -753,5 +777,20 @@ class _MessageCreateState extends State<MessageCreate>
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  Future<bool> checkmultitleonly(String title, List typelist) async {
+    for (int i = 0; i < typelist.length; i++) {
+      var rel =
+          await Dio().post("http://47.110.150.159:8080/group/select", data: {
+        "groupname": title,
+        "grouptype": typelist[i],
+      });
+      List r = rel.data;
+      if (r.isNotEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 }

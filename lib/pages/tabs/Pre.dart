@@ -427,6 +427,7 @@ class _PreAndSendState extends State<PreAndSend> {
                           //发送消息
                           targetIdList = List.from(alltargetIdList);
                           await _sendMessage();
+                          // sendMessageSuccess("发送成功");
                         }
                       } else {
                         //如果是多体系用户
@@ -446,17 +447,61 @@ class _PreAndSendState extends State<PreAndSend> {
                           //发送消息
 
 //首先要用muluserids和targetIdList将各个体系的人分开
+                          //       for (int i = 0; i < mulUserIds.length; i++) {
+                          //         //对于每个体系的id
+                          //         targetIdList = List<String>.from(
+                          //             Set.from(mulUserIds[i])
+                          //                 .intersection(Set.from(alltargetIdList))
+                          //                 .toList());
+                          //         if (targetIdList != null) {
+                          //           String subtype =
+                          //               await Tree.getTypeFromUsers(targetIdList);
+                          //           await _sendMessageMul(subtype);
+                          //         }
+                          //       }
+                          //     }
+                          //   }
+                          // }
+                          //判断跨体系用户的标题是否唯一
+                          //判断标题是否唯一
+                          List typelist = [];
                           for (int i = 0; i < mulUserIds.length; i++) {
                             //对于每个体系的id
-                            targetIdList = List<String>.from(
+                            List idList = List<String>.from(
                                 Set.from(mulUserIds[i])
                                     .intersection(Set.from(alltargetIdList))
                                     .toList());
-                            if (targetIdList != null) {
-                              String subtype =
+                            if (idList != null) {
+                              String type =
                                   await Tree.getTypeFromUsers(targetIdList);
-                              await _sendMessageMul(subtype);
+                              typelist.add(type);
                             }
+                          }
+                          bool multitleonly = await checkmultitleonly(
+                              messageModel.title, typelist);
+                          if (!multitleonly) {
+                            await DialogUtil.showAlertDiaLog(
+                              context,
+                              "标题已创建",
+                              title: "发送失败",
+                            );
+                          } else {
+//首先要用muluserids和targetIdList将各个体系的人分开
+                            for (int i = 0; i < mulUserIds.length; i++) {
+                              //对于每个体系的id
+                              targetIdList = List<String>.from(
+                                  Set.from(mulUserIds[i])
+                                      .intersection(Set.from(alltargetIdList))
+                                      .toList());
+                              //if (targetIdList != null) {
+                              if (targetIdList != null &&
+                                  targetIdList.length != 0) {
+                                String subtype =
+                                    await Tree.getTypeFromUsers(targetIdList);
+                                await _sendMessageMul(subtype);
+                              }
+                            }
+                            sendMessageSuccess("发送成功");
                           }
                         }
                       }
@@ -491,8 +536,11 @@ class _PreAndSendState extends State<PreAndSend> {
               // editable
               //    ?
               FlatButtonWithIcon(
-                  label: Text("遮蔽"),
-                  icon: Icon(Icons.edit),
+                  label: Text("遮蔽", style: TextStyle(color: Colors.white)),
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onPressed: () {
                     // Navigator.of(context).push(new MaterialPageRoute(
@@ -759,7 +807,7 @@ class _PreAndSendState extends State<PreAndSend> {
     // });
     // }
     print(messageId);
-    sendMessageSuccess("发送成功");
+    // sendMessageSuccess("发送成功");
   }
 
   _sendMessage() async {
@@ -941,6 +989,22 @@ class _PreAndSendState extends State<PreAndSend> {
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  //判断跨体系用户的标题是否唯一
+  Future<bool> checkmultitleonly(String title, List typelist) async {
+    for (int i = 0; i < typelist.length; i++) {
+      var rel =
+          await Dio().post("http://47.110.150.159:8080/group/select", data: {
+        "groupname": title,
+        "grouptype": typelist[i],
+      });
+      List r = rel.data;
+      if (r.isNotEmpty) {
+        return false;
+      }
+    }
+    return true;
   }
 
 //将信息内容保存到服务器

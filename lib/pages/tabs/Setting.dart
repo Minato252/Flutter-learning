@@ -190,7 +190,7 @@ class _SettingPageState extends State<SettingPage> {
 
   _sendGroupMessage(String groupId) async {
     TextMessage txtMessage = new TextMessage();
-    txtMessage.content = "这条消息来自 Flutter群消息，不要点击";
+    txtMessage.content = "这条信息来自 Flutter群信息，不要点击";
     Message msg = await RongIMClient.sendMessage(
         RCConversationType.Group, groupId, txtMessage);
     print(msg);

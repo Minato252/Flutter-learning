@@ -236,6 +236,7 @@ class _LoginPageState extends State<LoginPage> {
     // prefs.setString("name", userInfo["name"]);
     prefs.setString("name", rel.data["uName"]);
     print(prefs.getString("name"));
+    // print(prefs.getString("adminId"));
 
     // prefs.setString("phone", _assount.text);
     // prefs.setString("password", _password.text);

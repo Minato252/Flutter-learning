@@ -28,7 +28,6 @@ import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 import 'package:weitong/services/voiceprovider.dart';
 import 'package:provider/provider.dart';
-import 'package:weitong/widget/dialog_util.dart';
 import 'package:weitong/widget/toast.dart';
 
 import 'package:weitong/pages/tabs/SimpleRichEditController.dart';
@@ -38,9 +37,6 @@ import 'package:weitong/pages/tabs/chooseUser/contacts_list_page.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:synchronized/synchronized.dart' as prefix;
-import 'package:weitong/pages/group/PretoRichEditGroup.dart';
-
-import 'GroupshelterCreateMessage.dart';
 
 // import 'package:uuid/uuid.dart';
 // import 'package:uuid/uuid_util.dart';
@@ -59,7 +55,7 @@ Scrollbar getPre(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          /* Row(
+          /*Row(
             children: [
               // Icon(Icons.title),
               Expanded(
@@ -76,7 +72,7 @@ Scrollbar getPre(
                             ),
                           ),
                         ),
-                        Chip(label: Text(messageModel.keyWord)),
+                        //  Chip(label: Text(messageModel.keyWord)),
                       ],
                     ),
                     Align(
@@ -125,7 +121,7 @@ Scrollbar getPre(
           //     // '#12': Style(width: 400, height: 400),
           //   },
           // ),
-          Divider(),
+          isSearchResult ? Divider() : Text(""),
           // Container(
           //   child: messageModel.htmlCode ==
           //           """<p><span style="font-size:15px;"></span></p>"""
@@ -153,7 +149,7 @@ Scrollbar getPre(
                   ),
           ),
           // Divider(),
-          /* messageModel.modify
+          /*    messageModel.modify
               ? SafeArea(
                   child: SizedBox(
                     height: ScreenAdapter.height(500),
@@ -182,39 +178,34 @@ Scrollbar getPre(
 _sendMessage(SimpleRichEditController controller) async {}
 //这个类在初始化时传入html代码就可以生成对应的页面了,还附带了确认发送的按钮
 
-class GroupPre extends StatefulWidget {
+class AdminSearchMessagePrePage extends StatefulWidget {
   MessageModel messageModel;
   String content;
   bool editable;
   List<RichEditData> data;
-  String targetGroupId;
   double myFontSize = 15.0;
   bool isSearchResult = false;
-
-  GroupPre({
-    MessageModel messageModel,
-    bool editable = false,
-    bool isSearchResult,
-    List<RichEditData> data,
-    String targetGroupId,
-  }) {
+  AdminSearchMessagePrePage(
+      {MessageModel messageModel,
+      bool editable = false,
+      bool isSearchResult,
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
     this.editable = editable;
     this.data = data;
     this.isSearchResult = isSearchResult;
-    this.targetGroupId = targetGroupId;
   }
   @override
-  _GroupPreState createState() => _GroupPreState(
-      messageModel: messageModel,
-      editable: editable,
-      data: data,
-      isSearchResult: isSearchResult,
-      targetGroupId: targetGroupId);
+  _AdminSearchMessagePrePageState createState() =>
+      _AdminSearchMessagePrePageState(
+          messageModel: messageModel,
+          editable: editable,
+          data: data,
+          isSearchResult: isSearchResult);
 }
 
-class _GroupPreState extends State<GroupPre> {
+class _AdminSearchMessagePrePageState extends State<AdminSearchMessagePrePage> {
   MessageModel messageModel;
   String content;
   String targetId = "456";
@@ -222,9 +213,7 @@ class _GroupPreState extends State<GroupPre> {
   double myFontSize = 15.0;
 
   bool editable;
-  String targetGroupId;
   List<RichEditData> data;
-
   // List targetIdList;
   List<String> targetIdList = [];
   List<String> noteIdList = []; //要发短信的名单id
@@ -233,12 +222,11 @@ class _GroupPreState extends State<GroupPre> {
   SimpleRichEditController controller;
 
   bool isSearchResult = false;
-  _GroupPreState(
+  _AdminSearchMessagePrePageState(
       {MessageModel messageModel,
       bool editable = false,
       bool isSearchResult,
-      List<RichEditData> data,
-      String targetGroupId}) {
+      List<RichEditData> data}) {
     this.messageModel = messageModel;
     this.content = messageModel.toJsonString();
 
@@ -247,7 +235,6 @@ class _GroupPreState extends State<GroupPre> {
     this.editable = editable;
     this.data = data;
     this.controller = SimpleRichEditController();
-    this.targetGroupId = targetGroupId;
   }
   enlargeFontSize() {
     if (myFontSize <= 50) {
@@ -263,366 +250,6 @@ class _GroupPreState extends State<GroupPre> {
     }
   }
 
-  _sendGroupMessage(String groupId) async {
-    List rel = await GroupMessageService.searchGruopMember(groupId);
-    List<String> groupMember = [];
-    for (int i = 0; i < rel.length; i++) {
-      groupMember.add(rel[i]["id"]);
-    }
-    print(groupMember);
-    final ps = Provider.of<ProviderServices>(context);
-    Map userInfo = ps.userInfo;
-
-    String id = userInfo["id"];
-    // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
-    //===*更改，上面的获取树改为===
-    var isSingle = Tree.isInSingleCom(userInfo["id"]);
-
-    String jsonTree;
-    String subType;
-    if (isSingle == true) {
-      jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
-      var r = await Dio()
-          .post("http://47.110.150.159:8080/gettype?id=$id"); //获取用户所在的体系
-      subType = r.data;
-    } else {
-      String singleUserId;
-      for (int i = 0; i < groupMember.length; i++) {
-        var temp = await Tree.isInSingleCom(groupMember[i]);
-        if (temp == true) {
-          singleUserId = groupMember[i];
-          break;
-        }
-      }
-      jsonTree = await Tree.getTreeFromSer(singleUserId, false, context);
-      var r = await Dio().post(
-          "http://47.110.150.159:8080/gettype?id=${singleUserId}"); //获取用户所在的体系
-      subType = r.data;
-    }
-    //===========
-
-    var parsedJson = json.decode(jsonTree);
-    List users = []; //树的总人数
-    List users2 = []; //群成员
-    Tree.getAllPeople(parsedJson, users);
-    for (int i = 0; i < users.length; i++) {
-      if (groupMember.contains(users[i]["id"])) {
-        users2.add(users[i]["id"]);
-      }
-    }
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // for (int i = 0; i < users.length; i++) {
-    //   if (users[i]["id"] == id) {
-    //     users2.removeAt(i);
-    //   }
-    // }
-
-    //=========*更改（添加），给即将传进去的users加上括号====================
-    // 处理users列表，消除重复的，且将多体系的人名字后添加“（多体系用户），并且去掉自己”
-    Set userIds = {};
-    for (int i = 0; i < users.length; i++) {
-      if (userIds.contains(users[i]["id"])) {
-        //消除重复
-        users.removeAt(i);
-        i--;
-      } else {
-        userIds.add(users[i]["id"]);
-        var isSingle = await Tree.isInSingleCom(users[i]["id"]); //多体系=》名字后面加
-        if (isSingle != true) {
-          users[i]["name"] += "(多体系用户)";
-        }
-      }
-    }
-
-    // String id = userInfo["id"];
-    for (int i = 0; i < users.length; i++) {
-      if (users[i]["id"] == id) {
-        users.removeAt(i);
-      }
-    }
-
-    //=============================
-    var result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ContactListPage(
-              //users2,
-              //这里改成拉出该体系的所有人
-              users,
-              groupid: groupId,
-              grouptitle: messageModel.title,
-            )));
-    if (result == null) {
-      return;
-    }
-    List targetAllList = result;
-    targetIdList = [];
-    if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-      targetAllList[0].forEach((element) {
-        targetIdList.add(element["id"]);
-      });
-
-      //=========*更改（添加），对users2判断，然后对targetIdList判断====
-      List oldUsers = List.from(users2); //users变为老群成员
-      if (!oldUsers.contains(id)) {
-        oldUsers.add(id);
-      }
-      var tempOld = await Tree.getTypeFromUsers(oldUsers); //老群（有自己）
-      var tempNew = await Tree.getTypeFromUsers(targetIdList); //发送列表（没有自己）
-      // if (tempNew is List) {
-      //   if (tempOld is List) {
-      //     await DialogUtil.showAlertDiaLog(
-      //       context,
-      //       "此群已包含多体系用户，无法再加入新的多体系用户。",
-      //       title: "发送失败",
-      //     );
-      //     return;
-      //   } else if (tempNew.length > 1) {
-      //     await DialogUtil.showAlertDiaLog(
-      //       context,
-      //       "最多允许选择1个多体系用户。",
-      //       title: "发送失败",
-      //     );
-      //     return;
-      //   }
-      //   //如果已经有了多体系用户，targetIdList中就
-      // }
-      //================================
-      if (!targetIdList.contains(id)) {
-        targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
-      }
-      // await _sendMessage();
-      for (int i = 0; i < targetIdList.length; i++) {
-        if (!users2.contains(targetIdList[i])) {
-          await GroupMessageService.joinGroup(
-              groupId, messageModel.title, targetIdList[i]);
-        }
-      }
-      bool isDirctionMessage = false;
-      for (int i = 0; i < groupMember.length; i++) {
-        if (!targetIdList.contains(groupMember[i])) {
-          isDirctionMessage = true;
-        }
-      }
-      // var uuid = Uuid();
-      // var messageId = uuid.v1();
-      // messageModel.messageId = messageId;
-      messageModel.messageId = groupId;
-      messageModel.fromuserid = id;
-      content = messageModel.toJsonString();
-      // String useid = prefs.get("id");
-
-      ///=======这里注释掉了==================
-      // var type = await Dio()
-      //     .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
-      ///==============================
-
-      //发送给服务器
-      var rel1 = await Dio()
-          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-        "keywords": "null",
-        "messages": messageModel.htmlCode,
-        "touserid": messageModel.messageId,
-        "fromuserid": id,
-        "title": messageModel.title,
-        "hadLook": userInfo["name"] +
-            "(" +
-            new DateTime.now().toString().split('.')[0] +
-            ")",
-        "MesId": messageModel.messageId,
-        "Flag": "普通", //这里增加了flag
-
-        // "type": type.data,
-        //===========这里更改了========
-        "type": subType,
-        //==========================
-      });
-
-      if (isDirctionMessage) {
-        //未全选群成员，即对部分人隐藏内容
-        await GroupMessageService.sendDirectionMessage(
-            targetIdList, groupId, content);
-      } else {
-        //全选群成员，发送群消息
-        await GroupMessageService.sendGroupMessage(groupId, content);
-      }
-    }
-
-    // print(messageModel.title);
-
-    // //发送给服务器
-    // var rel1 = await Dio()
-    //     .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-    //   "keywords": "null",
-    //   "messages": messageModel.htmlCode,
-    //   "touserid": messageModel.messageId,
-    //   "fromuserid": prefs.get("id"),
-    //   "title": messageModel.title,
-    //   "hadLook": prefs.get("name") +
-    //       "(" +
-    //       new DateTime.now().toString().split('.')[0] +
-    //       ")",
-    //   "MesId": messageModel.messageId,
-    //   "Flag": "普通", //这里增加了flag
-    // });
-
-    if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-      targetAllList[1].forEach((element) {
-        noteIdList.add(element["id"]);
-        noteNameList.add(element["name"]);
-      });
-      _sendNoteMessage();
-    }
-    sendMessageSuccess("发送成功");
-    // String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
-    // var parsedJson = json.decode(jsonTree);
-    // List users = []; //树的总人数
-    // List users2 = []; //群成员
-    // Tree.getAllPeople(parsedJson, users);
-    // for (int i = 0; i < users.length; i++) {
-    //   if (groupMember.contains(users[i]["id"])) {
-    //     users2.add(users[i]["id"]);
-    //   }
-    // }
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String id = prefs.getString("id");
-    // // for (int i = 0; i < users.length; i++) {
-    // //   if (users[i]["id"] == id) {
-    // //     users2.removeAt(i);
-    // //   }
-    // // }
-    // print(groupId);
-    // print(messageModel.title);
-    // // List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-    // var result = await Navigator.of(context).push(MaterialPageRoute(
-    //     builder: (BuildContext context) => ContactListPage(
-    //           //users2,
-    //           //这里改成拉出该体系的所有人
-    //           users,
-    //           groupid: groupId,
-    //           grouptitle: messageModel.title,
-    //         )));
-    // if (result == null) {
-    //   return;
-    // }
-    // List targetAllList = result;
-    // targetIdList = [];
-    // if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-    //   targetAllList[0].forEach((element) {
-    //     targetIdList.add(element["id"]);
-    //   });
-    //   if (!targetIdList.contains(id)) {
-    //     targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
-    //   }
-    // await _sendMessage();
-    //   for (int i = 0; i < targetIdList.length; i++) {
-    //     if (!users2.contains(targetIdList[i])) {
-    //       await GroupMessageService.joinGroup(
-    //           groupId, messageModel.title, targetIdList[i]);
-    //     }
-    //   }
-    //   // Tree.getAllPeople(parsedJson, users);
-    //   // for (int i = 0; i < users.length; i++) {
-    //   //   if (groupMember.contains(users[i]["id"])) {
-    //   //     users2.add(users[i]);
-    //   //   }
-    //   // }
-    //   // SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   // String id = prefs.getString("id");
-    //   // // for (int i = 0; i < users.length; i++) {
-    //   // //   if (users[i]["id"] == id) {
-    //   // //     users2.removeAt(i);
-    //   // //   }
-    //   // // }
-    //   // print(groupId);
-    //   // print(messageModel.title);
-    //   // List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
-    //   //     builder: (BuildContext context) => ContactListPage(
-    //   //           users2,
-    //   //           groupid: groupId,
-    //   //           grouptitle: messageModel.title,
-    //   //         )));
-
-    //   // targetIdList = [];
-    //   // if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
-    //   //   targetAllList[0].forEach((element) {
-    //   //     targetIdList.add(element["id"]);
-    //   //   });
-    //   //   if (!targetIdList.contains(id)) {
-    //   //     targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
-    //   //   }
-    //   // await _sendMessage();
-    //   bool isDirctionMessage = false;
-    //   for (int i = 0; i < groupMember.length; i++) {
-    //     if (!targetIdList.contains(groupMember[i])) {
-    //       isDirctionMessage = true;
-    //     }
-    //   }
-    //   // var uuid = Uuid();
-    //   // var messageId = uuid.v1();
-    //   // messageModel.messageId = messageId;
-    //   messageModel.messageId = groupId;
-    //   messageModel.fromuserid = prefs.getString("id");
-    //   content = messageModel.toJsonString();
-
-    //   String useid = prefs.get("id");
-    //   var type = await Dio()
-    //       .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
-
-    //   //发送给服务器
-    //   var rel1 = await Dio()
-    //       .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-    //     "keywords": "null",
-    //     "messages": messageModel.htmlCode,
-    //     "touserid": messageModel.messageId,
-    //     "fromuserid": prefs.get("id"),
-    //     "title": messageModel.title,
-    //     "hadLook": prefs.get("name") +
-    //         "(" +
-    //         new DateTime.now().toString().split('.')[0] +
-    //         ")",
-    //     "MesId": messageModel.messageId,
-    //     "Flag": "普通", //这里增加了flag
-    //     "type": type.data,
-    //   });
-
-    //   if (isDirctionMessage) {
-    //     //未全选群成员，即对部分人隐藏内容
-    //     await GroupMessageService.sendDirectionMessage(
-    //         targetIdList, groupId, content);
-    //   } else {
-    //     //全选群成员，发送群消息
-    //     await GroupMessageService.sendGroupMessage(groupId, content);
-    //   }
-    // }
-
-    // // print(messageModel.title);
-
-    // // //发送给服务器
-    // // var rel1 = await Dio()
-    // //     .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-    // //   "keywords": "null",
-    // //   "messages": messageModel.htmlCode,
-    // //   "touserid": messageModel.messageId,
-    // //   "fromuserid": prefs.get("id"),
-    // //   "title": messageModel.title,
-    // //   "hadLook": prefs.get("name") +
-    // //       "(" +
-    // //       new DateTime.now().toString().split('.')[0] +
-    // //       ")",
-    // //   "MesId": messageModel.messageId,
-    // //   "Flag": "普通", //这里增加了flag
-    // // });
-
-    // if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
-    //   targetAllList[1].forEach((element) {
-    //     noteIdList.add(element["id"]);
-    //     noteNameList.add(element["name"]);
-    //   });
-    //   _sendNoteMessage();
-    // }
-    // sendMessageSuccess("发送成功");
-  }
-
   @override
   Widget build(BuildContext context) {
     notehtmlCode = messageModel.htmlCode;
@@ -631,50 +258,12 @@ class _GroupPreState extends State<GroupPre> {
     content = messageModel.toJsonString();
     return Scaffold(
       appBar: AppBar(
-        //title: Text("预览页面"),
-        //title: Text("内容页面"),
+        title: Text("内容页面"),
         actions: [
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(
-                width: ScreenAdapter.width(90),
-                child: FlatButton(
-                    onPressed: () {
-                      //print(widget.targetGroupId);
-                      Navigator.of(context).push(new MaterialPageRoute(
-                          builder: (context) => new PretoRichEditGroup(
-                              data,
-                              messageModel.title,
-                              /*, messageModel.keyWord*/
-                              messageModel.messageId)));
-                    },
-                    child: Text(
-                      "遮蔽",
-                      style: TextStyle(
-                          fontSize: ScreenAdapter.size(35),
-                          // fontSize: 15.0,
-                          //fontWeight: FontWeight.w400,
-                          color: Colors.white),
-                    )),
-              ),
-              SizedBox(
-                width: ScreenAdapter.width(90),
-                child: FlatButton(
-                    onPressed: () {
-                      _sendGroupMessage(targetGroupId);
-                    },
-                    child: Text(
-                      "发送",
-                      style: TextStyle(
-                          //fontSize: 15.0,
-                          fontSize: ScreenAdapter.size(35),
-                          //fontWeight: FontWeight.w400,
-                          color: Colors.white),
-                    )),
-              ),
-
-              /*  FlatButtonWithIcon(
+              /* FlatButtonWithIcon(
                 label: Text(
                   "发送",
                 ),
@@ -683,11 +272,8 @@ class _GroupPreState extends State<GroupPre> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onPressed: () async {
-                  //print("1111111111111111111111111");
-                  //print(messageModel.modify);
-                  //把群id传到了这里，然后根据id获取群成员。
-                  print(targetGroupId);
-                  _sendGroupMessage(targetGroupId);
+                  print(messageModel.messageId);
+                  _sendGroupMessage(messageModel.messageId);
                   // if (targetIdList == null) {
                   //   sendMessageSuccess("请选择您要发送的联系人！");
                   // } else {
@@ -696,8 +282,8 @@ class _GroupPreState extends State<GroupPre> {
                   // }
                   //加载联系人列表
 
-                  /*await _sendGroupMessage();
-                  final ps = Provider.of<ProviderServices>(context);
+                  // await _sendGroupMessage();
+                  /* final ps = Provider.of<ProviderServices>(context);
                   Map userInfo = ps.userInfo;
                   String jsonTree =
                       await Tree.getTreeFormSer(userInfo["id"], false, context);
@@ -734,53 +320,16 @@ class _GroupPreState extends State<GroupPre> {
                   }*/
                 },
               ),*/
-
-              // FlatButtonWithIcon(
-              //  label: Text("保存"),
-              //  icon: Icon(
-              //   Icons.save,
-              //  ),
-              //  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              SizedBox(
-                width: ScreenAdapter.width(90),
-                child: FlatButton(
-                  child: Text(
-                    "编辑",
-                    style: TextStyle(
-                        fontSize: ScreenAdapter.size(35),
-                        // fontSize: 15.0,
-                        //fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  ),
-                  onPressed: () {
-                    //Navigator.pop(context);
-                    Navigator.of(context).push(new MaterialPageRoute(
-                        builder: (context) => new PretoRichEdit(
-                            data,
-                            messageModel.title,
-                            messageModel.keyWord,
-                            targetGroupId)));
-                  },
+              /*FlatButtonWithIcon(
+                label: Text("保存"),
+                icon: Icon(
+                  Icons.save,
                 ),
-              ),
-              SizedBox(
-                width: ScreenAdapter.width(90),
-                child: FlatButton(
-                  child: Text(
-                    "保存",
-                    style: TextStyle(
-                        fontSize: ScreenAdapter.size(35),
-                        // fontSize: 15.0,
-                        //fontWeight: FontWeight.w400,
-                        color: Colors.white),
-                  ),
-                  onPressed: () {
-                    print(targetGroupId);
-                    postRequestFunction(notehtmlCode, targetGroupId);
-                  },
-                ),
-              ),
-
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                onPressed: () {
+                  postRequestFunction(notehtmlCode);
+                },
+              ),*/
               /* editable
                   ? FlatButtonWithIcon(
                       label: Text("遮蔽"),
@@ -788,31 +337,25 @@ class _GroupPreState extends State<GroupPre> {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onPressed: () {
                         Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (context) => new PretoRichEditGroup(
-                                data,
-                                messageModel.title,
-                                /*, messageModel.keyWord*/
-                                messageModel.messageId)));
+                            builder: (context) => new PretoRichEdit(data,
+                                messageModel.title, messageModel.keyWord)));
                       })
                   : SizedBox(
                       width: 0,
                       height: 0,
                     ),*/
               Container(
-                // height: 150.0,
-                height: ScreenAdapter.height(100),
+                height: 150.0,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: EdgeInsets.all(0),
                       padding: EdgeInsets.all(0),
-                      // height: 25,
-                      height: ScreenAdapter.height(30),
+                      height: 25,
                       child: IconButton(
                         tooltip: "字体放大",
-                        // iconSize: 24.0,
-                        iconSize: ScreenAdapter.size(35),
+                        iconSize: 24.0,
                         padding: EdgeInsets.all(0),
                         icon: Icon(
                           Icons.add,
@@ -837,12 +380,10 @@ class _GroupPreState extends State<GroupPre> {
                     Container(
                       margin: EdgeInsets.all(0),
                       padding: EdgeInsets.all(0),
-                      height: ScreenAdapter.height(50),
-                      // height: 25,
+                      height: 25,
                       child: IconButton(
                         tooltip: "字体放大",
-                        iconSize: ScreenAdapter.size(35),
-                        // iconSize: 24.0,
+                        iconSize: 24.0,
 
                         padding: EdgeInsets.all(0),
                         icon: Icon(
@@ -857,20 +398,20 @@ class _GroupPreState extends State<GroupPre> {
                     ),
                   ],
                 ),
-              ),
-              SizedBox(
-                width: ScreenAdapter.width(90),
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/',
-                        (route) => route == null,
-                      );
-                    },
-                    icon: Icon(Icons.account_balance)),
-              ),
+              )
             ],
-          )
+          ),
+          SizedBox(
+            width: ScreenAdapter.width(140),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/',
+                    (route) => route == null,
+                  );
+                },
+                icon: Icon(Icons.account_balance)),
+          ),
         ],
       ),
       body: Column(
@@ -962,6 +503,128 @@ class _GroupPreState extends State<GroupPre> {
     return content;
   }
 
+  _sendGroupMessage(String groupId) async {
+    String htmlCode2;
+    List rel = await GroupMessageService.searchGruopMember(groupId);
+    List<String> groupMember = [];
+    for (int i = 0; i < rel.length; i++) {
+      groupMember.add(rel[i]["id"]);
+    }
+    print(groupMember);
+    final ps = Provider.of<ProviderServices>(context);
+    Map userInfo = ps.userInfo;
+    String jsonTree = await Tree.getTreeFromSer(userInfo["id"], false, context);
+    var parsedJson = json.decode(jsonTree);
+    List users = []; //树的总人数
+    List users2 = []; //群成员
+    Tree.getAllPeople(parsedJson, users);
+    for (int i = 0; i < users.length; i++) {
+      if (groupMember.contains(users[i]["id"])) {
+        users2.add(users[i]);
+      }
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString("id");
+    // for (int i = 0; i < users.length; i++) {
+    //   if (users[i]["id"] == id) {
+    //     users2.removeAt(i);
+    //   }
+    // }
+    // List targetAllList = await Navigator.of(context).push(MaterialPageRoute(
+    var result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => ContactListPage(users2)));
+    if (result == null) {
+      return;
+    }
+    List targetAllList = result;
+    targetIdList = [];
+    if (targetAllList[0] != null && !targetAllList[0].isEmpty) {
+      targetAllList[0].forEach((element) {
+        targetIdList.add(element["id"]);
+      });
+      if (!targetIdList.contains(id)) {
+        targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
+      }
+      // await _sendMessage();
+      bool isDirctionMessage = false;
+      for (int i = 0; i < groupMember.length; i++) {
+        if (!targetIdList.contains(groupMember[i])) {
+          isDirctionMessage = true;
+        }
+      }
+      // var uuid = Uuid();
+      // var messageId = uuid.v1();
+      // messageModel.messageId = messageId;
+
+      messageModel.messageId = groupId;
+      messageModel.fromuserid = prefs.getString("id");
+      var htmlCode = await controller.generateHtmlUrl();
+      DateTime now = new DateTime.now();
+      //发送到服务器的
+      String cure =
+          "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+      htmlCode2 = messageModel.htmlCode + cure + htmlCode;
+      messageModel.htmlCode = messageModel.htmlCode + htmlCode;
+
+      content = messageModel.toJsonString();
+      String useid = prefs.get("id");
+      var type = await Dio()
+          .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+
+      var rel1 = await Dio()
+          .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+        "keywords": "null",
+        "messages": htmlCode2,
+        "touserid": messageModel.messageId,
+        "fromuserid": prefs.get("id"),
+        "title": messageModel.title,
+        "hadLook": prefs.get("name") +
+            "(" +
+            new DateTime.now().toString().split('.')[0] +
+            ")",
+        "MesId": messageModel.messageId,
+        "type": type.data,
+      });
+
+      if (isDirctionMessage) {
+        //未全选群成员，即对部分人隐藏内容
+        await GroupMessageService.sendDirectionMessage(
+            targetIdList, groupId, content);
+      } else {
+        //全选群成员，发送群消息
+        await GroupMessageService.sendGroupMessage(groupId, content);
+      }
+    }
+
+    // print(messageModel.title);
+
+    /* //发送给服务器
+    //print(htmlCode2);
+    //print("1111111111111111111");
+    var rel1 = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": "null",
+      "messages": htmlCode2,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId
+    });*/
+
+    if (targetAllList[1] != null && !targetAllList[1].isEmpty) {
+      targetAllList[1].forEach((element) {
+        noteIdList.add(element["id"]);
+        noteNameList.add(element["name"]);
+      });
+      _sendNoteMessage();
+    }
+    sendMessageSuccess("发送成功");
+  }
+
   _sendMessage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var db = DatabaseHelper();
@@ -972,87 +635,111 @@ class _GroupPreState extends State<GroupPre> {
     var uuid = Uuid();
     var messageId = uuid.v1();
     messageModel.messageId = messageId;
+    messageModel.fromuserid = prefs.getString("id");
     content = messageModel.toJsonString();
-    if (targetIdList.length == 1) {
-      String htmlCode2;
-      if (messageModel.modify) {
-        var htmlCode = await controller.generateHtmlUrl();
-        DateTime now = new DateTime.now();
-        String cure =
-            "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
-        // content = content + cure + htmlCode;
-        htmlCode2 = messageModel.htmlCode + cure + htmlCode;
-        messageModel.htmlCode = messageModel.htmlCode + htmlCode;
-        content = messageModel.toJsonString();
-      } else {
-        htmlCode2 = messageModel.htmlCode;
-      }
 
-      content = messageModel.toJsonString();
-      for (String item in targetIdList) {
-        Message message = await IM.sendMessage(content, item);
-        // IM.sendMessage(content, item).whenComplete(() => null)
-        String useid = prefs.get("id");
-        var type = await Dio()
-            .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
+    // if (targetIdList.length == 1) {
+    //   String htmlCode2;
+    //   if (messageModel.modify) {
+    //     var htmlCode = await controller.generateHtmlUrl();
+    //     DateTime now = new DateTime.now();
+    //     String cure =
+    //         "<p><span style=\"font-size:15px;color: red\">以下是由${prefs.get("id")}修改，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
+    //     // content = content + cure + htmlCode;
+    //     htmlCode2 = messageModel.htmlCode + cure + htmlCode;
+    //     messageModel.htmlCode = messageModel.htmlCode + htmlCode;
+    //     content = messageModel.toJsonString();
+    //   } else {
+    //     htmlCode2 = messageModel.htmlCode;
+    //   }
 
-        print("*************该消息的id是" +
-            messageModel.messageId +
-            "**********************");
-        var rel = await Dio()
-            .post("http://47.110.150.159:8080/messages/insertMessage", data: {
-          "keywords": messageModel.keyWord,
-          "messages": htmlCode2,
-          "touserid": item,
-          "fromuserid": prefs.get("id"),
-          "title": messageModel.title,
-          "hadLook": prefs.get("name") +
-              "(" +
-              new DateTime.now().toString().split('.')[0] +
-              ")",
-          "MesId": messageModel.messageId,
-          "type": type.data,
-        });
-      }
-    } else if (targetIdList.length > 1) {
-      // await GroupMessageService.creatGruop(messageId, messageModel.title,
-      //     targetIdList.join(',').toString(), content);
-      print(targetIdList.join(',').toString());
-      print("title:" + messageModel.title);
-      await GroupMessageService.creatGruop(messageId, messageModel.title,
-          targetIdList.join(',').toString(), content);
-      // print("*********");
-      // Future.delayed(Duration(seconds: 3), () {
-      // GroupMessageService.sendGroupMessage("11", content);
-      // });
-      // var rel = await GroupMessageService.creatGruop(
-      //     messageId, messageModel.title, targetIdList.join(',').toString());
-      // print("****建群*****");
-      // print(rel["code"]);
+    //   content = messageModel.toJsonString();
+    //   for (String item in targetIdList) {
+    //     Message message = await IM.sendMessage(content, item);
+    //     // IM.sendMessage(content, item).whenComplete(() => null)
 
-      // while (rel["code"] != 200) {
-      //   print("*********");
-      // }
-      // print("****发信息*****");
-      // GroupMessageService.sendGroupMessage(messageId, content);
-      // print("最后了");
+    //     print("*************该消息的id是" +
+    //         messageModel.messageId +
+    //         "**********************");
+    //     var rel = await Dio()
+    //         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+    //       "keywords": messageModel.keyWord,
+    //       "messages": htmlCode2,
+    //       "touserid": item,
+    //       "fromuserid": prefs.get("id"),
+    //       "title": messageModel.title,
+    //       "hadLook": prefs.get("name") +
+    //           "(" +
+    //           new DateTime.now().toString().split('.')[0] +
+    //           ")",
+    //       "MesId": messageModel.messageId
+    //     });
+    //   }
+    // } else if (targetIdList.length > 1) {
+    // await GroupMessageService.creatGruop(messageId, messageModel.title,
+    //     targetIdList.join(',').toString(), content);
+    print(targetIdList.join(',').toString());
+    print("title:" + messageModel.title);
+    print("**************在创建群之前的messageId是：" + messageModel.messageId);
+    await GroupMessageService.creatGruop(messageModel.messageId,
+        messageModel.title, targetIdList.join(',').toString(), content);
+    String useid = prefs.get("id");
+    var type = await Dio()
+        .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
 
-      // var lock = prefix.Lock();
-      // bool _bCounting = false;
-      // lock.synchronized(() async {
-      //   // _bCounting = !_bCounting;
+    //发给服务器
+    var rel = await Dio()
+        .post("http://47.110.150.159:8080/messages/insertMessage", data: {
+      "keywords": messageModel.keyWord,
+      "messages": messageModel.htmlCode,
+      "touserid": messageModel.messageId,
+      "fromuserid": prefs.get("id"),
+      "title": messageModel.title,
+      "hadLook": prefs.get("name") +
+          "(" +
+          new DateTime.now().toString().split('.')[0] +
+          ")",
+      "MesId": messageModel.messageId,
+      "Flag": "普通", //这里增加了flag
+      "type": type.data,
+    });
+    //print("1111111111111111111111");
+    //  print(rel);
 
-      //   GroupMessageService.creatGruop(
-      //       messageId, messageModel.title, targetIdList.join(',').toString());
-      //   print("****建群*****");
-      // });
-      // lock.synchronized(() async {
-      //   // _bCounting = !_bCounting;
-      //   GroupMessageService.sendGroupMessage(messageId, content);
-      //   print("****发信息*****");
-      // });
-    }
+    //print("222222222222222222222222");
+    //print(rel1);
+    // print("*********");
+    // Future.delayed(Duration(seconds: 3), () {
+    // GroupMessageService.sendGroupMessage("11", content);
+    // });
+    // var rel = await GroupMessageService.creatGruop(
+    //     messageId, messageModel.title, targetIdList.join(',').toString());
+    // print("****建群*****");
+    // print(rel["code"]);
 
+    // while (rel["code"] != 200) {
+    //   print("*********");
+    // }
+    // print("****发信息*****");
+    // GroupMessageService.sendGroupMessage(messageId, content);
+    // print("最后了");
+
+    // var lock = prefix.Lock();
+    // bool _bCounting = false;
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
+
+    //   GroupMessageService.creatGruop(
+    //       messageId, messageModel.title, targetIdList.join(',').toString());
+    //   print("****建群*****");
+    // });
+    // lock.synchronized(() async {
+    //   // _bCounting = !_bCounting;
+    //   GroupMessageService.sendGroupMessage(messageId, content);
+    //   print("****发信息*****");
+    // });
+    // }
+    print(messageId);
     sendMessageSuccess("发送成功");
   }
 
@@ -1100,8 +787,9 @@ class _GroupPreState extends State<GroupPre> {
   }
 
 //将信息内容保存到服务器
-  void postRequestFunction(String htmlCode, String targetGroupId) async {
-    print(targetGroupId);
+  void postRequestFunction(String htmlCode) async {
+    //print(targetGroupId);
+
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
     //   // var htmlCode = await controller.generateHtmlUrl();
     //   String url = "http://47.110.150.159:8080/insertNote";
@@ -1124,16 +812,14 @@ class _GroupPreState extends State<GroupPre> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // var htmlCode = await controller.generateHtmlUrl();
-    // String url = "http://47.110.150.159:8080/insertNote";
-    print("*");
-    print(targetGroupId);
+    //String url = "http://47.110.150.159:8080/insertNote";
     String id = prefs.get("id");
     DateTime now = new DateTime.now();
     String html = htmlCode +
         "<p><span style=\"font-size:15px;color: blue\">以上是由${prefs.get("name")}保存，时间为：${now.toString().split('.')[0]}<\/span><\/p>";
 
     ///发起post请求
-    /* Response response = await Dio().post(url, data: {
+    /*Response response = await Dio().post(url, data: {
       "nNotetitle": "${messageModel.title}",
       "nNote": "$htmlCode",
       "uId": "$id",
@@ -1146,7 +832,8 @@ class _GroupPreState extends State<GroupPre> {
     } else {
       fromid = messageModel.fromuserid;
     }*/
-
+    // print("*");
+    // print(messageModel.messageId);
     String useid = prefs.get("id");
     var type = await Dio()
         .post("http://47.110.150.159:8080/gettype?id=$useid"); //获取用户所在的体系
@@ -1155,14 +842,14 @@ class _GroupPreState extends State<GroupPre> {
         .post("http://47.110.150.159:8080/messages/insertMessage", data: {
       "keywords": messageModel.keyWord,
       "messages": html,
-      "touserid": targetGroupId,
+      "touserid": messageModel.messageId,
       "fromuserid": prefs.get("id"),
       "title": messageModel.title,
       "hadLook": prefs.get("name") +
           "(" +
           new DateTime.now().toString().split('.')[0] +
           ")",
-      "MesId": targetGroupId,
+      "MesId": messageModel.messageId,
       "Flag": "草稿",
       "type": type.data,
     });
@@ -1189,8 +876,7 @@ class Pre extends StatelessWidget {
     ScreenAdapter.init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("预览页面"),
-        // title: Text("内容页面"),
+        title: Text("内容"),
         actions: [
           Row(
             children: [

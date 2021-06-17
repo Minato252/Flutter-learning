@@ -130,6 +130,17 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
                         color: Colors.white),
                   )),
             ),
+            SizedBox(
+              width: ScreenAdapter.width(140),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => route == null,
+                    );
+                  },
+                  icon: Icon(Icons.account_balance)),
+            ),
           ],
         ),
         body: SafeArea(
@@ -391,24 +402,24 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
       }
       var tempOld = await Tree.getTypeFromUsers(oldUsers); //老群（有自己）
       var tempNew = await Tree.getTypeFromUsers(targetIdList); //发送列表（没有自己）
-      if (tempNew is List) {
-        if (tempOld is List) {
-          await DialogUtil.showAlertDiaLog(
-            context,
-            "此群已包含多体系用户，无法再加入新的多体系用户。",
-            title: "发送失败",
-          );
-          return;
-        } else if (tempNew.length > 1) {
-          await DialogUtil.showAlertDiaLog(
-            context,
-            "最多允许选择1个多体系用户。",
-            title: "发送失败",
-          );
-          return;
-        }
-        //如果已经有了多体系用户，targetIdList中就
-      }
+      // if (tempNew is List) {
+      //   if (tempOld is List) {
+      //     await DialogUtil.showAlertDiaLog(
+      //       context,
+      //       "此群已包含多体系用户，无法再加入新的多体系用户。",
+      //       title: "发送失败",
+      //     );
+      //     return;
+      //   } else if (tempNew.length > 1) {
+      //     await DialogUtil.showAlertDiaLog(
+      //       context,
+      //       "最多允许选择1个多体系用户。",
+      //       title: "发送失败",
+      //     );
+      //     return;
+      //   }
+      //   //如果已经有了多体系用户，targetIdList中就
+      // }
       //================================
       if (!targetIdList.contains(id)) {
         targetIdList.add(id); //不管什么情况，发消息发送人必须在群中
@@ -627,7 +638,7 @@ class _PretoRichEditGroupState extends State<PretoRichEditGroup> {
         });
       }
     }*/
-    sendMessageSuccess("发送成功");
+    // sendMessageSuccess("发送成功");
     Navigator.pop(context);
   }
 

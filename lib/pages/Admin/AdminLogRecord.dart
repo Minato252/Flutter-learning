@@ -11,6 +11,7 @@ import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/MessageModelToConversation.dart';
 import 'package:weitong/Model/messageModel.dart';
+import 'package:weitong/pages/Admin/AdminSearch/AdminSearchMessage.dart';
 import 'package:weitong/pages/SearchMessage/SearchMessage.dart';
 import 'package:weitong/pages/tabs/NullResult.dart';
 
@@ -421,7 +422,7 @@ class _AdminLogRecordPageState extends State<AdminLogRecordPage> {
 
     print(conversation);
     Navigator.push(context, MaterialPageRoute(builder: (c) {
-      return SearchMessagePage(conList: conversation
+      return AdminSearchMessagePage(conList: conversation
           // title:title,
           );
     }));

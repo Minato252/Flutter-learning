@@ -130,21 +130,48 @@ class _ConversationItemState extends State<ConversationItem> {
     String groupId = this.message.targetId;
     List member = await GroupMessageService.searchGruopMember(groupId);
     // Map map = new Map();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String usId = prefs.get("id");
+    var rel1 = await Dio().post(
+        "http://47.110.150.159:8080/record/selectrecord?id=" +
+            usId +
+            "&type=member");
+    String usphoto = rel1.data["portrait"].toString();
 
     for (int i = 0; i < member.length; i++) {
       var rel = await Dio().post(
           "http://47.110.150.159:8080/record/selectrecord?id=" +
               member[i]["id"] +
               "&type=member");
-      photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
-
+      if (rel.data == "" || rel.data == null) {
+        photoUrlMap[member[i]["id"]] = usphoto;
+      } else {
+        photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+      }
       //获取用户名
       var relname = await Dio().post(
           "http://47.110.150.159:8080/getinformation?id=" + member[i]["id"]);
-      nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
+      if (relname.data == "" || relname.data == null) {
+        nameUrlMap[member[i]["id"]] = "已不再体系";
+      } else {
+        nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
+      }
     }
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // for (int i = 0; i < member.length; i++) {
+    //   var rel = await Dio().post(
+    //       "http://47.110.150.159:8080/record/selectrecord?id=" +
+    //           member[i]["id"] +
+    //           "&type=member");
+    //   photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+
+    //   //获取用户名
+    //   var relname = await Dio().post(
+    //       "http://47.110.150.159:8080/getinformation?id=" + member[i]["id"]);
+    //   nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
+    // }
+
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
     /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
     var rel_2 = await Dio().post(

@@ -297,7 +297,7 @@ class SimpleRichEditController extends RichEditController {
     }
     sb.write("<p>");
     sb.write('''
-           <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" x5-video-orientation="portrait" controls="controls"  style="width: 100px;height: 100%;"></video>
+           <video src="${url}" playsinline="true" webkit-playsinline="true" x-webkit-airplay="allow" airplay="allow" x5-video-player-type="h5" x5-video-player-fullscreen="true" xo5-vide-orientation="portrait" controls="controls"  style="width: 100px;height: 100%;"></video>
            ''');
 
     // sb.write('''
@@ -679,7 +679,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     });
     _controller.setLooping(true);
     _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    // _controller.play();
   }
 
   @override

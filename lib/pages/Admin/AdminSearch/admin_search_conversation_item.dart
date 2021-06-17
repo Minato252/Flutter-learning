@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart' as prefix;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weitong/Model/style.dart';
+import 'package:weitong/pages/Admin/AdminSearch/admin_search_message_item_factory.dart';
 import 'package:weitong/pages/SearchMessage/search_message_item_factory.dart';
 import 'package:weitong/pages/group/GroupMessageService.dart';
 import 'package:weitong/services/ScreenAdapter.dart';
@@ -13,17 +14,17 @@ import 'dart:developer' as developer;
 
 import 'package:weitong/widget/widget_util.dart';
 
-class SearchConversationItem extends StatefulWidget {
+class AdminSearchConversationItem extends StatefulWidget {
   prefix.Message message;
   ConversationItemDelegate delegate;
   bool showTime;
   bool multiSelect = false;
   List selectedMessageIds;
-  _SearchConversationItemState state;
+  _AdminSearchConversationItemState state;
   String userId;
   ValueNotifier<int> time = ValueNotifier<int>(0);
 
-  SearchConversationItem(
+  AdminSearchConversationItem(
       ConversationItemDelegate delegate,
       prefix.Message msg,
       bool showTime,
@@ -42,7 +43,7 @@ class SearchConversationItem extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return state = new _SearchConversationItemState(
+    return state = new _AdminSearchConversationItemState(
       this.delegate,
       this.message,
       this.showTime,
@@ -58,7 +59,8 @@ class SearchConversationItem extends StatefulWidget {
   }
 }
 
-class _SearchConversationItemState extends State<SearchConversationItem> {
+class _AdminSearchConversationItemState
+    extends State<AdminSearchConversationItem> {
   String pageName = "example.ConversationItem";
   prefix.Message message;
   ConversationItemDelegate delegate;
@@ -82,7 +84,7 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
 
   String userId = "";
 
-  _SearchConversationItemState(
+  _AdminSearchConversationItemState(
       ConversationItemDelegate delegate,
       prefix.Message msg,
       bool showTime,
@@ -133,12 +135,7 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
 
   void _getInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // if (prefs.getString("adminId") == null ||
-    //     prefs.getString("adminId") == "") {
-    this.userId = prefs.getString("id");
-    // } else {
-    //   this.userId = "";
-    // }
+    this.userId = "";
     // if (prefs.getString("id") != null && prefs.getString("id") != "") {
     //   this.userId = prefs.getString("id");
     // } else {
@@ -189,35 +186,21 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
     String groupId = this.message.targetId;
     List member = await GroupMessageService.searchGruopMember(groupId);
     // Map map = new Map();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String usId = prefs.get("id");
-    var rel1 = await Dio().post(
-        "http://47.110.150.159:8080/record/selectrecord?id=" +
-            usId +
-            "&type=member");
-    String usphoto = rel1.data["portrait"].toString();
 
     for (int i = 0; i < member.length; i++) {
       var rel = await Dio().post(
           "http://47.110.150.159:8080/record/selectrecord?id=" +
               member[i]["id"] +
               "&type=member");
-      if (rel.data == "" || rel.data == null) {
-        photoUrlMap[member[i]["id"]] = usphoto;
-      } else {
-        photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
-      }
+      photoUrlMap[member[i]["id"]] = rel.data["portrait"].toString();
+
       //获取用户名
       var relname = await Dio().post(
           "http://47.110.150.159:8080/getinformation?id=" + member[i]["id"]);
-      if (relname.data == "" || relname.data == null) {
-        nameUrlMap[member[i]["id"]] = "已不再体系";
-      } else {
-        nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
-      }
+      nameUrlMap[member[i]["id"]] = relname.data["uName"].toString();
     }
 
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     /*var rel_1 = await Dio()
         .post("http://47.110.150.159:8080/record/selectrecord?id=" + targetId);*/
     var rel_2 = await Dio().post(
@@ -680,7 +663,7 @@ class _SearchConversationItemState extends State<SearchConversationItem> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         // child: MessageItemFactory(
-                        child: SearchMessageItemFactory(
+                        child: AdminSearchMessageItemFactory(
                             message: message,
                             needShow: needShowMessage,
                             userid: userId),

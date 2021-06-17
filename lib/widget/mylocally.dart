@@ -132,14 +132,14 @@ class EasyNotification {
   // }
 
   Future<void> show(
-      {String title = "亘管", String message = "新消息", String id = ""}) async {
+      {String title = "亘管", String message = "新信息", String id = ""}) async {
     //如果不在前台就通知
     // locally.show(title: "亘管", message: "您有$num条新消息");
     String unreadString = "";
     RongIMClient.getTotalUnreadCount((int count, int code) {
       if (0 == code) {
         print("未读数为" + count.toString());
-        unreadString = "(共${count.toString()}条未读消息)";
+        unreadString = "(共${count.toString()}条未读信息)";
       }
     });
     //获取用户名
@@ -147,7 +147,7 @@ class EasyNotification {
       var relname = await Dio()
           .post("http://47.110.150.159:8080/getinformation?id=" + id);
       String name = relname.data["uName"].toString();
-      message = "$name发来一条新消息";
+      message = "$name发来一条新信息";
     }
     message += unreadString;
 

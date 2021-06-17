@@ -288,7 +288,7 @@ class _EdituserdetailsState extends State<Edituserdetails> {
     Response response =
         await Dio().post("http://47.110.150.159:8080/updataUser", data: {
       "uLoginid": details["id"],
-      "id": details["id"],
+      // "id": details["id"],
       "uPassword": password,
       "uAuthority": job,
       "uName": name,

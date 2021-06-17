@@ -6,20 +6,24 @@ import 'package:weitong/pages/tree/tree.dart';
 import 'package:weitong/services/providerServices.dart';
 import 'package:weitong/widget/JdButton.dart';
 
-class TagChoiceChipDemo extends StatefulWidget {
+class TagChoiceChipUser extends StatefulWidget {
   @override
   _TagChoiceState createState() => _TagChoiceState();
 }
 
-class _TagChoiceState extends State<TagChoiceChipDemo> {
+class _TagChoiceState extends State<TagChoiceChipUser> {
   @override
   List<String> _tags = [];
+  List<String> companys = [];
+  Map m;
+  bool exittag = false;
   // = [
   //   '111',
   //   '222',
   //   '333',
   // ];
-  String _choice = "";
+  String _choicecompany = "";
+  String _choicetag = "";
 
   @override
   void initState() {
@@ -31,53 +35,27 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
   _getTag() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print("***********************${arguments['identify']}*******************");
-    String adminid;
+
     String id = prefs.get("id");
-    if (id == '' || id == null) {
-      id = prefs.get("adminId");
-      var rel = await Dio()
-          .post("http://47.110.150.159:8080/selectWord?id=${adminid}");
-      List<String> s = rel.data.toString().split(',');
-      for (int i = 0; i < s.length; i++) {
-        if (!_tags.contains(s[i])) {
-          _tags.add(s[i]);
-        }
+
+    //用户
+    var rel = await Dio().post("http://47.110.150.159:8080/GetWords?id=${id}");
+    // List<String> s = rel.data.toString().split(',');
+    m = rel.data;
+    m.forEach((key, value) {
+      List<String> tags = [];
+      String regex = ",";
+      List result = value.split(regex);
+      for (int i = 0; i < result.length; i++) {
+        tags.add(result[i]);
       }
-    } else {
-      //用户
-      var rel =
-          await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
-      // List<String> s = rel.data.toString().split(',');
-      for (int i = 0; i < rel.data.length; i++) {
-        if (!_tags.contains(rel.data[i])) {
-          _tags.add(rel.data[i]);
-        }
-      }
-    }
-
-    // var rel =
-    //     await Dio().post("http://47.110.150.159:8080/selectWord?id=${id}");
-    // var rel =
-    //     await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
-    // //  List<String> s = rel.data.toString().split(',');
-    // // List s = rel.data;
-
-    // for (int i = 0; i < rel.data.length; i++) {
-    //   if (!_tags.contains(rel.data[i])) {
-    //     _tags.add(rel.data[i]);
-    //   }
-    // }
-
-    // var rel =
-    //     await Dio().post("http://47.110.150.159:8080/MutliGetWord?id=${id}");
-    // // List<String> s = rel.data.toString().split(',');
-
-    // for (int i = 0; i < rel.data.length; i++) {
-    //   if (!_tags.contains(rel.data[i])) {
-    //     _tags.add(rel.data[i]);
-    //   }
-    // }
-
+      m["$key"] = tags;
+      companys.add(key);
+      // List<String> tag = [];
+      // String regex = ",";
+      // List result = value.split(regex);
+      // _tag.add(result);
+    });
     setState(() {});
   }
 
@@ -122,48 +100,26 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
               children: <Widget>[
                 SizedBox(height: 15),
                 Text(
-                  "选择您的公司和关键词",
+                  "选择您的公司",
                   style: TextStyle(fontSize: 20.0),
                 ),
-                SizedBox(height: 15),
                 SizedBox(height: 15),
                 // Text(
                 //   "选择您的关键词",
                 //   style: TextStyle(fontSize: 20.0),
                 // ),
-                // SizedBox(height: 15),
-                //  Wrap(
-                //   spacing: 8.0,
-                //   children: _tags.map((tag) {
-                //     return ChoiceChip(
-                //       label: Text(tag),
-                //       selected: _choice == tag,
-                //       // selectedColor: Theme.of(context).accentColor,
-                //       onSelected: (value) {
-                //         setState(() {
-                //           _choice = tag;
-                //         });
-                //       },
-                //       // onDeleted: () {
-                //       //   setState(() {
-                //       //     _tags.remove(tag);
-                //       //   });
-                //       // },
-                //       // deleteButtonTooltipMessage: "删除这个关键词",
-                //       // onSelected: ,
-                //     );
-                //   }).toList(),
-                // ),
+
                 Wrap(
                   spacing: 8.0,
-                  children: _tags.map((tag) {
+                  children: companys.map((company) {
                     return ChoiceChip(
-                      label: Text(tag),
-                      selected: _choice == tag,
+                      label: Text(company),
+                      selected: _choicecompany == company,
                       // selectedColor: Theme.of(context).accentColor,
                       onSelected: (value) {
                         setState(() {
-                          _choice = tag;
+                          _choicecompany = company;
+                          exittag = true;
                         });
                       },
                       // onDeleted: () {
@@ -177,7 +133,37 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
                   }).toList(),
                 ),
                 SizedBox(height: 15),
-                Text("已选择关键词: $_choice"),
+                Text(
+                  "选择您的关键词",
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                SizedBox(height: 15),
+                exittag
+                    ? Wrap(
+                        spacing: 8.0,
+                        children: m["$_choicecompany"].map<Widget>((tag) {
+                          return ChoiceChip(
+                              label: Text(tag),
+                              selected: _choicetag == tag,
+                              // selectedColor: Theme.of(context).accentColor,
+                              onSelected: (value) {
+                                setState(() {
+                                  _choicetag = tag;
+                                });
+                              }
+                              // onDeleted: () {
+                              //   setState(() {
+                              //     _tags.remove(tag);
+                              //   });
+                              // },
+                              // deleteButtonTooltipMessage: "删除这个关键词",
+                              // onSelected: ,
+                              );
+                        }).toList(),
+                      )
+                    : SizedBox(height: 30),
+                SizedBox(height: 15),
+                Text("已选择公司和关键词: $_choicecompany:$_choicetag"),
                 SizedBox(height: 15),
                 Divider(
                   color: Colors.black12,
@@ -196,6 +182,6 @@ class _TagChoiceState extends State<TagChoiceChipDemo> {
   }
 
   void _sendDataBack(BuildContext context) {
-    Navigator.pop(context, _choice);
+    Navigator.pop(context, _choicetag);
   }
 }
